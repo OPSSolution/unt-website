@@ -1,7 +1,7 @@
 import { Product, Article, TrainingTrack, PartnerLogo } from '../types';
 
 export const PARTNERS: PartnerLogo[] = [
-  { id: '1', name: 'Siam Agri Commodities', category: 'Food & Beverage', country: 'Thailand', logoText: 'SIAM AGRI' },
+  { id: '1', name: 'Mekong Agri Commodities', category: 'Food & Beverage', country: 'Vietnam', logoText: 'MEKONG AGRI' },
   { id: '2', name: 'Kyoto Bio Botanicals', category: 'Skincare & Cosmetics', country: 'Japan', logoText: 'KYOTO BIO' },
   { id: '3', name: 'Mekong FMCG Direct', category: 'Household Goods', country: 'Vietnam', logoText: 'MEKONG FMCG' },
   { id: '4', name: 'Seoul Health Labs', category: 'Health Supplements', country: 'South Korea', logoText: 'SEOUL LABS' },
@@ -14,8 +14,8 @@ export const PRODUCTS: Product[] = [
     id: 'prod-1',
     name: '100% Pure Organic Coconut Water (Tetra Pak)',
     category: 'Food & Beverage',
-    origin: 'Thailand',
-    originFlag: '🇹🇭',
+    origin: 'Vietnam',
+    originFlag: '🇻🇳',
     moq: '500 Cartons (12,000 units)',
     leadTime: '14 - 21 Days',
     image: 'https://images.unsplash.com/photo-1525385133512-2f3bdd039054?q=80&w=1000&auto=format&fit=crop',
@@ -98,14 +98,14 @@ export const PRODUCTS: Product[] = [
     originFlag: '🇰🇷',
     moq: '2,000 Bottles (60 Count)',
     leadTime: '20 - 30 Days',
-    image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=1000&auto=format&fit=crop',
-    description: 'Enhanced bioavailability liposomal Vitamin C 1000mg + Zinc 15mg capsules for optimal immune defence and antioxidant support.',
+    image: 'https://images.unsplash.com/photo-1584017911766-d451b3d0e843?q=80&w=1000&auto=format&fit=crop',
+    description: 'High potency liposomal Vitamin C with Zinc for maximum bioavailability and immune support.',
     oemAvailable: true,
     specifications: [
-      'Dosage: 1000mg Liposomal Vit C + 15mg Zinc Picolinate per dose',
-      'Capsule: Vegetable HPMC Capsule (Halal & Vegan)',
-      'Packaging: UV-blocking HDPE bottle with safety ring seal',
-      'Registration: Pre-audited for Cambodia Ministry of Health import permit'
+      'Active Ingredients: Liposomal Vitamin C 1000mg, Zinc Picolinate 15mg',
+      'Capsule: Vegetable Cellulose (Vegan)',
+      'Bottle: UV-Protected Amber Glass',
+      'Certifications: K-FDA Approved, GMP Certified Facility'
     ],
     certifications: ['GMP Health', 'KFDA Registered', 'Halal Certified'],
     shelfLife: '24 Months'
@@ -114,8 +114,8 @@ export const PRODUCTS: Product[] = [
     id: 'prod-6',
     name: 'Plant-Based Biodegradable Multi-Surface Clean Drops',
     category: 'Household Goods',
-    origin: 'Thailand',
-    originFlag: '🇹🇭',
+    origin: 'Vietnam',
+    originFlag: '🇻🇳',
     moq: '3,000 Bottles / Refills',
     leadTime: '14 - 20 Days',
     image: 'https://images.unsplash.com/photo-1583947215259-38e31be8751f?q=80&w=1000&auto=format&fit=crop',
@@ -188,10 +188,10 @@ export const ARTICLES: Article[] = [
       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop'
     },
     image: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?q=80&w=1000&auto=format&fit=crop',
-    excerpt: 'Best practices for temperature-controlled freight between Thailand, Vietnam, and Phnom Penh to eliminate spoilage and maintain product integrity.',
+    excerpt: 'Best practices for temperature-controlled freight between Vietnam, South Korea, and Phnom Penh to eliminate spoilage and maintain product integrity.',
     content: [
       'Maintaining an uninterrupted cold chain across tropical transit corridors requires real-time IoT temperature logging, specialized reefer containers, and rapid customs priority clearance.',
-      'UNT Logistics deploys GPS-tracked refrigerated trailers with dual-power generator backup for cross-border land transport from Chonburi and Ho Chi Minh directly into our Phnom Penh temperature-regulated distribution center.',
+      'UNT Logistics deploys GPS-tracked refrigerated trailers with dual-power generator backup for cross-border land transport directly into our Phnom Penh temperature-regulated distribution center.',
       'Discover how our end-to-end cold storage monitoring safeguards dairy, beverage, and frozen specialty items with zero thermal spikes.'
     ],
     tags: ['Cold Chain', 'Logistics', 'Food Safety', 'Reefer Shipping']
@@ -315,7 +315,7 @@ export const TRAINING_TRACKS: TrainingTrack[] = [
     description: 'Practical training on verifying overseas factories, managing multi-modal logistics, navigating ASEAN customs regulations, and mitigating currency risks.',
     targetAudience: 'Supply Chain Directors, Logistics Managers, Importing Entrepreneurs',
     keyTakeaways: [
-      'Conduct rigorous factory background checks and quality audits in China, Thailand, Korea',
+      'Conduct rigorous factory background checks and quality audits in China, Vietnam, Korea',
       'Master Incoterms 2020 (FOB, CIF, DDP) and their hidden cost implications',
       'Ensure 100% compliance with Cambodian customs, tax codes, and ministry permits',
       'Implement buffer stock protocols for peak seasonal demand'
@@ -345,7 +345,7 @@ export const SOURCING_STEPS = [
     step: '02',
     title: 'Factory Verification & Sampling',
     subtitle: 'Audited Global Manufacturer Matching',
-    description: 'We match your project with audited ISO/GMP certified facilities across Thailand, Vietnam, Korea, Japan, or China, providing physical samples for rapid approval.',
+    description: 'We match your project with audited ISO/GMP certified facilities across Vietnam, Korea, Japan, or China, providing physical samples for rapid approval.',
     icon: 'verified'
   },
   {

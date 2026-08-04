@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PageTab, Product, Article } from './types';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
@@ -22,6 +22,32 @@ export default function App() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
 
+  // Dark Mode State with LocalStorage Persistence
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    const savedTheme = localStorage.getItem('unt_theme');
+    if (savedTheme) {
+      return savedTheme === 'dark';
+    }
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+      document.body.classList.add('dark');
+      localStorage.setItem('unt_theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.body.classList.remove('dark');
+      localStorage.setItem('unt_theme', 'light');
+    }
+  }, [darkMode]);
+
+  // Scroll to top & trigger ScrollReveal when tab changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [activeTab]);
+
   const handleOpenQuoteModal = (productName?: string) => {
     if (productName) {
       setPreselectedProduct(productName);
@@ -32,11 +58,13 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-emerald-500 selection:text-white">
+    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-[#090D16] text-slate-900 dark:text-slate-100 font-sans selection:bg-emerald-500 selection:text-white transition-colors duration-300">
       {/* Navbar */}
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
         onOpenQuoteModal={() => handleOpenQuoteModal()}
         onSelectProduct={(product) => setSelectedProduct(product)}
         onSelectArticle={(article) => setSelectedArticle(article)}
