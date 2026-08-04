@@ -1,122 +1,119 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React, { useState } from 'react';
+import { PageTab, Product, Article } from './types';
+import { Navbar } from './components/Navbar';
+import { Footer } from './components/Footer';
+import { QuoteModal } from './components/QuoteModal';
+import { ProductDetailModal } from './components/ProductDetailModal';
+import { ArticleReaderModal } from './components/ArticleReaderModal';
 
-function App() {
-  const [count, setCount] = useState(0)
+import { HomePage } from './pages/HomePage';
+import { AboutPage } from './pages/AboutPage';
+import { ServicesPage } from './pages/ServicesPage';
+import { ProductsPage } from './pages/ProductsPage';
+import { TrainingPage } from './pages/TrainingPage';
+import { BlogPage } from './pages/BlogPage';
+import { ContactPage } from './pages/ContactPage';
+
+export default function App() {
+  const [activeTab, setActiveTab] = useState<PageTab>('home');
+  const [quoteModalOpen, setQuoteModalOpen] = useState<boolean>(false);
+  const [preselectedProduct, setPreselectedProduct] = useState<string>('');
+  
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+
+  const handleOpenQuoteModal = (productName?: string) => {
+    if (productName) {
+      setPreselectedProduct(productName);
+    } else {
+      setPreselectedProduct('');
+    }
+    setQuoteModalOpen(true);
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-emerald-500 selection:text-white">
+      {/* Navbar */}
+      <Navbar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        onOpenQuoteModal={() => handleOpenQuoteModal()}
+        onSelectProduct={(product) => setSelectedProduct(product)}
+        onSelectArticle={(article) => setSelectedArticle(article)}
+      />
 
-      <div className="ticks"></div>
+      {/* Main View Container */}
+      <main className="flex-1">
+        {activeTab === 'home' && (
+          <HomePage
+            setActiveTab={setActiveTab}
+            onOpenQuoteModal={() => handleOpenQuoteModal()}
+            onOpenProductModal={(product) => setSelectedProduct(product)}
+            onOpenArticleModal={(article) => setSelectedArticle(article)}
+          />
+        )}
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        {activeTab === 'about' && (
+          <AboutPage
+            setActiveTab={setActiveTab}
+            onOpenQuoteModal={() => handleOpenQuoteModal()}
+          />
+        )}
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+        {activeTab === 'services' && (
+          <ServicesPage
+            setActiveTab={setActiveTab}
+            onOpenQuoteModal={() => handleOpenQuoteModal()}
+          />
+        )}
+
+        {activeTab === 'products' && (
+          <ProductsPage
+            onOpenProductModal={(product) => setSelectedProduct(product)}
+            onOpenQuoteWithProduct={(prodName) => handleOpenQuoteModal(prodName)}
+          />
+        )}
+
+        {activeTab === 'training' && (
+          <TrainingPage
+            onOpenQuoteModal={() => handleOpenQuoteModal()}
+          />
+        )}
+
+        {activeTab === 'blog' && (
+          <BlogPage
+            onOpenArticleModal={(article) => setSelectedArticle(article)}
+            onOpenQuoteModal={() => handleOpenQuoteModal()}
+          />
+        )}
+
+        {activeTab === 'contact' && <ContactPage />}
+      </main>
+
+      {/* Footer */}
+      <Footer
+        setActiveTab={setActiveTab}
+        onOpenQuoteModal={() => handleOpenQuoteModal()}
+      />
+
+      {/* Interactive Modals */}
+      <QuoteModal
+        isOpen={quoteModalOpen}
+        onClose={() => setQuoteModalOpen(false)}
+        preselectedProduct={preselectedProduct}
+      />
+
+      <ProductDetailModal
+        product={selectedProduct}
+        onClose={() => setSelectedProduct(null)}
+        onOpenQuoteWithProduct={(prodName) => handleOpenQuoteModal(prodName)}
+      />
+
+      <ArticleReaderModal
+        article={selectedArticle}
+        onClose={() => setSelectedArticle(null)}
+        onOpenQuoteModal={() => handleOpenQuoteModal()}
+      />
+    </div>
+  );
 }
-
-export default App
