@@ -27,4 +27,5 @@ app.get("/api/health", async (_req, res) => {
 });
 
 const PORT = Number(process.env.PORT ?? 5000);
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const HOST = process.env.HOST ?? "localhost";
+app.listen(PORT, () => console.log(`Server running on port http://${HOST}:${PORT}`));
