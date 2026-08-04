@@ -26,18 +26,18 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }
   };
 
   return (
-    <footer className="bg-white text-slate-700 border-t border-slate-200 pt-16 pb-12 shadow-inner">
+    <footer className="bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-300 border-t border-slate-200 dark:border-slate-800 pt-16 pb-12 shadow-inner transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Top Callout Banner */}
-        <div className="mb-16 rounded-3xl bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-emerald-500/10 border border-emerald-200 p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden shadow-sm">
+        <div className="mb-16 rounded-3xl bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-emerald-500/10 dark:from-emerald-950/50 dark:via-slate-900/50 dark:to-emerald-950/50 border border-emerald-200 dark:border-emerald-800/80 p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden shadow-sm">
           <div className="relative z-10 max-w-2xl text-left">
-            <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-extrabold tracking-wider uppercase rounded-full mb-3">
+            <span className="inline-block px-3 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-xs font-extrabold tracking-wider uppercase rounded-full mb-3">
               Ready to Expand Your Wholesale Supply Chain?
             </span>
-            <h3 className="text-2xl sm:text-3xl font-display font-bold text-slate-900 tracking-tight">
+            <h3 className="text-2xl sm:text-3xl font-display font-bold text-slate-900 dark:text-white tracking-tight">
               Partner with Cambodia’s Leading Sourcing Ecosystem
             </h3>
-            <p className="mt-2 text-slate-600 text-sm">
+            <p className="mt-2 text-slate-600 dark:text-slate-300 text-sm">
               From verified factory matching to door-to-door customs clearance and private label formulation — we deliver reliability at scale.
             </p>
           </div>
@@ -51,7 +51,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }
             </button>
             <button
               onClick={() => navigateTo('contact')}
-              className="px-6 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-sm border border-slate-300 transition-all flex items-center justify-center"
+              className="px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-sm border border-slate-300 dark:border-slate-700 transition-all flex items-center justify-center"
             >
               Contact Phnom Penh Office
             </button>
@@ -59,7 +59,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }
         </div>
 
         {/* Main Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-200">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-200 dark:border-slate-800">
           {/* Col 1: Brand & Identity */}
           <div className="lg:col-span-2 space-y-4 text-left">
             <div className="flex items-center space-x-3">
@@ -67,17 +67,17 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }
                 <img src="/images/logos/image.png" alt="UNT Logo" className="w-full h-full object-contain" />
               </div>
               <div>
-                <span className="font-display font-bold text-xl text-slate-900 block">UNT COMPANY</span>
-                <span className="text-xs text-emerald-600 font-semibold">Unique Noble Trading Co., Ltd.</span>
+                <span className="font-display font-bold text-xl text-slate-900 dark:text-white block">UNT COMPANY</span>
+                <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">Unique Noble Trading Co., Ltd.</span>
               </div>
             </div>
             
-            <p className="text-slate-600 text-sm leading-relaxed max-w-sm">
+            <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed max-w-sm">
               Empowering Asian commerce by bridging world-class manufacturers with retail networks, wholesale distributors, and emerging brands in Cambodia and ASEAN.
             </p>
 
-            <div className="pt-2 flex items-center space-x-2 text-xs text-emerald-700 font-medium">
-              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+            <div className="pt-2 flex items-center space-x-2 text-xs text-emerald-700 dark:text-emerald-400 font-medium">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
               <span>Full Ministry of Commerce & GDCE Import Audit Compliant</span>
             </div>
           </div>

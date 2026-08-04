@@ -7,7 +7,7 @@ interface SourcingCalculatorProps {
 
 export const SourcingCalculator: React.FC<SourcingCalculatorProps> = ({ onOpenQuoteModal }) => {
   const [category, setCategory] = useState('Food & Beverage');
-  const [origin, setOrigin] = useState('Thailand');
+  const [origin, setOrigin] = useState('Vietnam');
   const [quantity, setQuantity] = useState(5000);
   const [oemNeeded, setOemNeeded] = useState(false);
 
@@ -21,7 +21,7 @@ export const SourcingCalculator: React.FC<SourcingCalculatorProps> = ({ onOpenQu
   };
 
   const getShippingMethod = () => {
-    if (origin === 'Thailand' || origin === 'Vietnam') return 'Cross-Border Overland Reefer & Express Trucking';
+    if (origin === 'Vietnam') return 'Cross-Border Overland Reefer & Express Trucking';
     return 'Ocean Freight (FCL/LCL) + Customs Clearance';
   };
 
@@ -34,123 +34,116 @@ export const SourcingCalculator: React.FC<SourcingCalculatorProps> = ({ onOpenQu
   };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden text-slate-800">
+    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden text-slate-800 dark:text-slate-100 transition-colors duration-300">
       {/* Decorative accent */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 dark:bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative z-10 space-y-6">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
               <Calculator className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-display font-bold text-slate-900">Interactive Sourcing Estimator</h3>
-              <p className="text-xs text-slate-500">Calculate lead times, logistics, & Cambodian import permit requirements</p>
+              <h3 className="text-lg font-display font-bold text-slate-900 dark:text-white">Interactive Sourcing Estimator</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Calculate lead times, logistics, & Cambodian import permit requirements</p>
             </div>
           </div>
-          <span className="hidden sm:inline-block px-3 py-1 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold rounded-full">
+          <span className="hidden sm:inline-block px-3 py-1 bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs font-bold rounded-full">
             B2B Sourcing Tool
           </span>
         </div>
 
         {/* Form Controls */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left">
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">1. Product Category</label>
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">1. Product Category</label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-emerald-500 focus:bg-white"
+              className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2.5 text-xs text-slate-900 dark:text-white font-medium focus:outline-none focus:border-emerald-500"
             >
-              <option value="Food & Beverage">Food & Beverage</option>
-              <option value="Skincare & Beauty">Skincare & Cosmetics</option>
-              <option value="Health Supplements">Health & Wellness</option>
-              <option value="Personal Care">Personal Care & Hair</option>
-              <option value="Household Goods">Household Goods</option>
+              <option value="Food & Beverage" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Food & Beverage (FMCG)</option>
+              <option value="Skincare & Beauty" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Skincare & Cosmetics</option>
+              <option value="Health Supplements" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Health & Dietary Supplements</option>
+              <option value="Personal Care" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Personal Hygiene & Care</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">2. Target Country of Origin</label>
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">2. Manufacturing Origin</label>
             <select
               value={origin}
               onChange={(e) => setOrigin(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-emerald-500 focus:bg-white"
+              className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2.5 text-xs text-slate-900 dark:text-white font-medium focus:outline-none focus:border-emerald-500"
             >
-              <option value="Thailand">Thailand 🇹🇭</option>
-              <option value="Vietnam">Vietnam 🇻🇳</option>
-              <option value="South Korea">South Korea 🇰🇷</option>
-              <option value="Japan">Japan 🇯🇵</option>
-              <option value="China">China 🇨🇳</option>
+              <option value="South Korea" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">South Korea (Sea / Air Freight)</option>
+              <option value="Japan" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Japan (Sea / Air Freight)</option>
+              <option value="China" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">China (Sea Freight / Ports)</option>
+              <option value="Vietnam" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Vietnam (Border Trucking)</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">
-              3. Target Units ({quantity.toLocaleString()} units)
-            </label>
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">3. Estimated Lot Volume</label>
             <input
-              type="range"
-              min={500}
-              max={50000}
-              step={500}
+              type="number"
+              min="500"
+              step="500"
               value={quantity}
               onChange={(e) => setQuantity(Number(e.target.value))}
-              className="w-full accent-emerald-600 cursor-pointer h-2 bg-slate-200 rounded-lg"
+              className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2.5 text-xs text-slate-900 dark:text-white font-medium focus:outline-none focus:border-emerald-500"
             />
-            <div className="flex justify-between text-[10px] text-slate-500 mt-1">
-              <span>500 (Trial)</span>
-              <span>25,000</span>
-              <span>50,000+ (FCL)</span>
-            </div>
           </div>
         </div>
 
-        {/* OEM Toggle Check */}
-        <div className="flex items-center space-x-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
+        {/* Checkbox */}
+        <div className="flex items-center space-x-2 pt-1 text-left">
           <input
             type="checkbox"
             id="oemToggle"
             checked={oemNeeded}
             onChange={(e) => setOemNeeded(e.target.checked)}
-            className="w-4 h-4 text-emerald-600 rounded border-slate-300 bg-white focus:ring-emerald-500"
+            className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500 cursor-pointer"
           />
-          <label htmlFor="oemToggle" className="text-xs text-slate-700 cursor-pointer select-none">
-            Include <strong className="text-emerald-700">Custom OEM Formulation & Private Label Packaging</strong> (+14 days sampling/tooling)
+          <label htmlFor="oemToggle" className="text-xs text-slate-700 dark:text-slate-300 font-semibold cursor-pointer">
+            Requires Turnkey OEM / Custom Brand Re-packaging (+14 Days R&D)
           </label>
         </div>
 
-        {/* Estimation Results Panel */}
-        <div className="p-5 rounded-2xl bg-gradient-to-br from-slate-50 via-emerald-50/40 to-emerald-100/30 border border-emerald-200 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div>
-            <div className="text-[11px] text-slate-600 font-semibold uppercase tracking-wider flex items-center space-x-1">
-              <Clock className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Est. Door-to-Door Lead Time</span>
+        {/* Dynamic Estimation Output Display Card */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-slate-100 dark:border-slate-800 text-left">
+          {/* Estimated Lead Time */}
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1">
+            <div className="flex items-center space-x-1.5 text-emerald-700 dark:text-emerald-400 font-bold text-xs">
+              <Clock className="w-4 h-4" />
+              <span>Est. Delivery Lead Time</span>
             </div>
-            <div className="text-xl font-display font-bold text-slate-900 mt-1">{getLeadTime()}</div>
-            <div className="text-[10px] text-slate-500 mt-0.5">Includes factory prep & customs clearance</div>
+            <div className="text-xl font-display font-bold text-slate-900 dark:text-white">{getLeadTime()}</div>
+            <div className="text-[10px] text-slate-500 dark:text-slate-400">Includes factory build & customs release</div>
           </div>
 
-          <div>
-            <div className="text-[11px] text-slate-600 font-semibold uppercase tracking-wider flex items-center space-x-1">
-              <Truck className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Recommended Freight Route</span>
+          {/* Shipping Logistics Mode */}
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1">
+            <div className="flex items-center space-x-1.5 text-emerald-700 dark:text-emerald-400 font-bold text-xs">
+              <Truck className="w-4 h-4" />
+              <span>Logistics Shipping Route</span>
             </div>
-            <div className="text-xs font-bold text-slate-900 mt-1 leading-snug">{getShippingMethod()}</div>
-            <div className="text-[10px] text-slate-500 mt-0.5">Delivered directly to Phnom Penh warehouse</div>
+            <div className="text-xs font-bold text-slate-900 dark:text-white leading-snug">{getShippingMethod()}</div>
+            <div className="text-[10px] text-slate-500 dark:text-slate-400">Door-to-door Phnom Penh delivery</div>
           </div>
 
-          <div>
-            <div className="text-[11px] text-slate-600 font-semibold uppercase tracking-wider flex items-center space-x-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Compliance Documents Managed</span>
+          {/* Permits & Permits Required */}
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1">
+            <div className="flex items-center space-x-1.5 text-emerald-700 dark:text-emerald-400 font-bold text-xs">
+              <ShieldCheck className="w-4 h-4" />
+              <span>Ministry Clearances Secured</span>
             </div>
-            <ul className="text-[11px] text-emerald-800 mt-1 space-y-0.5 font-medium">
-              {getPermitsRequired().map((item, idx) => (
+            <ul className="space-y-1 text-[11px] text-slate-600 dark:text-slate-300 font-medium">
+              {getPermitsRequired().map((permit, idx) => (
                 <li key={idx} className="flex items-center space-x-1">
-                  <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
-                  <span className="truncate">{item}</span>
+                  <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <span className="truncate">{permit}</span>
                 </li>
               ))}
             </ul>
