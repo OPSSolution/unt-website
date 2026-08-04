@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { PageTab } from '../types';
-import { PRODUCTS, ARTICLES, PARTNERS } from '../data/mockData';
+import { ARTICLES, PARTNERS } from '../data/mockData';
 import { ArrowRight, ShieldCheck, Globe, Truck, Package, Sparkles, CheckCircle2, ChevronRight, GraduationCap } from 'lucide-react';
 
 interface HomePageProps {
@@ -10,12 +10,76 @@ interface HomePageProps {
   onOpenArticleModal: (article: any) => void;
 }
 
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?q=80&w=2070&auto=format&fit=crop';
+
+const PILLARS_DEFAULT = {
+  badge: 'Full-Spectrum Trading Infrastructure',
+  heading: 'Integrated Solutions for Modern Commerce',
+  subheading: 'UNT Company operates as a complete commercial gateway, managing product supply chains from initial factory audits to local market distribution.',
+  pillar1_title: 'Premium Product Distribution',
+  pillar1_desc: 'Direct access to verified international wholesale catalogs spanning Food & Beverage, Skincare, Beauty, Personal Care, Health Supplements, and Household FMCG.',
+  pillar2_title: 'Sourcing-as-a-Service & OEM',
+  pillar2_desc: 'End-to-end custom procurement. We audit factories in Thailand, Korea, Japan, and China, negotiate pricing, inspect pre-shipment batches, and clear Cambodian customs.',
+  pillar3_title: 'Sales & Trade Capacity Academy',
+  pillar3_desc: 'Empowering commercial teams, sales reps, and procurement directors with masterclasses in B2B negotiation, buyer psychology, key account management, and retention.',
+};
+
+const HERITAGE_DEFAULT = {
+  badge: 'Balancing Heritage with Modern Efficiency',
+  heading: 'Bridging International Factories with Cambodian Commerce',
+  paragraph: "Global supply chains are complex, but sourcing doesn't have to be. UNT Company combines deep local market knowledge with international trade relationships to provide smooth, transparent procurement.",
+  feature1_title: 'Direct Factory Access',
+  feature1_desc: 'Eliminate middlemen markup. We connect you directly to verified factories in Thailand, South Korea, Japan, Vietnam, and China.',
+  feature2_title: 'Full Customs & Ministry Permits',
+  feature2_desc: 'We manage product registration with the Cambodian Ministry of Health, Ministry of Commerce, and GDCE customs clearance.',
+  feature3_title: 'End-to-End Door Delivery',
+  feature3_desc: 'Temperature-controlled logistics from overseas port loading directly to your Phnom Penh or provincial distribution center.',
+  quality_badge: 'The UNT Quality Standard',
+  quality_desc: 'Zero product returns due to quality defects across 2024–2026. Audit-verified production from certified ISO/GMP manufacturers.',
+};
+
+const OEM_DEFAULT = {
+  badge: 'OEM & Private Label Excellence',
+  heading: 'Launch Your Brand with World-Class Formulations',
+  paragraph: 'Have a proprietary product concept? UNT Company provides end-to-end private label manufacturing. We match your brand with GMP-certified factories in South Korea, Japan, and Thailand for custom cosmetics, supplements, beverages, and personal care lines.',
+  chip1_title: 'Custom Formulas', chip1_sub: 'R&D & Lab Stability',
+  chip2_title: 'Package Design', chip2_sub: 'Khmer Label Compliant',
+  chip3_title: 'Low Trial MOQs', chip3_sub: 'Flexible Batch Sizes',
+  chip4_title: 'Turnkey Clearance', chip4_sub: 'Ministry Permit Filing',
+  cta: 'Start OEM Private Label Project',
+};
+
 export const HomePage: React.FC<HomePageProps> = ({
   setActiveTab,
   onOpenQuoteModal,
   onOpenProductModal,
   onOpenArticleModal,
 }) => {
+  const [featureImage, setFeatureImage] = useState(FALLBACK_IMAGE);
+  const [pillars, setPillars] = useState(PILLARS_DEFAULT);
+  const [heritage, setHeritage] = useState(HERITAGE_DEFAULT);
+  const [oem, setOem] = useState(OEM_DEFAULT);
+  const [products, setProducts] = useState<any[]>([]);
+  const [articles, setArticles] = useState<any[]>(ARTICLES);
+
+  useEffect(() => {
+    const base = import.meta.env.VITE_API_URL ?? 'http://localhost:5000';
+    fetch(`${base}/api/hero/content`)
+      .then((r) => r.json())
+      .then((d) => { if (d.feature_image) setFeatureImage(d.feature_image); })
+      .catch(() => {});
+    fetch(`${base}/api/homepage/pillars`)
+      .then((r) => r.json()).then((d) => { if (d.data) setPillars(d.data); }).catch(() => {});
+    fetch(`${base}/api/homepage/heritage`)
+      .then((r) => r.json()).then((d) => { if (d.data) setHeritage(d.data); }).catch(() => {});
+    fetch(`${base}/api/homepage/oem_banner`)
+      .then((r) => r.json()).then((d) => { if (d.data) setOem(d.data); }).catch(() => {});
+    fetch(`${base}/api/products`)
+      .then((r) => r.json()).then((d) => { if (Array.isArray(d)) setProducts(d); }).catch(() => {});
+    fetch(`${base}/api/articles`)
+      .then((r) => r.json()).then((d) => { if (Array.isArray(d) && d.length) setArticles(d); }).catch(() => {});
+  }, []);
+
   return (
     <div className="space-y-20 pb-16 bg-slate-50 text-slate-900">
       {/* 1. Hero Section - Executive Light Background with Emerald Accents */}
@@ -85,13 +149,13 @@ export const HomePage: React.FC<HomePageProps> = ({
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center space-y-3 mb-12">
           <span className="px-3.5 py-1 bg-emerald-100 border border-emerald-200 text-emerald-800 text-xs font-bold uppercase tracking-widest rounded-full">
-            Full-Spectrum Trading Infrastructure
+            {pillars.badge}
           </span>
           <h2 className="text-3xl sm:text-4xl font-display font-bold text-slate-900">
-            Integrated Solutions for Modern Commerce
+            {pillars.heading}
           </h2>
           <p className="text-slate-600 text-sm max-w-2xl mx-auto">
-            UNT Company operates as a complete commercial gateway, managing product supply chains from initial factory audits to local market distribution.
+            {pillars.subheading}
           </p>
         </div>
 
@@ -107,10 +171,10 @@ export const HomePage: React.FC<HomePageProps> = ({
               </div>
               <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider block">Pillar One</span>
               <h3 className="text-2xl font-display font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
-                Premium Product Distribution
+                {pillars.pillar1_title}
               </h3>
               <p className="text-slate-600 text-sm leading-relaxed">
-                Direct access to verified international wholesale catalogs spanning Food & Beverage, Skincare, Beauty, Personal Care, Health Supplements, and Household FMCG.
+                {pillars.pillar1_desc}
               </p>
               <ul className="space-y-2 text-xs text-slate-600 pt-2 font-medium">
                 <li className="flex items-center space-x-2">
@@ -144,10 +208,10 @@ export const HomePage: React.FC<HomePageProps> = ({
               </div>
               <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider block">Pillar Two</span>
               <h3 className="text-2xl font-display font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
-                Sourcing-as-a-Service & OEM
+                {pillars.pillar2_title}
               </h3>
               <p className="text-slate-600 text-sm leading-relaxed">
-                End-to-end custom procurement. We audit factories in Thailand, Korea, Japan, and China, negotiate pricing, inspect pre-shipment batches, and clear Cambodian customs.
+                {pillars.pillar2_desc}
               </p>
               <ul className="space-y-2 text-xs text-slate-600 pt-2 font-medium">
                 <li className="flex items-center space-x-2">
@@ -181,10 +245,10 @@ export const HomePage: React.FC<HomePageProps> = ({
               </div>
               <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider block">Pillar Three</span>
               <h3 className="text-2xl font-display font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
-                Sales & Trade Capacity Academy
+                {pillars.pillar3_title}
               </h3>
               <p className="text-slate-600 text-sm leading-relaxed">
-                Empowering commercial teams, sales reps, and procurement directors with masterclasses in B2B negotiation, buyer psychology, key account management, and retention.
+                {pillars.pillar3_desc}
               </p>
               <ul className="space-y-2 text-xs text-slate-600 pt-2 font-medium">
                 <li className="flex items-center space-x-2">
@@ -215,7 +279,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           {/* Image side */}
           <div className="relative rounded-3xl overflow-hidden border border-slate-200 shadow-xl group">
             <img
-              src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?q=80&w=2070&auto=format&fit=crop"
+              src={featureImage}
               alt="Container Ship Logistics"
               className="w-full h-[450px] object-cover group-hover:scale-105 transition-transform duration-700"
             />
@@ -223,10 +287,10 @@ export const HomePage: React.FC<HomePageProps> = ({
             <div className="absolute bottom-6 left-6 right-6 p-6 rounded-2xl bg-white/95 border border-slate-200 backdrop-blur-md shadow-lg">
               <div className="flex items-center space-x-3 text-emerald-700 font-bold text-sm">
                 <ShieldCheck className="w-5 h-5 shrink-0 text-emerald-600" />
-                <span>The UNT Quality Standard</span>
+                <span>{heritage.quality_badge}</span>
               </div>
               <p className="text-slate-600 text-xs mt-1">
-                Zero product returns due to quality defects across 2024–2026. Audit-verified production from certified ISO/GMP manufacturers.
+                {heritage.quality_desc}
               </p>
             </div>
           </div>
@@ -234,13 +298,13 @@ export const HomePage: React.FC<HomePageProps> = ({
           {/* Text side */}
           <div className="space-y-6 text-left">
             <span className="px-3 py-1 bg-emerald-100 border border-emerald-200 text-emerald-800 text-xs font-bold uppercase tracking-wider rounded-full">
-              Balancing Heritage with Modern Efficiency
+              {heritage.badge}
             </span>
             <h2 className="text-3xl sm:text-4xl font-display font-bold tracking-tight text-slate-900">
-              Bridging International Factories with Cambodian Commerce
+              {heritage.heading}
             </h2>
             <p className="text-slate-600 text-sm leading-relaxed">
-              Global supply chains are complex, but sourcing doesn't have to be. UNT Company combines deep local market knowledge with international trade relationships to provide smooth, transparent procurement.
+              {heritage.paragraph}
             </p>
 
             <div className="space-y-4 pt-2">
@@ -249,10 +313,8 @@ export const HomePage: React.FC<HomePageProps> = ({
                   <Globe className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-base font-bold text-slate-900">Direct Factory Access</h4>
-                  <p className="text-xs text-slate-600 mt-0.5">
-                    Eliminate middlemen markup. We connect you directly to verified factories in Thailand, South Korea, Japan, Vietnam, and China.
-                  </p>
+                  <h4 className="text-base font-bold text-slate-900">{heritage.feature1_title}</h4>
+                  <p className="text-xs text-slate-600 mt-0.5">{heritage.feature1_desc}</p>
                 </div>
               </div>
 
@@ -261,10 +323,8 @@ export const HomePage: React.FC<HomePageProps> = ({
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-base font-bold text-slate-900">Full Customs & Ministry Permits</h4>
-                  <p className="text-xs text-slate-600 mt-0.5">
-                    We manage product registration with the Cambodian Ministry of Health, Ministry of Commerce, and GDCE customs clearance.
-                  </p>
+                  <h4 className="text-base font-bold text-slate-900">{heritage.feature2_title}</h4>
+                  <p className="text-xs text-slate-600 mt-0.5">{heritage.feature2_desc}</p>
                 </div>
               </div>
 
@@ -273,10 +333,8 @@ export const HomePage: React.FC<HomePageProps> = ({
                   <Truck className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-base font-bold text-slate-900">End-to-End Door Delivery</h4>
-                  <p className="text-xs text-slate-600 mt-0.5">
-                    Temperature-controlled logistics from overseas port loading directly to your Phnom Penh or provincial distribution center.
-                  </p>
+                  <h4 className="text-base font-bold text-slate-900">{heritage.feature3_title}</h4>
+                  <p className="text-xs text-slate-600 mt-0.5">{heritage.feature3_desc}</p>
                 </div>
               </div>
             </div>
@@ -308,7 +366,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {PRODUCTS.slice(0, 3).map((product) => (
+          {products.slice(0, 3).map((product) => (
             <div
               key={product.id}
               onClick={() => onOpenProductModal(product)}
@@ -322,7 +380,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-3 left-3 px-2.5 py-1 bg-white/90 backdrop-blur-md text-slate-900 text-xs font-bold rounded-lg flex items-center space-x-1.5 border border-slate-200 shadow-sm">
-                    <span>{product.originFlag}</span>
+                    <span>{product.origin_flag}</span>
                     <span>{product.origin}</span>
                   </div>
                 </div>
@@ -345,7 +403,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     </div>
                     <div className="text-right">
                       <span className="block text-[10px] uppercase font-semibold text-slate-400">Lead Time</span>
-                      <span className="font-semibold text-slate-900">{product.leadTime}</span>
+                      <span className="font-semibold text-slate-900">{product.lead_time}</span>
                     </div>
                   </div>
                 </div>
@@ -367,31 +425,31 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div className="rounded-3xl bg-gradient-to-r from-emerald-900 via-emerald-800 to-slate-900 p-8 sm:p-12 text-white relative overflow-hidden shadow-2xl text-left">
           <div className="relative z-10 max-w-3xl space-y-6">
             <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 text-xs font-bold uppercase tracking-wider rounded-full border border-emerald-400/30">
-              OEM & Private Label Excellence
+              {oem.badge}
             </span>
             <h2 className="text-3xl sm:text-5xl font-display font-bold tracking-tight">
-              Launch Your Brand with World-Class Formulations
+              {oem.heading}
             </h2>
             <p className="text-emerald-100 text-sm sm:text-base leading-relaxed">
-              Have a proprietary product concept? UNT Company provides end-to-end private label manufacturing. We match your brand with GMP-certified factories in South Korea, Japan, and Thailand for custom cosmetics, supplements, beverages, and personal care lines.
+              {oem.paragraph}
             </p>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
               <div className="p-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-xs">
-                <span className="font-bold text-emerald-300 block">Custom Formulas</span>
-                <span className="text-emerald-100 text-[10px]">R&D & Lab Stability</span>
+                <span className="font-bold text-emerald-300 block">{oem.chip1_title}</span>
+                <span className="text-emerald-100 text-[10px]">{oem.chip1_sub}</span>
               </div>
               <div className="p-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-xs">
-                <span className="font-bold text-emerald-300 block">Package Design</span>
-                <span className="text-emerald-100 text-[10px]">Khmer Label Compliant</span>
+                <span className="font-bold text-emerald-300 block">{oem.chip2_title}</span>
+                <span className="text-emerald-100 text-[10px]">{oem.chip2_sub}</span>
               </div>
               <div className="p-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-xs">
-                <span className="font-bold text-emerald-300 block">Low Trial MOQs</span>
-                <span className="text-emerald-100 text-[10px]">Flexible Batch Sizes</span>
+                <span className="font-bold text-emerald-300 block">{oem.chip3_title}</span>
+                <span className="text-emerald-100 text-[10px]">{oem.chip3_sub}</span>
               </div>
               <div className="p-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-xs">
-                <span className="font-bold text-emerald-300 block">Turnkey Clearance</span>
-                <span className="text-emerald-100 text-[10px]">Ministry Permit Filing</span>
+                <span className="font-bold text-emerald-300 block">{oem.chip4_title}</span>
+                <span className="text-emerald-100 text-[10px]">{oem.chip4_sub}</span>
               </div>
             </div>
 
@@ -400,7 +458,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 onClick={onOpenQuoteModal}
                 className="px-6 py-3.5 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-bold text-sm shadow-xl transition-all flex items-center justify-center space-x-2"
               >
-                <span>Start OEM Private Label Project</span>
+                <span>{oem.cta}</span>
                 <ArrowRight className="w-4 h-4 text-emerald-700" />
               </button>
             </div>
@@ -455,7 +513,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {ARTICLES.slice(0, 2).map((article) => (
+          {articles.slice(0, 2).map((article) => (
             <div
               key={article.id}
               onClick={() => onOpenArticleModal(article)}
@@ -477,7 +535,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                   <div className="text-xs text-slate-500 flex items-center space-x-2">
                     <span>{article.date}</span>
                     <span>•</span>
-                    <span>{article.readTime}</span>
+                    <span>{article.read_time ?? article.readTime}</span>
                   </div>
                   <h3 className="text-xl font-display font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
                     {article.title}

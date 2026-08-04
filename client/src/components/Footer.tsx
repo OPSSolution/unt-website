@@ -63,10 +63,8 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }
           {/* Col 1: Brand & Identity */}
           <div className="lg:col-span-2 space-y-4 text-left">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-white border-2 border-emerald-500 p-0.5 shadow-sm">
-                <div className="w-full h-full bg-emerald-50 rounded-full flex flex-col items-center justify-center">
-                  <span className="font-display font-black text-xs text-slate-900">UNT</span>
-                </div>
+              <div className="w-12 h-12 rounded-xl bg-white border border-emerald-200 shadow-sm p-1 shrink-0">
+                <img src="/images/logos/image.png" alt="UNT Logo" className="w-full h-full object-contain" />
               </div>
               <div>
                 <span className="font-display font-bold text-xl text-slate-900 block">UNT COMPANY</span>

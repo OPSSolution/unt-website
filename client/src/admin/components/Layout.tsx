@@ -1,0 +1,96 @@
+import React, { useState } from 'react';
+import { Sidebar, type AdminPage } from './Sidebar';
+import { useAdminAuth } from '../hooks/useAdminAuth';
+import { useTheme } from './ThemeContext';
+import { DashboardPage } from '../pages/DashboardPage';
+import { HeroEditor } from '../pages/HeroEditor';
+import { HomeSectionsEditor } from '../pages/HomeSectionsEditor';
+import { AboutEditor } from '../pages/AboutEditor';
+import { ServicesEditor } from '../pages/ServicesEditor';
+import { ProductsManager } from '../pages/ProductsManager';
+import { PartnersManager } from '../pages/PartnersManager';
+import { TrainingEditor } from '../pages/TrainingEditor';
+import { ArticlesManager } from '../pages/ArticlesManager';
+import { ContactEditor } from '../pages/ContactEditor';
+import { Menu, Sun, Moon } from 'lucide-react';
+
+const PAGE_LABELS: Record<AdminPage, string> = {
+  dashboard: 'Dashboard',
+  home_hero: 'Hero Section',
+  home_sections: 'Homepage Sections',
+  about: 'About Page',
+  services: 'Services Page',
+  products: 'Products',
+  partners: 'Partners',
+  training: 'Training Page',
+  articles: 'Articles',
+  contact: 'Contact Page',
+};
+
+export function Layout() {
+  const [page, setPage] = useState<AdminPage>('dashboard');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { user } = useAdminAuth();
+  const { theme, toggle } = useTheme();
+
+  const renderPage = () => {
+    switch (page) {
+      case 'dashboard':     return <DashboardPage onNavigate={setPage} />;
+      case 'home_hero':     return <HeroEditor />;
+      case 'home_sections': return <HomeSectionsEditor />;
+      case 'about':         return <AboutEditor />;
+      case 'services':      return <ServicesEditor />;
+      case 'products':      return <ProductsManager />;
+      case 'partners':      return <PartnersManager />;
+      case 'training':      return <TrainingEditor />;
+      case 'articles':      return <ArticlesManager />;
+      case 'contact':       return <ContactEditor />;
+    }
+  };
+
+  return (
+    <div className="flex h-screen w-screen overflow-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
+      <Sidebar
+        active={page}
+        onChange={setPage}
+        adminEmail={user?.email ?? ''}
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
+      <div className="flex flex-col flex-1 min-w-0 h-full">
+        {/* Top bar — mobile hamburger + theme toggle */}
+        <header className="flex items-center justify-between px-4 py-3 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shrink-0">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <span className="font-bold text-sm text-slate-900 dark:text-white lg:hidden">{PAGE_LABELS[page]}</span>
+            {/* Desktop breadcrumb */}
+            <span className="hidden lg:block font-semibold text-sm text-slate-500 dark:text-slate-400">
+              UNT Admin &rsaquo; <span className="text-slate-900 dark:text-white">{PAGE_LABELS[page]}</span>
+            </span>
+          </div>
+          <button
+            onClick={toggle}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-medium transition-colors"
+            title="Toggle theme"
+          >
+            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            <span className="hidden sm:inline">{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+          </button>
+        </header>
+
+        <div className="flex-1 flex flex-col min-h-0">
+          <div className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-950" id="admin-scroll">
+            <div className="p-4 sm:p-6 lg:p-8">
+              {renderPage()}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
