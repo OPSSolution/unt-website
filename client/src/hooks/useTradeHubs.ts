@@ -20,7 +20,7 @@ function loadHubs(): Promise<void> {
         }));
       }
     })
-    .catch(() => {});
+    .catch(() => { });
   return fetchPromise;
 }
 
