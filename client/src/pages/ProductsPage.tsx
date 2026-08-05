@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Product } from '../types';
 import { useProducts } from '../hooks/useProducts';
 import { useHomepageSections } from '../hooks/useHomepageSections';
-import { Search, ArrowRight, Layers } from 'lucide-react';
+import { Search, ArrowRight, Layers, Globe } from 'lucide-react';
 import { ScrollReveal } from '../components/ScrollReveal';
 import { Card3D } from '../components/Card3D';
 
