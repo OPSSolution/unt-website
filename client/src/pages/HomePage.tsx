@@ -117,28 +117,48 @@ export const HomePage: React.FC<HomePageProps> = ({
               <span>Interactive 3D Trade Hub Focus: Select Origin to Rotate 3D Globe</span>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-2 p-2 rounded-2xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-md">
+            <div className="inline-flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 p-1.5 sm:p-2 rounded-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 shadow-lg max-w-full">
+              {/* Global ASEAN Network Button */}
               <button
                 onClick={() => setSelectedOrigin('all')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${selectedOrigin === 'all'
-                    ? 'bg-emerald-600 text-white shadow-sm'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                  }`}
+                className={`h-9 sm:h-10 px-3.5 sm:px-4 rounded-full text-xs font-bold transition-all duration-300 flex items-center space-x-2 shrink-0 ${
+                  selectedOrigin === 'all'
+                    ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/25 scale-105'
+                    : 'bg-slate-100/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                }`}
               >
-                Global ASEAN Network
+                <Globe className={`w-4 h-4 shrink-0 ${selectedOrigin === 'all' ? 'text-white animate-spin' : 'text-emerald-600 dark:text-emerald-400'}`} />
+                <span>Global ASEAN Network</span>
+                {selectedOrigin === 'all' && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                )}
               </button>
-              {TRADE_HUBS.map((hub) => (
-                <button
-                  key={hub.id}
-                  onClick={() => setSelectedOrigin(hub.id)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center ${selectedOrigin === hub.id
-                      ? 'bg-emerald-600 text-white shadow-sm scale-105'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+
+              {/* Country Hub Buttons with Flags */}
+              {TRADE_HUBS.map((hub) => {
+                const isSelected = selectedOrigin === hub.id;
+                return (
+                  <button
+                    key={hub.id}
+                    onClick={() => setSelectedOrigin(hub.id)}
+                    className={`h-9 sm:h-10 px-3.5 sm:px-4 rounded-full text-xs font-bold transition-all duration-300 flex items-center space-x-2 shrink-0 ${
+                      isSelected
+                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/25 scale-105'
+                        : 'bg-slate-100/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                     }`}
-                >
-                  <span>{hub.name}</span>
-                </button>
-              ))}
+                  >
+                    <img
+                      src={hub.flagUrl}
+                      alt={hub.name}
+                      className="w-4.5 h-3 object-cover rounded-sm border border-slate-200/80 dark:border-slate-700/80 shrink-0"
+                    />
+                    <span>{hub.name}</span>
+                    {isSelected && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                    )}
+                  </button>
+                );
+              })}
             </div>
 
             {/* Live B2B Hub Metrics Panel */}
