@@ -41,6 +41,7 @@ export interface Partner {
   country: string;
   logo_text: string;
   image?: string;
+  description?: string;
   created_at?: string;
 }
 

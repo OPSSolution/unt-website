@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Send, CheckCircle2, Clock } from 'lucide-react';
 import { ScrollReveal } from '../components/ScrollReveal';
+import { useHomepageSections } from '../hooks/useHomepageSections';
 
 export const ContactPage: React.FC = () => {
+  const sections = useHomepageSections();
+  const data = sections.contact_page ?? {};
   const [selectedChips, setSelectedChips] = useState<string[]>(['Product Sourcing']);
   const [contactName, setContactName] = useState('');
   const [email, setEmail] = useState('');
@@ -48,13 +51,15 @@ export const ContactPage: React.FC = () => {
         <ScrollReveal animation="up">
           <div className="relative z-10 max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 text-center space-y-4">
             <span className="px-3.5 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-widest rounded-full inline-block">
-              Direct B2B Communication Portal
+              {data.badge ?? 'Direct B2B Communication Portal'}
             </span>
             <h1 className="text-4xl sm:text-6xl font-display font-black tracking-tight text-slate-900 dark:text-white">
-              Connect with <span className="emerald-gradient-text">UNT Company</span>
+              {data.headline
+                ? data.headline
+                : <>Connect with <span className="emerald-gradient-text">UNT Company</span></>}
             </h1>
             <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg max-w-3xl mx-auto leading-relaxed">
-              Whether you require factory procurement, OEM private label manufacturing, customs clearance consultation, or B2B sales training for your commercial team.
+              {data.subheadline ?? 'Whether you require factory procurement, OEM private label manufacturing, customs clearance consultation, or B2B sales training for your commercial team.'}
             </p>
           </div>
         </ScrollReveal>
@@ -66,13 +71,13 @@ export const ContactPage: React.FC = () => {
         <div className="lg:col-span-5 space-y-6">
           <div className="space-y-3">
             <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider rounded-full">
-              Direct Channels
+              {data.section_badge ?? 'Direct Channels'}
             </span>
             <h2 className="text-2xl font-display font-bold text-slate-900 dark:text-white">
-              Connect With Our Team
+              {data.section_heading ?? 'Connect With Our Team'}
             </h2>
             <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
-              Whether you require urgent customs clearance support, bulk wholesale pricing, or custom OEM formulation — we respond within 4 business hours.
+              {data.section_desc ?? 'Whether you require urgent customs clearance support, bulk wholesale pricing, or custom OEM formulation — we respond within 4 business hours.'}
             </p>
           </div>
 
@@ -85,7 +90,7 @@ export const ContactPage: React.FC = () => {
                 <h3 className="font-display font-bold text-sm text-slate-900 dark:text-white">Phnom Penh Headquarters</h3>
               </div>
               <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed pl-8">
-                Phnom Penh Tower, Level 14, Monivong Blvd, Sangkat Boeung Keng Kang 1, Doun Penh, Phnom Penh, Kingdom of Cambodia.
+                {data.hq_address ?? 'Phnom Penh Tower, Level 14, Monivong Blvd, Sangkat Boeung Keng Kang 1, Doun Penh, Phnom Penh, Kingdom of Cambodia.'}
               </p>
             </div>
 
@@ -98,15 +103,15 @@ export const ContactPage: React.FC = () => {
               <div className="pl-8 space-y-1.5 text-xs">
                 <div className="flex justify-between items-center text-slate-700 dark:text-slate-300">
                   <span className="font-medium">Phnom Penh Landline:</span>
-                  <a href="tel:+85523999888" className="font-mono font-bold text-emerald-700 dark:text-emerald-400 hover:underline">+855 23 999 888</a>
+                  <a href={`tel:${(data.phone_landline ?? '+855 23 999 888').replace(/\s/g, '')}`} className="font-mono font-bold text-emerald-700 dark:text-emerald-400 hover:underline">{data.phone_landline ?? '+855 23 999 888'}</a>
                 </div>
                 <div className="flex justify-between items-center text-slate-700 dark:text-slate-300">
                   <span className="font-medium">Telegram Support:</span>
-                  <a href="https://t.me/untsourcing" target="_blank" rel="noreferrer" className="font-mono text-emerald-700 dark:text-emerald-400 hover:underline">@untsourcing</a>
+                  <a href={`https://t.me/${(data.phone_telegram ?? '@untsourcing').replace('@', '')}`} target="_blank" rel="noreferrer" className="font-mono text-emerald-700 dark:text-emerald-400 hover:underline">{data.phone_telegram ?? '@untsourcing'}</a>
                 </div>
                 <div className="flex justify-between items-center text-slate-700 dark:text-slate-300">
                   <span className="font-medium">WhatsApp / Mobile:</span>
-                  <a href="https://wa.me/85512345678" target="_blank" rel="noreferrer" className="font-mono text-emerald-700 dark:text-emerald-400 hover:underline">+855 12 345 678</a>
+                  <a href={`https://wa.me/${(data.phone_whatsapp ?? '+855 12 345 678').replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="font-mono text-emerald-700 dark:text-emerald-400 hover:underline">{data.phone_whatsapp ?? '+855 12 345 678'}</a>
                 </div>
               </div>
             </div>
@@ -118,8 +123,8 @@ export const ContactPage: React.FC = () => {
                 <h3 className="font-display font-bold text-sm text-slate-900 dark:text-white">Email Inquiries</h3>
               </div>
               <div className="pl-8 space-y-1 text-xs text-slate-600 dark:text-slate-300">
-                <div>General Trade & Sourcing: <strong className="text-emerald-700 dark:text-emerald-400 font-mono">info@untcompany.com</strong></div>
-                <div>Customs & Compliance: <strong className="text-emerald-700 dark:text-emerald-400 font-mono">customs@untcompany.com</strong></div>
+                <div>General Trade & Sourcing: <strong className="text-emerald-700 dark:text-emerald-400 font-mono">{data.email_general ?? 'info@untcompany.com'}</strong></div>
+                <div>Customs & Compliance: <strong className="text-emerald-700 dark:text-emerald-400 font-mono">{data.email_customs ?? 'customs@untcompany.com'}</strong></div>
               </div>
             </div>
 
@@ -129,7 +134,7 @@ export const ContactPage: React.FC = () => {
                 <Clock className="w-4 h-4 text-emerald-700 dark:text-emerald-400 shrink-0" />
                 <span className="font-semibold">Working Hours (GMT+7):</span>
               </div>
-              <span className="font-bold text-emerald-800 dark:text-emerald-300">Mon - Sat: 8:00 AM - 6:00 PM</span>
+              <span className="font-bold text-emerald-800 dark:text-emerald-300">{data.hours ?? 'Mon - Sat: 8:00 AM - 6:00 PM'}</span>
             </div>
           </div>
         </div>

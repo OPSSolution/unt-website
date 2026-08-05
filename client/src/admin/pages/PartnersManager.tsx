@@ -5,7 +5,7 @@ import { Plus, Pencil, Trash2, X, Save, Loader } from 'lucide-react';
 import { ImageField } from '../components/ImageField';
 import { Field } from '../components/EditorShell';
 
-const EMPTY = { name: '', category: '', country: '', logo_text: '', image: '' };
+const EMPTY = { name: '', category: '', country: '', logo_text: '', image: '', description: '' };
 
 function PartnerForm({ initial, onSave, onCancel, saving }: {
   initial: any; onSave: (data: any) => void; onCancel: () => void; saving: boolean;
@@ -21,8 +21,11 @@ function PartnerForm({ initial, onSave, onCancel, saving }: {
         <Field label="Category" value={form.category} onChange={(v) => set('category', v)} />
         <Field label="Country" value={form.country} onChange={(v) => set('country', v)} />
       </div>
-      <div className="max-w-sm">
-        <ImageField label="Partner Logo Image (optional)" value={form.image ?? ''} onChange={(v) => set('image', v)} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="max-w-sm">
+          <ImageField label="Partner Logo Image (optional)" value={form.image ?? ''} onChange={(v) => set('image', v)} />
+        </div>
+        <Field label="Description (optional)" value={form.description ?? ''} onChange={(v) => set('description', v)} multiline rows={3} />
       </div>
       <div className="flex items-center gap-3 pt-1">
         <button onClick={() => onSave(form)} disabled={saving} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-sm font-bold transition-colors">

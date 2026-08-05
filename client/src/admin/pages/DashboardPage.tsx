@@ -23,8 +23,8 @@ export function DashboardPage({ onNavigate }: Props) {
   }, []);
 
   const cards = [
-    { id: 'home_hero' as AdminPage,     label: 'Hero Section',      desc: 'Edit headline, badge, stats',      icon: <Sparkles className="w-5 h-5" />, count: null },
-    { id: 'home_sections' as AdminPage, label: 'Homepage Sections', desc: 'Pillars, heritage, OEM banner',    icon: <Sparkles className="w-5 h-5" />, count: null },
+    { id: 'homepage' as AdminPage,      label: 'Homepage Editor',   desc: 'Hero, pillars, heritage, OEM…',   icon: <Sparkles className="w-5 h-5" />, count: null },
+    { id: 'trade_hubs' as AdminPage,    label: 'World Map Hubs',    desc: 'Globe countries & trade data',    icon: <Sparkles className="w-5 h-5" />, count: null },
     { id: 'about' as AdminPage,         label: 'About Page',        desc: 'Mission, pillars, network hubs',   icon: <Sparkles className="w-5 h-5" />, count: null },
     { id: 'services' as AdminPage,      label: 'Services Page',     desc: 'Sourcing steps, OEM, customs',     icon: <Sparkles className="w-5 h-5" />, count: null },
     { id: 'products' as AdminPage,      label: 'Products',          desc: 'Manage product catalog',           icon: <Package className="w-5 h-5" />,  count: counts.products },
@@ -32,6 +32,7 @@ export function DashboardPage({ onNavigate }: Props) {
     { id: 'partners' as AdminPage,      label: 'Partners',          desc: 'Manage partner logos',             icon: <Users className="w-5 h-5" />,    count: counts.partners },
     { id: 'training' as AdminPage,      label: 'Training Page',     desc: 'Training hero & CTA banner',       icon: <Sparkles className="w-5 h-5" />, count: null },
     { id: 'contact' as AdminPage,       label: 'Contact Page',      desc: 'Address, phone, email info',       icon: <Sparkles className="w-5 h-5" />, count: null },
+    { id: 'navbar_footer' as AdminPage, label: 'Navbar & Footer',   desc: 'Brand name, CTAs, copyright',      icon: <Sparkles className="w-5 h-5" />, count: null },
   ];
 
   return (

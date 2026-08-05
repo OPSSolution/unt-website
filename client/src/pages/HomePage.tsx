@@ -4,6 +4,12 @@ import { PRODUCTS, ARTICLES, PARTNERS } from '../data/mockData';
 import { ArrowRight, ShieldCheck, Globe, Truck, Package, Sparkles, CheckCircle2, ChevronRight, GraduationCap, LayoutGrid, Layers, FlaskConical, Palette, FileCheck2 } from 'lucide-react';
 import { ThreeBackground } from '../components/ThreeBackground';
 import { useTradeHubs } from '../hooks/useTradeHubs';
+import { useHeroContent } from '../hooks/useHeroContent';
+import { useHeroStats } from '../hooks/useHeroStats';
+import { useHomepageSections } from '../hooks/useHomepageSections';
+import { useProducts } from '../hooks/useProducts';
+import { useArticles } from '../hooks/useArticles';
+import { usePartners } from '../hooks/usePartners';
 import { ScrollReveal } from '../components/ScrollReveal';
 import { Card3D } from '../components/Card3D';
 import { CardSwiper } from '../components/CardSwiper';
@@ -24,6 +30,18 @@ export const HomePage: React.FC<HomePageProps> = ({
   onOpenArticleModal,
 }) => {
   const TRADE_HUBS = useTradeHubs();
+  const hero = useHeroContent();
+  const heroStats = useHeroStats();
+  const sections = useHomepageSections();
+  const DB_PRODUCTS = useProducts();
+  const DB_ARTICLES = useArticles();
+  const DB_PARTNERS = usePartners();
+  const pillars = sections.pillars ?? {};
+  const heritage = sections.heritage ?? {};
+  const productsSec = sections.products_section ?? {};
+  const oem = sections.oem_banner ?? {};
+  const partnersSec = sections.partners_section ?? {};
+  const insights = sections.insights_section ?? {};
   const [selectedOrigin, setSelectedOrigin] = useState<string>('all');
   const [displayMode, setDisplayMode] = useState<'grid' | 'carousel'>('carousel');
   const [activeFeature, setActiveFeature] = useState<number>(0);
@@ -97,16 +115,16 @@ export const HomePage: React.FC<HomePageProps> = ({
   const productsByCountry = useMemo(() => {
     const map: Record<string, typeof PRODUCTS> = { all: PRODUCTS.slice(0, 4) };
     TRADE_HUBS.forEach((hub) => {
-      map[hub.id] = PRODUCTS.filter(
+      map[hub.id] = DB_PRODUCTS.filter(
         (p) => p.origin.toLowerCase() === hub.name.toLowerCase()
       ).slice(0, 4);
     });
     return map;
-  }, []);
+  }, [DB_PRODUCTS, TRADE_HUBS]);
 
   const activeCountryId = isAllPhase ? 'all' : globeCountry;
   const activeHub = TRADE_HUBS.find((h) => h.id === activeCountryId);
-  const displayedProducts = (productsByCountry[activeCountryId] ?? PRODUCTS.slice(0, 3));
+  const displayedProducts = (productsByCountry[activeCountryId] ?? DB_PRODUCTS.slice(0, 3));
 
   return (
     <div className="space-y-20 pb-16 bg-slate-50 dark:bg-[#090D16] text-slate-900 dark:text-slate-100 transition-colors duration-300 bg-ambient-mesh stripe-mesh-glow">
@@ -123,7 +141,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           {/* Stripe Pill Badge */}
           <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-emerald-50/90 dark:bg-emerald-950/90 border border-emerald-300/60 dark:border-emerald-700/60 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm font-bold shadow-md shadow-emerald-500/10">
             <Sparkles className="w-4 h-4 text-emerald-500 dark:text-emerald-400 animate-pulse" />
-            <span>Cambodia’s Premier Trading &amp; Sourcing Ecosystem</span>
+            <span>{hero?.badge_text ?? "Cambodia's Premier Trading & Sourcing Ecosystem"}</span>
           </div>
 
           {/* Main Stripe Style Multi-Tone Headline */}
@@ -140,7 +158,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           <div className="pt-2 max-w-6xl mx-auto space-y-4">
             <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center justify-center space-x-2">
               <Globe className="w-4 h-4 text-emerald-600 dark:text-emerald-400 animate-spin" />
-              <span>Interactive 3D Trade Hub Focus: Select Origin to Rotate 3D Globe</span>
+              <span>{sections.hero_globe?.globe_label ?? 'Interactive 3D Trade Hub Focus: Select Origin to Rotate 3D Globe'}</span>
             </div>
 
             <div className="inline-flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 p-2 rounded-2xl sm:rounded-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 shadow-lg max-w-full">
@@ -223,36 +241,38 @@ export const HomePage: React.FC<HomePageProps> = ({
               onClick={() => setActiveTab('services')}
               className="btn-shine group w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-600 hover:from-emerald-500 hover:to-emerald-500 text-white font-bold text-base shadow-xl shadow-emerald-600/20 hover:shadow-emerald-500/30 transition-all duration-300 hover:scale-[1.03] active:scale-95 flex items-center justify-center space-x-2 relative overflow-hidden"
             >
-              <span>Explore Sourcing Solutions</span>
+              <span>{hero?.cta_primary ?? 'Explore Sourcing Solutions'}</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform duration-300" />
             </button>
             <button
               onClick={onOpenQuoteModal}
               className="group w-full sm:w-auto px-8 py-4 rounded-xl bg-slate-900/60 dark:bg-slate-900/40 hover:bg-slate-900 dark:hover:bg-slate-800 text-slate-100 hover:text-white font-bold text-base border border-slate-700/80 hover:border-emerald-500/60 shadow-lg transition-all duration-300 hover:scale-[1.03] active:scale-95 flex items-center justify-center space-x-2 backdrop-blur-sm"
             >
-              <span>Request B2B Quote</span>
+              <span>{hero?.cta_secondary ?? 'Request B2B Quote'}</span>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 group-hover:animate-ping" />
             </button>
           </div>
 
           {/* Quick Stats Grid Bar */}
           <div className="pt-10 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-            <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-              <div className="text-2xl sm:text-3xl font-display font-bold text-emerald-700 dark:text-emerald-400">$50M+</div>
-              <div className="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1">Annual Trade Volume</div>
-            </div>
-            <div className="p-5 rounded-2xl stripe-glass-card stripe-card-tilt">
-              <div className="text-2xl sm:text-3xl font-display font-bold stripe-gradient-heading">500+</div>
-              <div className="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1">Audited Factories</div>
-            </div>
-            <div className="p-5 rounded-2xl stripe-glass-card stripe-card-tilt">
-              <div className="text-2xl sm:text-3xl font-display font-bold stripe-gradient-heading">15+</div>
-              <div className="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1">Global Trade Origins</div>
-            </div>
-            <div className="p-5 rounded-2xl stripe-glass-card stripe-card-tilt">
-              <div className="text-2xl sm:text-3xl font-display font-bold stripe-gradient-heading">99.4%</div>
-              <div className="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1">On-Time Customs Clearance</div>
-            </div>
+            {heroStats.length > 0 ? (
+              heroStats.map((stat, i) => (
+                <div key={stat.id} className={`p-5 rounded-2xl ${i === 0 ? 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm' : 'stripe-glass-card stripe-card-tilt'}`}>
+                  <div className={`text-2xl sm:text-3xl font-display font-bold ${i === 0 ? 'text-emerald-700 dark:text-emerald-400' : 'stripe-gradient-heading'}`}>
+                    {stat.value}
+                  </div>
+                  <div className="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1">{stat.label}</div>
+                </div>
+              ))
+            ) : (
+              /* Fallback while stats load */
+              [{ v: '$50M+', l: 'Annual Trade Volume' }, { v: '500+', l: 'Audited Factories' }, { v: '15+', l: 'Global Trade Origins' }, { v: '99.4%', l: 'On-Time Customs Clearance' }].map((s, i) => (
+                <div key={i} className={`p-5 rounded-2xl ${i === 0 ? 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm' : 'stripe-glass-card stripe-card-tilt'}`}>
+                  <div className={`text-2xl sm:text-3xl font-display font-bold ${i === 0 ? 'text-emerald-700 dark:text-emerald-400' : 'stripe-gradient-heading'}`}>{s.v}</div>
+                  <div className="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1">{s.l}</div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -697,20 +717,20 @@ export const HomePage: React.FC<HomePageProps> = ({
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
             <div className="text-left">
               <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider rounded-full">
-                Wholesale &amp; OEM Catalog
+                {productsSec.badge ?? 'Wholesale & OEM Catalog'}
               </span>
               <h2 className="text-3xl font-display font-bold text-slate-900 dark:text-white mt-2">
-                Featured Import Catalog Items
+                {productsSec.heading ?? 'Featured Import Catalog Items'}
               </h2>
               <p className="text-slate-600 dark:text-slate-300 text-sm mt-1">
-                Verified quality products ready for immediate Cambodian distribution or custom private label rebranding.
+                {productsSec.subheading ?? 'Verified quality products ready for immediate Cambodian distribution or custom private label rebranding.'}
               </p>
             </div>
             <button
               onClick={() => setActiveTab('products')}
               className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center space-x-2 shrink-0 shadow-sm"
             >
-              <span>View Full Catalog</span>
+              <span>{productsSec.cta ?? 'View Full Catalog'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -1021,17 +1041,17 @@ export const HomePage: React.FC<HomePageProps> = ({
           <div className="flex items-end justify-between">
             <div className="text-left">
               <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider rounded-full">
-                Market Intelligence
+                {insights.badge ?? 'Market Intelligence'}
               </span>
               <h2 className="text-3xl font-display font-bold text-slate-900 dark:text-white mt-2">
-                Latest Regulatory &amp; Trade Insights
+                {insights.heading ?? 'Latest Regulatory & Trade Insights'}
               </h2>
             </div>
             <button
               onClick={() => setActiveTab('blog')}
               className="text-xs font-bold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 transition-colors flex items-center space-x-1"
             >
-              <span>View All Articles</span>
+              <span>{insights.cta ?? 'View All Articles'}</span>
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>

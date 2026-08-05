@@ -3,30 +3,34 @@ import { Sidebar, type AdminPage } from './Sidebar';
 import { useAdminAuth } from '../hooks/useAdminAuth';
 import { useTheme } from './ThemeContext';
 import { DashboardPage } from '../pages/DashboardPage';
-import { HeroEditor } from '../pages/HeroEditor';
-import { HomeSectionsEditor } from '../pages/HomeSectionsEditor';
+import { HomepageEditor } from '../pages/HomepageEditor';
 import { AboutEditor } from '../pages/AboutEditor';
 import { ServicesEditor } from '../pages/ServicesEditor';
 import { ProductsManager } from '../pages/ProductsManager';
+import { ProductsPageEditor } from '../pages/ProductsPageEditor';
 import { PartnersManager } from '../pages/PartnersManager';
 import { TrainingEditor } from '../pages/TrainingEditor';
 import { ArticlesManager } from '../pages/ArticlesManager';
+import { BlogEditor } from '../pages/BlogEditor';
 import { TradeHubsEditor } from '../pages/TradeHubsEditor';
 import { ContactEditor } from '../pages/ContactEditor';
+import { NavbarFooterEditor } from '../pages/NavbarFooterEditor';
 import { Menu, Sun, Moon } from 'lucide-react';
 
 const PAGE_LABELS: Record<AdminPage, string> = {
   dashboard: 'Dashboard',
-  home_hero: 'Hero Section',
-  home_sections: 'Homepage Sections',
+  homepage: 'Homepage Editor',
   trade_hubs: 'World Map Hubs',
   about: 'About Page',
   services: 'Services Page',
   products: 'Products',
+  products_page: 'Catalog Page Header',
   partners: 'Partners',
   training: 'Training Page',
   articles: 'Articles',
+  blog: 'Blog Page Header',
   contact: 'Contact Page',
+  navbar_footer: 'Navbar & Footer',
 };
 
 export function Layout() {
@@ -38,16 +42,18 @@ export function Layout() {
   const renderPage = () => {
     switch (page) {
       case 'dashboard':     return <DashboardPage onNavigate={setPage} />;
-      case 'home_hero':     return <HeroEditor />;
-      case 'home_sections': return <HomeSectionsEditor />;
+      case 'homepage':      return <HomepageEditor />;
       case 'trade_hubs':    return <TradeHubsEditor />;
       case 'about':         return <AboutEditor />;
       case 'services':      return <ServicesEditor />;
       case 'products':      return <ProductsManager />;
+      case 'products_page':  return <ProductsPageEditor />;
       case 'partners':      return <PartnersManager />;
       case 'training':      return <TrainingEditor />;
       case 'articles':      return <ArticlesManager />;
+      case 'blog':          return <BlogEditor />;
       case 'contact':       return <ContactEditor />;
+      case 'navbar_footer': return <NavbarFooterEditor />;
     }
   };
 
@@ -78,7 +84,7 @@ export function Layout() {
           </div>
           <button
             onClick={toggle}
-            className="btn-shine flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 text-xs font-bold transition-colors shadow-sm"
+            className="btn-shine flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors shadow-sm"
             title="Toggle theme"
           >
             {theme === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}

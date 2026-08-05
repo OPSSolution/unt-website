@@ -85,6 +85,14 @@ const createContainerMesh = (): THREE.Mesh => {
 
 export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ activeOrigin = 'all', hubs: hubsProp }) => {
   const activeHubs = hubsProp ?? TRADE_HUBS;
+  const activeHubsKey = activeHubs.map((hub) => [
+    hub.id,
+    hub.name,
+    hub.flagUrl,
+    hub.lat,
+    hub.lon,
+    hub.type,
+  ].join(':')).join('|');
   const mountRef = useRef<HTMLDivElement>(null);
   const globeGroupRef = useRef<THREE.Group | null>(null);
   const targetRotationYRef = useRef<number>(0);
@@ -656,7 +664,7 @@ export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ activeOrigin =
       khRingMat.dispose();
       renderer.dispose();
     };
-  }, [activeHubs]);
+  }, [activeHubsKey]);
 
   // Rotate globe smoothly when activeOrigin changes
   useEffect(() => {

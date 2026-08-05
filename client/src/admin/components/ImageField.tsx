@@ -67,10 +67,12 @@ export function ImageField({ label, value, onChange, bucket = 'uploads' }: Props
       {value && (
         <div className="relative w-full h-36 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 group">
           <img
+            key={value}
             src={value}
             alt="preview"
             className="w-full h-full object-cover"
-            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            onError={(e) => { e.currentTarget.classList.add('hidden'); }}
+            onLoad={(e) => { e.currentTarget.classList.remove('hidden'); }}
           />
           <button
             type="button"

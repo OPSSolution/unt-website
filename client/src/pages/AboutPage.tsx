@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { ScrollReveal } from '../components/ScrollReveal';
 import { Card3D } from '../components/Card3D';
+import { useHomepageSections } from '../hooks/useHomepageSections';
 
 interface AboutPageProps {
   setActiveTab: (tab: PageTab) => void;
@@ -139,6 +140,8 @@ const HUBS = [
 
 export const AboutPage: React.FC<AboutPageProps> = ({ onOpenQuoteModal }) => {
   const [activeTimeline, setActiveTimeline] = useState(TIMELINE.length - 1);
+  const sections = useHomepageSections();
+  const data = sections.about_page ?? {};
 
   return (
     <div className="space-y-0 pb-16 animate-fade-in bg-slate-50 dark:bg-[#090D16] text-slate-900 dark:text-slate-100 transition-colors duration-300 bg-ambient-mesh">
@@ -165,7 +168,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onOpenQuoteModal }) => {
               </span>
             </h1>
             <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg max-w-3xl mx-auto leading-relaxed">
-              Unique Noble Trading Co., Ltd. (UNT Company) is a premier Cambodian trading, sourcing, OEM manufacturing, and commercial capacity building ecosystem headquartered in Phnom Penh.
+              {data.subheadline ?? 'Unique Noble Trading Co., Ltd. (UNT Company) is a premier Cambodian trading, sourcing, OEM manufacturing, and commercial capacity building ecosystem headquartered in Phnom Penh.'}
             </p>
 
 

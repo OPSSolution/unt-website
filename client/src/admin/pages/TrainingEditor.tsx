@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../api';
 import { useAdminAuth } from '../hooks/useAdminAuth';
+import { useAutoSave } from '../hooks/useAutoSave';
 import { EditorShell, Field, Card, SectionDivider } from '../components/EditorShell';
 
 const DEFAULTS = {
@@ -27,10 +28,18 @@ export function TrainingEditor() {
   const { token } = useAdminAuth();
   const [data, setData] = useState<any>(DEFAULTS);
   const [activeTab, setActiveTab] = useState<Tab>('Hero');
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+
+  const { saving, saved, error, dirty, autoSaving, autoSaved, autoSaveError } = useAutoSave(
+    'training_page',
+    data,
+    async (d) => {
+      if (!token) return;
+      await api.updateHomepageSection('training_page', d, token);
+    },
+    1500,
+    !loading
+  );
 
   useEffect(() => {
     api.getHomepageSection('training_page')
@@ -43,20 +52,18 @@ export function TrainingEditor() {
 
   const handleSave = async () => {
     if (!token) return;
-    setSaving(true); setError('');
     try {
       await api.updateHomepageSection('training_page', data, token);
-      setSaved(true); setTimeout(() => setSaved(false), 2500);
-    } catch (e: any) { setError(e.message); }
-    finally { setSaving(false); }
+    } catch (e: any) { /* auto-save will show errors */ }
   };
 
   return (
     <EditorShell
       title="Sales Training Page"
-      description="Edit content shown on the Sales Training page."
+      description="Edit content shown on the Sales Training page. Changes are saved automatically."
       saving={saving} saved={saved} error={error} onSave={handleSave}
       loading={loading}
+      autoSaving={autoSaving} autoSaved={autoSaved} autoSaveError={autoSaveError} dirty={dirty}
       tabs={[...TABS]} activeTab={activeTab} onTabChange={(t) => setActiveTab(t as Tab)}
     >
       {activeTab === 'Hero' && (

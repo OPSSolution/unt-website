@@ -1,5 +1,5 @@
 import React from 'react';
-import { Save, Loader, CheckCircle } from 'lucide-react';
+import { Save, Loader, CheckCircle, CloudUpload, Cloud } from 'lucide-react';
 
 export function Field({
   label, value, onChange, multiline = false, rows = 3,
@@ -46,12 +46,17 @@ interface EditorShellProps {
   tabs?: string[];
   activeTab?: string;
   onTabChange?: (tab: string) => void;
+  autoSaving?: boolean;
+  autoSaved?: boolean;
+  autoSaveError?: string;
+  dirty?: boolean;
   children: React.ReactNode;
 }
 
 export function EditorShell({
   title, description, saving, saved, error, onSave,
   loading, tabs, activeTab, onTabChange, children,
+  autoSaving, autoSaved, autoSaveError, dirty,
 }: EditorShellProps) {
   if (loading) {
     return (
@@ -69,20 +74,47 @@ export function EditorShell({
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">{title}</h1>
           <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-1">{description}</p>
         </div>
-        <button
-          onClick={onSave}
-          disabled={saving}
-          className="btn-shine flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-full bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 disabled:opacity-60 text-white dark:text-slate-900 font-bold text-sm transition-colors shrink-0 shadow-lg shadow-slate-900/20 dark:shadow-black/30"
-        >
-          {saved ? <CheckCircle className="w-4 h-4" /> : <Save className="w-4 h-4" />}
-          <span className="hidden sm:inline">{saving ? 'Saving...' : saved ? 'Saved ✓' : 'Save Changes'}</span>
-          <span className="sm:hidden">{saving ? '...' : saved ? '✓' : 'Save'}</span>
-        </button>
+        <div className="flex items-center gap-3 shrink-0">
+          {/* Auto-save status indicator */}
+          {(autoSaving || autoSaved || dirty || autoSaveError) && (
+            <div className="hidden sm:flex items-center gap-1.5 text-xs font-medium">
+              {autoSaving ? (
+                <span className="flex items-center gap-1.5 text-sky-500">
+                  <CloudUpload className="w-4 h-4 animate-pulse" />
+                  Saving...
+                </span>
+              ) : autoSaved ? (
+                <span className="flex items-center gap-1.5 text-emerald-500">
+                  <CheckCircle className="w-4 h-4" />
+                  Auto-saved
+                </span>
+              ) : dirty ? (
+                <span className="flex items-center gap-1.5 text-slate-400">
+                  <Cloud className="w-4 h-4" />
+                  Unsaved changes
+                </span>
+              ) : null}
+            </div>
+          )}
+          <button
+            onClick={onSave}
+            disabled={saving}
+            className={`btn-shine flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-full font-bold text-sm transition-all shrink-0 shadow-lg disabled:opacity-60 ${
+              saved
+                ? 'bg-emerald-500 text-white shadow-emerald-500/30'
+                : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/30'
+            }`}
+          >
+            {saved ? <CheckCircle className="w-4 h-4" /> : <Save className="w-4 h-4" />}
+            <span className="hidden sm:inline">{saving ? 'Saving...' : saved ? 'Saved ✓' : 'Save Changes'}</span>
+            <span className="sm:hidden">{saving ? '...' : saved ? '✓' : 'Save'}</span>
+          </button>
+        </div>
       </div>
 
-      {error && (
+      {(error || autoSaveError) && (
         <div className="px-4 py-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 rounded-xl text-red-600 dark:text-red-400 text-sm mt-4">
-          {error}
+          {error || autoSaveError}
         </div>
       )}
 
@@ -94,7 +126,7 @@ export function EditorShell({
               onClick={() => onTabChange(tab)}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${
                 activeTab === tab
-                  ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-sm'
+                  ? 'bg-emerald-600 text-white shadow-sm'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/10'
               }`}
             >

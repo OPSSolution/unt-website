@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Upload, Loader, Trash2, Plus, GripVertical } from 'lucide-react';
 import { api } from '../api';
 import { useAdminAuth } from '../hooks/useAdminAuth';
+import { useAutoSave } from '../hooks/useAutoSave';
 import { EditorShell, Field, Card, SectionDivider } from '../components/EditorShell';
 import { TRADE_HUBS, TradeHub } from '../../components/ThreeBackground';
 import { supabase } from '../../supabaseClient';
@@ -62,10 +63,18 @@ function FlagUpload({ value, onChange }: { value: string; onChange: (url: string
 export function TradeHubsEditor() {
   const { token } = useAdminAuth();
   const [hubs, setHubs] = useState<TradeHub[]>(TRADE_HUBS);
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+
+  const { saving, saved, error, dirty, autoSaving, autoSaved, autoSaveError } = useAutoSave(
+    'trade_hubs',
+    hubs,
+    async (h) => {
+      if (!token) return;
+      await api.updateHomepageSection('trade_hubs', { hubs: h }, token);
+    },
+    1500,
+    !loading
+  );
 
   useEffect(() => {
     api.getHomepageSection('trade_hubs')
@@ -76,12 +85,9 @@ export function TradeHubsEditor() {
 
   const handleSave = async () => {
     if (!token) return;
-    setSaving(true); setError('');
     try {
       await api.updateHomepageSection('trade_hubs', { hubs }, token);
-      setSaved(true); setTimeout(() => setSaved(false), 2500);
-    } catch (e: any) { setError(e.message); }
-    finally { setSaving(false); }
+    } catch (e: any) { /* auto-save will show errors */ }
   };
 
   const update = (idx: number, key: keyof TradeHub) => (v: string) =>
@@ -99,9 +105,10 @@ export function TradeHubsEditor() {
   return (
     <EditorShell
       title="World Map Trade Hubs"
-      description="Manage the countries shown on the 3D globe and their trade details."
+      description="Manage the countries shown on the 3D globe and their trade details. Changes are saved automatically."
       saving={saving} saved={saved} error={error} onSave={handleSave}
       loading={loading}
+      autoSaving={autoSaving} autoSaved={autoSaved} autoSaveError={autoSaveError} dirty={dirty}
     >
       <div className="space-y-3">
         {hubs.map((hub, idx) => (

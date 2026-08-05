@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PageTab } from '../types';
 import { Mail, Phone, MapPin, Send, ShieldCheck, CheckCircle2, ArrowRight } from 'lucide-react';
+import { useHomepageSections } from '../hooks/useHomepageSections';
 
 interface FooterProps {
   setActiveTab: (tab: PageTab) => void;
@@ -10,6 +11,8 @@ interface FooterProps {
 export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }) => {
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const sections = useHomepageSections();
+  const nb = sections.navbar_footer ?? {};
 
   const handleNewsletterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,13 +35,13 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }
         <div className="mb-16 rounded-3xl bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-emerald-500/10 dark:from-emerald-950/50 dark:via-slate-900/50 dark:to-emerald-950/50 border border-emerald-200 dark:border-emerald-800/80 p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden shadow-sm">
           <div className="relative z-10 max-w-2xl text-left">
             <span className="inline-block px-3 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-xs font-extrabold tracking-wider uppercase rounded-full mb-3">
-              Ready to Expand Your Wholesale Supply Chain?
+              {nb.footer_callout_badge ?? 'Ready to Expand Your Wholesale Supply Chain?'}
             </span>
             <h3 className="text-2xl sm:text-3xl font-display font-bold text-slate-900 dark:text-white tracking-tight">
-              Partner with Cambodia’s Leading Sourcing Ecosystem
+              {nb.footer_callout_heading ?? "Partner with Cambodia's Leading Sourcing Ecosystem"}
             </h3>
             <p className="mt-2 text-slate-600 dark:text-slate-300 text-sm">
-              From verified factory matching to door-to-door customs clearance and private label formulation — we deliver reliability at scale.
+              {nb.footer_callout_desc ?? 'From verified factory matching to door-to-door customs clearance and private label formulation — we deliver reliability at scale.'}
             </p>
           </div>
           <div className="relative z-10 flex flex-col sm:flex-row gap-3 w-full md:w-auto shrink-0">
@@ -67,13 +70,13 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }
                 <img src="/images/logos/image.png" alt="UNT Logo" className="w-full h-full object-contain" />
               </div>
               <div>
-                <span className="font-display font-bold text-xl text-slate-900 dark:text-white block">UNT COMPANY</span>
-                <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">Unique Noble Trading Co., Ltd.</span>
+                <span className="font-display font-bold text-xl text-slate-900 dark:text-white block">{nb.company_name ?? 'UNT COMPANY'}</span>
+                <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">{nb.company_legal ?? 'Unique Noble Trading Co., Ltd.'}</span>
               </div>
             </div>
             
             <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed max-w-sm">
-              Empowering Asian commerce by bridging world-class manufacturers with retail networks, wholesale distributors, and emerging brands in Cambodia and ASEAN.
+              {nb.footer_desc ?? 'Empowering Asian commerce by bridging world-class manufacturers with retail networks, wholesale distributors, and emerging brands in Cambodia and ASEAN.'}
             </p>
 
             <div className="pt-2 flex items-center space-x-2 text-xs text-emerald-700 dark:text-emerald-400 font-medium">
@@ -190,7 +193,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }
         {/* Bottom Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
           <div>
-            © {new Date().getFullYear()} Unique Noble Trading Co., Ltd. (UNT Company). All rights reserved.
+            © {new Date().getFullYear()} {nb.footer_copyright ?? 'Unique Noble Trading Co., Ltd. (UNT Company). All rights reserved.'}
           </div>
           <div className="flex items-center space-x-6">
             <button onClick={() => navigateTo('contact')} className="hover:text-slate-700 transition-colors">

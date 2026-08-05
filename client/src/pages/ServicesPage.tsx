@@ -5,6 +5,7 @@ import { SourcingCalculator } from '../components/SourcingCalculator';
 import { ShieldCheck, ArrowRight, CheckCircle2, PackageCheck } from 'lucide-react';
 import { ScrollReveal } from '../components/ScrollReveal';
 import { Card3D } from '../components/Card3D';
+import { useHomepageSections } from '../hooks/useHomepageSections';
 
 interface ServicesPageProps {
   setActiveTab: (tab: PageTab) => void;
@@ -12,6 +13,8 @@ interface ServicesPageProps {
 }
 
 export const ServicesPage: React.FC<ServicesPageProps> = ({ setActiveTab, onOpenQuoteModal }) => {
+  const sections = useHomepageSections();
+  const data = sections.services_page ?? {};
   return (
     <div className="space-y-16 pb-16 animate-fade-in bg-slate-50 dark:bg-[#090D16] text-slate-900 dark:text-slate-100 transition-colors duration-300 bg-ambient-mesh">
       {/* 1. Hero */}
@@ -19,13 +22,15 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ setActiveTab, onOpen
         <ScrollReveal animation="up">
           <div className="relative z-10 max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 text-center space-y-4">
             <span className="px-3.5 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-widest rounded-full inline-block">
-              End-to-End Procurement Infrastructure
+              {data.badge ?? 'End-to-End Procurement Infrastructure'}
             </span>
             <h1 className="text-4xl sm:text-6xl font-display font-black tracking-tight text-slate-900 dark:text-white">
-              Integrated Global <span className="emerald-gradient-text">Trading Solutions</span>
+              {data.headline
+                ? data.headline
+                : <>Integrated Global <span className="emerald-gradient-text">Trading Solutions</span></>}
             </h1>
             <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg max-w-3xl mx-auto leading-relaxed">
-              From factory-direct auditing and private label OEM formulation to Ministry permits, GDCE customs clearance, and door-to-door logistics in Cambodia.
+              {data.subheadline ?? 'From factory-direct auditing and private label OEM formulation to Ministry permits, GDCE customs clearance, and door-to-door logistics in Cambodia.'}
             </p>
           </div>
         </ScrollReveal>
@@ -36,13 +41,13 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ setActiveTab, onOpen
         <ScrollReveal animation="up">
           <div className="text-center space-y-3 max-w-2xl mx-auto">
             <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider rounded-full">
-              Methodology
+              {data.steps_badge ?? 'Methodology'}
             </span>
             <h2 className="text-3xl font-display font-bold text-slate-900 dark:text-white">
-              The UNT Sourcing-as-a-Service Process
+              {data.steps_heading ?? 'The UNT Sourcing-as-a-Service Process'}
             </h2>
             <p className="text-slate-600 dark:text-slate-300 text-sm">
-              We simplify global procurement into five fully transparent, risk-managed stages.
+              {data.steps_sub ?? 'We simplify global procurement into five fully transparent, risk-managed stages.'}
             </p>
           </div>
 
@@ -100,10 +105,10 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ setActiveTab, onOpen
                     </div>
                   </div>
                   <h3 className="text-2xl font-display font-bold text-slate-900 dark:text-white">
-                    Turnkey OEM &amp; Private Label Formulations
+                    {data.oem_title ?? 'Turnkey OEM & Private Label Formulations'}
                   </h3>
                   <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                    Launch proprietary brand lines with minimal upfront R&amp;D costs. We handle formula matching, stability testing, custom bottle/jar selection, foil printing, and multi-lingual packaging.
+                    {data.oem_desc ?? 'Launch proprietary brand lines with minimal upfront R&D costs. We handle formula matching, stability testing, custom bottle/jar selection, foil printing, and multi-lingual packaging.'}
                   </p>
                   <ul className="space-y-2.5 text-xs text-slate-700 dark:text-slate-300 font-medium">
                     <li className="flex items-center space-x-2">
@@ -124,7 +129,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ setActiveTab, onOpen
                   onClick={onOpenQuoteModal}
                   className="px-6 py-3 rounded-xl bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-500 transition-colors flex items-center space-x-2 shadow-sm w-fit"
                 >
-                  <span>Discuss Private Label Project</span>
+                  <span>{data.oem_cta ?? 'Discuss Private Label Project'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
@@ -146,10 +151,10 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ setActiveTab, onOpen
                     </div>
                   </div>
                   <h3 className="text-2xl font-display font-bold text-slate-900 dark:text-white">
-                    GDCE Customs Brokerage &amp; Ministry Registration
+                    {data.customs_title ?? 'GDCE Customs Brokerage & Ministry Registration'}
                   </h3>
                   <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                    Zero customs hold ups. Our licensed Phnom Penh customs brokers manage import declaration filings, tax tariff classification, and Ministry health import certificates.
+                    {data.customs_desc ?? 'Zero customs hold ups. Our licensed Phnom Penh customs brokers manage import declaration filings, tax tariff classification, and Ministry health import certificates.'}
                   </p>
                   <ul className="space-y-2.5 text-xs text-slate-700 dark:text-slate-300 font-medium">
                     <li className="flex items-center space-x-2">
@@ -170,7 +175,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ setActiveTab, onOpen
                   onClick={onOpenQuoteModal}
                   className="px-6 py-3 rounded-xl bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-500 transition-colors flex items-center space-x-2 shadow-sm w-fit"
                 >
-                  <span>Request Customs Clearance Consultation</span>
+                  <span>{data.customs_cta ?? 'Request Customs Clearance Consultation'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>

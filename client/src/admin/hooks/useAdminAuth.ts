@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '../../supabaseClient';
 import type { User } from '@supabase/supabase-js';
 
@@ -9,47 +9,45 @@ interface AdminAuthState {
   isAdmin: boolean;
 }
 
+const isAdmin = (user: User | null) =>
+  user?.app_metadata?.role === 'admin' || user?.user_metadata?.role === 'admin';
+
 const toState = (user: User | null, token: string | null): AdminAuthState => ({
-  user,
-  token,
-  loading: false,
-  isAdmin: user?.app_metadata?.role === 'admin' || user?.user_metadata?.role === 'admin',
+  user, token, loading: false, isAdmin: isAdmin(user),
 });
 
-// Module-level cache so multiple consumers share one resolved state
+// Module-level cache & listener set
 let cache: AdminAuthState | null = null;
+const listeners = new Set<(s: AdminAuthState) => void>();
+
+function broadcast(s: AdminAuthState) {
+  cache = s;
+  listeners.forEach((fn) => fn(s));
+}
+
+// Bootstrap: getSession resolves from localStorage instantly (no network),
+// then onAuthStateChange keeps it live for login/logout events.
+if (supabase) {
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    broadcast(toState(session?.user ?? null, session?.access_token ?? null));
+  });
+
+  supabase.auth.onAuthStateChange((_event, session) => {
+    broadcast(toState(session?.user ?? null, session?.access_token ?? null));
+  });
+} else {
+  cache = { user: null, token: null, loading: false, isAdmin: false };
+}
 
 export function useAdminAuth(): AdminAuthState {
   const [state, setState] = useState<AdminAuthState>(
     cache ?? { user: null, token: null, loading: true, isAdmin: false }
   );
-  const initialized = useRef(false);
 
   useEffect(() => {
-    if (initialized.current) return;
-    initialized.current = true;
-
-    if (!supabase) {
-      cache = { user: null, token: null, loading: false, isAdmin: false };
-      setState(cache);
-      return;
-    }
-
-    if (cache && !cache.loading) {
-      setState(cache);
-    } else {
-      supabase!.auth.getSession().then(({ data: { session } }) => {
-        cache = toState(session?.user ?? null, session?.access_token ?? null);
-        setState(cache);
-      });
-    }
-
-    const { data: { subscription } } = supabase!.auth.onAuthStateChange((_event, session) => {
-      cache = toState(session?.user ?? null, session?.access_token ?? null);
-      setState(cache);
-    });
-
-    return () => subscription.unsubscribe();
+    if (cache) setState(cache);
+    listeners.add(setState);
+    return () => { listeners.delete(setState); };
   }, []);
 
   return state;
