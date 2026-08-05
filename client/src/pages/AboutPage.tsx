@@ -171,20 +171,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onOpenQuoteModal }) => {
               {data.subheadline ?? 'Unique Noble Trading Co., Ltd. (UNT Company) is a premier Cambodian trading, sourcing, OEM manufacturing, and commercial capacity building ecosystem headquartered in Phnom Penh.'}
             </p>
 
-            {/* Quick Stats Row */}
-            <div className="pt-6 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-              {[
-                { value: '$50M+', label: 'Annual Trade Volume' },
-                { value: '500+', label: 'Audited Factories' },
-                { value: '1,200+', label: 'Professionals Trained' },
-                { value: '99.4%', label: 'On-Time Clearance' },
-              ].map((stat, idx) => (
-                <div key={idx} className="p-4 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-sm">
-                  <div className="text-2xl sm:text-3xl font-display font-bold text-emerald-700 dark:text-emerald-400">{stat.value}</div>
-                  <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">{stat.label}</div>
-                </div>
-              ))}
-            </div>
+
           </div>
         </ScrollReveal>
       </section>
