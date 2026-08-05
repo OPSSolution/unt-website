@@ -4,6 +4,7 @@ import { TrainingTrack } from '../types';
 import { GraduationCap, CheckCircle2, ArrowRight, Clock, X } from 'lucide-react';
 import { ScrollReveal } from '../components/ScrollReveal';
 import { Card3D } from '../components/Card3D';
+import { useHomepageSections } from '../hooks/useHomepageSections';
 
 interface TrainingPageProps {
   onOpenQuoteModal: () => void;
@@ -11,6 +12,8 @@ interface TrainingPageProps {
 
 export const TrainingPage: React.FC<TrainingPageProps> = ({ onOpenQuoteModal }) => {
   const [selectedTrack, setSelectedTrack] = useState<TrainingTrack | null>(null);
+  const sections = useHomepageSections();
+  const data = sections.training_page ?? {};
 
   return (
     <div className="space-y-16 pb-16 animate-fade-in bg-slate-50 dark:bg-[#090D16] text-slate-900 dark:text-slate-100 transition-colors duration-300 bg-ambient-mesh">
@@ -19,33 +22,25 @@ export const TrainingPage: React.FC<TrainingPageProps> = ({ onOpenQuoteModal }) 
         <ScrollReveal animation="up">
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
             <span className="px-3.5 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-widest rounded-full inline-block">
-              UNT Trade Capacity Building Institute
+              {data.badge ?? 'UNT Trade Capacity Building Institute'}
             </span>
             <h1 className="text-4xl sm:text-6xl font-display font-black tracking-tight text-slate-900 dark:text-white">
-              Mastering the Art of <span className="emerald-gradient-text">Global Commerce</span>
+              {data.headline
+                ? data.headline
+                : <>Mastering the Art of <span className="emerald-gradient-text">Global Commerce</span></>}
             </h1>
             <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg max-w-3xl mx-auto leading-relaxed">
-              Elevate your commercial team's B2B negotiation skills, buyer psychology, key account retention, and international supply chain management.
+              {data.subheadline ?? "Elevate your commercial team's B2B negotiation skills, buyer psychology, key account retention, and international supply chain management."}
             </p>
 
             {/* Quick Stats Bar */}
             <div className="pt-8 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 shadow-sm">
-                <div className="text-2xl font-display font-bold text-emerald-700 dark:text-emerald-400">1,200+</div>
-                <div className="text-[11px] text-slate-600 dark:text-slate-400 mt-1">Professionals Certified</div>
-              </div>
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 shadow-sm">
-                <div className="text-2xl font-display font-bold text-emerald-700 dark:text-emerald-400">4.9 / 5.0</div>
-                <div className="text-[11px] text-slate-600 dark:text-slate-400 mt-1">Average Course Rating</div>
-              </div>
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 shadow-sm">
-                <div className="text-2xl font-display font-bold text-emerald-700 dark:text-emerald-400">15+</div>
-                <div className="text-[11px] text-slate-600 dark:text-slate-400 mt-1">Senior Trade Instructors</div>
-              </div>
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 shadow-sm">
-                <div className="text-2xl font-display font-bold text-emerald-700 dark:text-emerald-400">34%</div>
-                <div className="text-[11px] text-slate-600 dark:text-slate-400 mt-1">Avg 90-Day Conversion Lift</div>
-              </div>
+              {[1, 2, 3, 4].map((n) => (
+                <div key={n} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 shadow-sm">
+                  <div className="text-2xl font-display font-bold text-emerald-700 dark:text-emerald-400">{data[`stat${n}_value`] ?? ['1,200+', '4.9 / 5.0', '15+', '34%'][n - 1]}</div>
+                  <div className="text-[11px] text-slate-600 dark:text-slate-400 mt-1">{data[`stat${n}_label`] ?? ['Professionals Certified', 'Average Course Rating', 'Senior Trade Instructors', 'Avg 90-Day Conversion Lift'][n - 1]}</div>
+                </div>
+              ))}
             </div>
           </div>
         </ScrollReveal>
@@ -55,13 +50,13 @@ export const TrainingPage: React.FC<TrainingPageProps> = ({ onOpenQuoteModal }) 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="text-center space-y-3 max-w-2xl mx-auto">
           <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider rounded-full">
-            Curriculum
+            {data.tracks_badge ?? 'Curriculum'}
           </span>
           <h2 className="text-3xl font-display font-bold text-slate-900 dark:text-white">
-            Specialized B2B Commercial Tracks
+            {data.tracks_heading ?? 'Specialized B2B Commercial Tracks'}
           </h2>
           <p className="text-slate-600 dark:text-slate-300 text-sm">
-            Select a track below to review full module syllabi, target audience criteria, and enrollment schedules.
+            {data.tracks_sub ?? 'Select a track below to review full module syllabi, target audience criteria, and enrollment schedules.'}
           </p>
         </div>
 
@@ -134,20 +129,20 @@ export const TrainingPage: React.FC<TrainingPageProps> = ({ onOpenQuoteModal }) 
         <div className="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 sm:p-10 text-slate-900 dark:text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-lg text-left">
           <div className="space-y-2 max-w-2xl">
             <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider rounded-full border border-emerald-200 dark:border-emerald-800">
-              In-House Corporate Solutions
+              {data.bootcamp_badge ?? 'In-House Corporate Solutions'}
             </span>
             <h3 className="text-2xl font-display font-bold text-slate-900 dark:text-white">
-              Need a Private Masterclass for Your Commercial Team?
+              {data.bootcamp_heading ?? 'Need a Private Masterclass for Your Commercial Team?'}
             </h3>
             <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
-              We deliver custom on-site workshops tailored to your industry, product catalog, and specific negotiation challenges directly at your Phnom Penh corporate headquarters.
+              {data.bootcamp_desc ?? 'We deliver custom on-site workshops tailored to your industry, product catalog, and specific negotiation challenges directly at your Phnom Penh corporate headquarters.'}
             </p>
           </div>
           <button
             onClick={onOpenQuoteModal}
             className="px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md shrink-0 flex items-center space-x-2"
           >
-            <span>Book Corporate Session</span>
+            <span>{data.bootcamp_cta ?? 'Book Corporate Session'}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

@@ -1,9 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { PageTab } from '../types';
-import { PRODUCTS, ARTICLES, PARTNERS } from '../data/mockData';
 import { ArrowRight, ShieldCheck, Globe, Truck, Package, Sparkles, CheckCircle2, ChevronRight, GraduationCap } from 'lucide-react';
 import { ThreeBackground } from '../components/ThreeBackground';
 import { useTradeHubs } from '../hooks/useTradeHubs';
+import { useHeroContent } from '../hooks/useHeroContent';
+import { useHeroStats } from '../hooks/useHeroStats';
+import { useHomepageSections } from '../hooks/useHomepageSections';
+import { useProducts } from '../hooks/useProducts';
+import { useArticles } from '../hooks/useArticles';
+import { usePartners } from '../hooks/usePartners';
 import { ScrollReveal } from '../components/ScrollReveal';
 import { Card3D } from '../components/Card3D';
 import { CardSwiper } from '../components/CardSwiper';
@@ -22,6 +27,18 @@ export const HomePage: React.FC<HomePageProps> = ({
   onOpenArticleModal,
 }) => {
   const TRADE_HUBS = useTradeHubs();
+  const hero = useHeroContent();
+  const heroStats = useHeroStats();
+  const sections = useHomepageSections();
+  const DB_PRODUCTS = useProducts();
+  const DB_ARTICLES = useArticles();
+  const DB_PARTNERS = usePartners();
+  const pillars = sections.pillars ?? {};
+  const heritage = sections.heritage ?? {};
+  const productsSec = sections.products_section ?? {};
+  const oem = sections.oem_banner ?? {};
+  const partnersSec = sections.partners_section ?? {};
+  const insights = sections.insights_section ?? {};
   const [selectedOrigin, setSelectedOrigin] = useState<string>('all');
   const selectedHub = TRADE_HUBS.find((h) => h.id === selectedOrigin);
 
@@ -70,18 +87,18 @@ export const HomePage: React.FC<HomePageProps> = ({
 
   // Memoize products grouped by country for O(1) lookup
   const productsByCountry = useMemo(() => {
-    const map: Record<string, typeof PRODUCTS> = { all: PRODUCTS.slice(0, 3) };
+    const map: Record<string, typeof DB_PRODUCTS> = { all: DB_PRODUCTS.slice(0, 3) };
     TRADE_HUBS.forEach((hub) => {
-      map[hub.id] = PRODUCTS.filter(
+      map[hub.id] = DB_PRODUCTS.filter(
         (p) => p.origin.toLowerCase() === hub.name.toLowerCase()
       ).slice(0, 3);
     });
     return map;
-  }, []);
+  }, [DB_PRODUCTS, TRADE_HUBS]);
 
   const activeCountryId = isAllPhase ? 'all' : globeCountry;
   const activeHub = TRADE_HUBS.find((h) => h.id === activeCountryId);
-  const displayedProducts = (productsByCountry[activeCountryId] ?? PRODUCTS.slice(0, 3));
+  const displayedProducts = (productsByCountry[activeCountryId] ?? DB_PRODUCTS.slice(0, 3));
 
   return (
     <div className="space-y-20 pb-16 bg-slate-50 dark:bg-[#090D16] text-slate-900 dark:text-slate-100 transition-colors duration-300 bg-ambient-mesh stripe-mesh-glow">
@@ -98,25 +115,26 @@ export const HomePage: React.FC<HomePageProps> = ({
           {/* Stripe Pill Badge */}
           <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-emerald-50/90 dark:bg-emerald-950/90 border border-emerald-300/60 dark:border-emerald-700/60 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm font-bold shadow-md shadow-emerald-500/10">
             <Sparkles className="w-4 h-4 text-emerald-500 dark:text-emerald-400 animate-pulse" />
-            <span>Cambodia’s Premier Trading &amp; Sourcing Ecosystem</span>
+            <span>{hero?.badge_text ?? "Cambodia's Premier Trading & Sourcing Ecosystem"}</span>
           </div>
 
           {/* Main Stripe Style Multi-Tone Headline */}
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-black text-slate-900 dark:text-white tracking-tight max-w-5xl mx-auto leading-[1.1]">
-            Your Trusted Sourcing Partner —{' '}
-            <span className="stripe-gradient-heading">From the World to Cambodia</span>
+            {hero?.headline
+              ? hero.headline
+              : <>Your Trusted Sourcing Partner —{' '}<span className="stripe-gradient-heading">From the World to Cambodia</span></>}
           </h1>
 
           {/* Subtitle */}
           <p className="text-slate-600 dark:text-slate-300 text-base sm:text-xl max-w-3xl mx-auto leading-relaxed font-normal">
-            Unique Noble Trading Co., Ltd. (<strong className="text-slate-900 dark:text-white">UNT Company</strong>) bridges international manufacturers with retail networks across ASEAN. We streamline product sourcing, OEM private label manufacturing, distribution, and commercial sales training.
+            {hero?.subtitle ?? 'Unique Noble Trading Co., Ltd. (UNT Company) bridges international manufacturers with retail networks across ASEAN. We streamline product sourcing, OEM private label manufacturing, distribution, and commercial sales training.'}
           </p>
 
           {/* Interactive Productive 3D B2B Origin Selector */}
           <div className="pt-2 max-w-4xl mx-auto space-y-4">
             <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center justify-center space-x-2">
               <Globe className="w-4 h-4 text-emerald-600 dark:text-emerald-400 animate-spin" />
-              <span>Interactive 3D Trade Hub Focus: Select Origin to Rotate 3D Globe</span>
+              <span>{sections.hero_globe?.globe_label ?? 'Interactive 3D Trade Hub Focus: Select Origin to Rotate 3D Globe'}</span>
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-2 p-2 rounded-2xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-md">
@@ -127,7 +145,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                   }`}
               >
-                Global ASEAN Network
+                {sections.hero_globe?.globe_all_label ?? 'Global ASEAN Network'}
               </button>
               {TRADE_HUBS.map((hub) => (
                 <button
@@ -181,35 +199,37 @@ export const HomePage: React.FC<HomePageProps> = ({
               onClick={() => setActiveTab('services')}
               className="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold text-base shadow-lg shadow-emerald-600/25 transition-all hover:scale-105 flex items-center justify-center space-x-2"
             >
-              <span>Explore Sourcing Solutions</span>
+              <span>{hero?.cta_primary ?? 'Explore Sourcing Solutions'}</span>
               <ArrowRight className="w-5 h-5" />
             </button>
             <button
               onClick={onOpenQuoteModal}
               className="w-full sm:w-auto px-8 py-4 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-bold text-base border border-slate-300 dark:border-slate-700 shadow-md transition-all flex items-center justify-center space-x-2"
             >
-              <span>Request B2B Quote</span>
+              <span>{hero?.cta_secondary ?? 'Request B2B Quote'}</span>
             </button>
           </div>
 
           {/* Quick Stats Grid Bar */}
           <div className="pt-10 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-            <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-              <div className="text-2xl sm:text-3xl font-display font-bold text-emerald-700 dark:text-emerald-400">$50M+</div>
-              <div className="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1">Annual Trade Volume</div>
-            </div>
-            <div className="p-5 rounded-2xl stripe-glass-card stripe-card-tilt">
-              <div className="text-2xl sm:text-3xl font-display font-bold stripe-gradient-heading">500+</div>
-              <div className="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1">Audited Factories</div>
-            </div>
-            <div className="p-5 rounded-2xl stripe-glass-card stripe-card-tilt">
-              <div className="text-2xl sm:text-3xl font-display font-bold stripe-gradient-heading">15+</div>
-              <div className="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1">Global Trade Origins</div>
-            </div>
-            <div className="p-5 rounded-2xl stripe-glass-card stripe-card-tilt">
-              <div className="text-2xl sm:text-3xl font-display font-bold stripe-gradient-heading">99.4%</div>
-              <div className="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1">On-Time Customs Clearance</div>
-            </div>
+            {heroStats.length > 0 ? (
+              heroStats.map((stat, i) => (
+                <div key={stat.id} className={`p-5 rounded-2xl ${i === 0 ? 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm' : 'stripe-glass-card stripe-card-tilt'}`}>
+                  <div className={`text-2xl sm:text-3xl font-display font-bold ${i === 0 ? 'text-emerald-700 dark:text-emerald-400' : 'stripe-gradient-heading'}`}>
+                    {stat.value}
+                  </div>
+                  <div className="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1">{stat.label}</div>
+                </div>
+              ))
+            ) : (
+              /* Fallback while stats load */
+              [{ v: '$50M+', l: 'Annual Trade Volume' }, { v: '500+', l: 'Audited Factories' }, { v: '15+', l: 'Global Trade Origins' }, { v: '99.4%', l: 'On-Time Customs Clearance' }].map((s, i) => (
+                <div key={i} className={`p-5 rounded-2xl ${i === 0 ? 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm' : 'stripe-glass-card stripe-card-tilt'}`}>
+                  <div className={`text-2xl sm:text-3xl font-display font-bold ${i === 0 ? 'text-emerald-700 dark:text-emerald-400' : 'stripe-gradient-heading'}`}>{s.v}</div>
+                  <div className="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1">{s.l}</div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -219,13 +239,13 @@ export const HomePage: React.FC<HomePageProps> = ({
         <ScrollReveal animation="up">
           <div className="text-center space-y-3 mb-12">
             <span className="px-3.5 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-widest rounded-full">
-              Full-Spectrum Trading Infrastructure
+              {pillars.badge ?? 'Full-Spectrum Trading Infrastructure'}
             </span>
             <h2 className="text-3xl sm:text-4xl font-display font-bold text-slate-900 dark:text-white">
-              Integrated Solutions for Modern Commerce
+              {pillars.heading ?? 'Integrated Solutions for Modern Commerce'}
             </h2>
             <p className="text-slate-600 dark:text-slate-300 text-sm max-w-2xl mx-auto">
-              UNT Company operates as a complete commercial gateway, managing product supply chains from initial factory audits to local market distribution.
+              {pillars.subheading ?? 'UNT Company operates as a complete commercial gateway, managing product supply chains from initial factory audits to local market distribution.'}
             </p>
           </div>
         </ScrollReveal>
@@ -247,24 +267,20 @@ export const HomePage: React.FC<HomePageProps> = ({
                   </div>
                   <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider block">Pillar One</span>
                   <h3 className="text-2xl font-display font-bold text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
-                    Premium Product Distribution
+                    {pillars.pillar1_title ?? 'Premium Product Distribution'}
                   </h3>
                   <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                    Direct access to verified international wholesale catalogs spanning Food &amp; Beverage, Skincare, Beauty, Personal Care, Health Supplements, and Household FMCG.
+                    {pillars.pillar1_desc ?? 'Direct access to verified international wholesale catalogs spanning Food & Beverage, Skincare, Beauty, Personal Care, Health Supplements, and Household FMCG.'}
                   </p>
                   <ul className="space-y-2 text-xs text-slate-600 dark:text-slate-400 pt-2 font-medium">
-                    <li className="flex items-center space-x-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                      <span>100% Authentic Factory Sealed Lots</span>
-                    </li>
-                    <li className="flex items-center space-x-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                      <span>Khmer Language Labeling Compliance</span>
-                    </li>
-                    <li className="flex items-center space-x-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                      <span>Temperature Controlled Logistics</span>
-                    </li>
+                    {[1, 2, 3].map((b) => (
+                      <li key={b} className="flex items-center space-x-2">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                        <span>
+                          {pillars[`pillar1_bullet${b}`] ?? ['100% Authentic Factory Sealed Lots', 'Khmer Language Labeling Compliance', 'Temperature Controlled Logistics'][b - 1]}
+                        </span>
+                      </li>
+                    ))}
                   </ul>
                 </div>
                 <div className="pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-emerald-700 dark:text-emerald-400">
@@ -291,24 +307,20 @@ export const HomePage: React.FC<HomePageProps> = ({
                   </div>
                   <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider block">Pillar Two</span>
                   <h3 className="text-2xl font-display font-bold text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
-                    Sourcing-as-a-Service &amp; OEM
+                    {pillars.pillar2_title ?? 'Sourcing-as-a-Service & OEM'}
                   </h3>
                   <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                    End-to-end custom procurement. We audit factories in Vietnam, Korea, Japan, and China, negotiate pricing, inspect pre-shipment batches, and clear Cambodian customs.
+                    {pillars.pillar2_desc ?? 'End-to-end custom procurement. We audit factories in Vietnam, Korea, Japan, and China, negotiate pricing, inspect pre-shipment batches, and clear Cambodian customs.'}
                   </p>
                   <ul className="space-y-2 text-xs text-slate-600 dark:text-slate-400 pt-2 font-medium">
-                    <li className="flex items-center space-x-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                      <span>Turnkey OEM Private Label Manufacturing</span>
-                    </li>
-                    <li className="flex items-center space-x-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                      <span>AQL 2.5 Strict Quality Inspection</span>
-                    </li>
-                    <li className="flex items-center space-x-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                      <span>GDCE Brokerage &amp; Door Delivery</span>
-                    </li>
+                    {[1, 2, 3].map((b) => (
+                      <li key={b} className="flex items-center space-x-2">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                        <span>
+                          {pillars[`pillar2_bullet${b}`] ?? ['Turnkey OEM Private Label Manufacturing', 'AQL 2.5 Strict Quality Inspection', 'GDCE Brokerage & Door Delivery'][b - 1]}
+                        </span>
+                      </li>
+                    ))}
                   </ul>
                 </div>
                 <div className="pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-emerald-700 dark:text-emerald-400">
@@ -335,24 +347,20 @@ export const HomePage: React.FC<HomePageProps> = ({
                   </div>
                   <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider block">Pillar Three</span>
                   <h3 className="text-2xl font-display font-bold text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
-                    Sales &amp; Trade Capacity Academy
+                    {pillars.pillar3_title ?? 'Sales & Trade Capacity Academy'}
                   </h3>
                   <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                    Empowering commercial teams, sales reps, and procurement directors with masterclasses in B2B negotiation, buyer psychology, key account management, and retention.
+                    {pillars.pillar3_desc ?? 'Empowering commercial teams, sales reps, and procurement directors with masterclasses in B2B negotiation, buyer psychology, key account management, and retention.'}
                   </p>
                   <ul className="space-y-2 text-xs text-slate-600 dark:text-slate-400 pt-2 font-medium">
-                    <li className="flex items-center space-x-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                      <span>1,200+ Professionals Certified</span>
-                    </li>
-                    <li className="flex items-center space-x-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                      <span>Tailored Corporate In-House Bootcamps</span>
-                    </li>
-                    <li className="flex items-center space-x-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                      <span>Negotiation &amp; Contract Strategies</span>
-                    </li>
+                    {[1, 2, 3].map((b) => (
+                      <li key={b} className="flex items-center space-x-2">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                        <span>
+                          {pillars[`pillar3_bullet${b}`] ?? ['1,200+ Professionals Certified', 'Tailored Corporate In-House Bootcamps', 'Negotiation & Contract Strategies'][b - 1]}
+                        </span>
+                      </li>
+                    ))}
                   </ul>
                 </div>
                 <div className="pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-emerald-700 dark:text-emerald-400">
@@ -372,7 +380,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           <ScrollReveal animation="right">
             <div className="relative rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-xl group">
               <img
-                src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?q=80&w=2070&auto=format&fit=crop"
+                src={hero?.feature_image ?? 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?q=80&w=2070&auto=format&fit=crop'}
                 alt="Container Ship Logistics"
                 className="w-full h-[450px] object-cover group-hover:scale-105 transition-transform duration-700"
               />
@@ -380,10 +388,10 @@ export const HomePage: React.FC<HomePageProps> = ({
               <div className="absolute bottom-6 left-6 right-6 p-6 rounded-2xl bg-white/95 dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 backdrop-blur-md shadow-lg">
                 <div className="flex items-center space-x-3 text-emerald-700 dark:text-emerald-400 font-bold text-sm">
                   <ShieldCheck className="w-5 h-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                  <span>The UNT Quality Standard</span>
+                  <span>{heritage.quality_badge ?? 'The UNT Quality Standard'}</span>
                 </div>
                 <p className="text-slate-600 dark:text-slate-300 text-xs mt-1">
-                  Zero product returns due to quality defects across 2024–2026. Audit-verified production from certified ISO/GMP manufacturers.
+                  {heritage.quality_desc ?? 'Zero product returns due to quality defects across 2024–2026. Audit-verified production from certified ISO/GMP manufacturers.'}
                 </p>
               </div>
             </div>
@@ -393,51 +401,35 @@ export const HomePage: React.FC<HomePageProps> = ({
           <ScrollReveal animation="left" delay={150}>
             <div className="space-y-6 text-left">
               <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider rounded-full">
-                Balancing Heritage with Modern Efficiency
+                {heritage.badge ?? 'Balancing Heritage with Modern Efficiency'}
               </span>
               <h2 className="text-3xl sm:text-4xl font-display font-bold tracking-tight text-slate-900 dark:text-white">
-                Bridging International Factories with Cambodian Commerce
+                {heritage.heading ?? 'Bridging International Factories with Cambodian Commerce'}
               </h2>
               <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                Global supply chains are complex, but sourcing doesn't have to be. UNT Company combines deep local market knowledge with international trade relationships to provide smooth, transparent procurement.
+                {heritage.paragraph ?? "Global supply chains are complex, but sourcing doesn't have to be. UNT Company combines deep local market knowledge with international trade relationships to provide smooth, transparent procurement."}
               </p>
 
               <div className="space-y-4 pt-2">
-                <div className="flex items-start space-x-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-emerald-700 dark:text-emerald-400 shrink-0">
-                    <Globe className="w-5 h-5" />
+                {[1, 2, 3].map((n) => (
+                  <div key={n} className="flex items-start space-x-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-emerald-700 dark:text-emerald-400 shrink-0">
+                      {n === 1 ? <Globe className="w-5 h-5" /> : n === 2 ? <ShieldCheck className="w-5 h-5" /> : <Truck className="w-5 h-5" />}
+                    </div>
+                    <div>
+                      <h4 className="text-base font-bold text-slate-900 dark:text-white">
+                        {heritage[`feature${n}_title`] ?? ['Direct Factory Access', 'Full Customs & Ministry Permits', 'End-to-End Door Delivery'][n - 1]}
+                      </h4>
+                      <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+                        {heritage[`feature${n}_desc`] ?? [
+                          'Eliminate middlemen markup. We connect you directly to verified factories in South Korea, Japan, Vietnam, and China.',
+                          'We manage product registration with the Cambodian Ministry of Health, Ministry of Commerce, and GDCE customs clearance.',
+                          'Temperature-controlled logistics from overseas port loading directly to your Phnom Penh or provincial distribution center.'
+                        ][n - 1]}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-base font-bold text-slate-900 dark:text-white">Direct Factory Access</h4>
-                    <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
-                      Eliminate middlemen markup. We connect you directly to verified factories in South Korea, Japan, Vietnam, and China.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-emerald-700 dark:text-emerald-400 shrink-0">
-                    <ShieldCheck className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="text-base font-bold text-slate-900 dark:text-white">Full Customs &amp; Ministry Permits</h4>
-                    <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
-                      We manage product registration with the Cambodian Ministry of Health, Ministry of Commerce, and GDCE customs clearance.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-emerald-700 dark:text-emerald-400 shrink-0">
-                    <Truck className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="text-base font-bold text-slate-900 dark:text-white">End-to-End Door Delivery</h4>
-                    <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
-                      Temperature-controlled logistics from overseas port loading directly to your Phnom Penh or provincial distribution center.
-                    </p>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </ScrollReveal>
@@ -450,20 +442,20 @@ export const HomePage: React.FC<HomePageProps> = ({
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
             <div className="text-left">
               <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider rounded-full">
-                Wholesale &amp; OEM Catalog
+                {productsSec.badge ?? 'Wholesale & OEM Catalog'}
               </span>
               <h2 className="text-3xl font-display font-bold text-slate-900 dark:text-white mt-2">
-                Featured Import Catalog Items
+                {productsSec.heading ?? 'Featured Import Catalog Items'}
               </h2>
               <p className="text-slate-600 dark:text-slate-300 text-sm mt-1">
-                Verified quality products ready for immediate Cambodian distribution or custom private label rebranding.
+                {productsSec.subheading ?? 'Verified quality products ready for immediate Cambodian distribution or custom private label rebranding.'}
               </p>
             </div>
             <button
               onClick={() => setActiveTab('products')}
               className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center space-x-2 shrink-0 shadow-sm"
             >
-              <span>View Full Catalog</span>
+              <span>{productsSec.cta ?? 'View Full Catalog'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -541,7 +533,7 @@ export const HomePage: React.FC<HomePageProps> = ({
 
         {/* Product Cards — pop in per country with Card3D tilt */}
         <div key={`cards-${cardKey}`} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {(displayedProducts.length > 0 ? displayedProducts : PRODUCTS.slice(0, 3)).map((product, i) => (
+          {(displayedProducts.length > 0 ? displayedProducts : DB_PRODUCTS.slice(0, 3)).map((product, i) => (
             <Card3D key={product.id} intensity={12} onClick={() => onOpenProductModal(product)}>
               <div className="group cursor-pointer rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-md hover:shadow-2xl hover:border-emerald-400 dark:hover:border-emerald-500 transition-all flex flex-col justify-between h-full">
                 <div>
@@ -603,32 +595,26 @@ export const HomePage: React.FC<HomePageProps> = ({
           <div className="rounded-3xl bg-gradient-to-r from-emerald-900 via-emerald-800 to-slate-900 p-8 sm:p-12 text-white relative overflow-hidden shadow-2xl text-left border border-emerald-700/30">
             <div className="relative z-10 max-w-3xl space-y-6">
               <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 text-xs font-bold uppercase tracking-wider rounded-full border border-emerald-400/30">
-                OEM &amp; Private Label Excellence
+                {oem.badge ?? 'OEM & Private Label Excellence'}
               </span>
               <h2 className="text-3xl sm:text-5xl font-display font-bold tracking-tight">
-                Launch Your Brand with World-Class Formulations
+                {oem.heading ?? 'Launch Your Brand with World-Class Formulations'}
               </h2>
               <p className="text-emerald-100 text-sm sm:text-base leading-relaxed">
-                Have a proprietary product concept? UNT Company provides end-to-end private label manufacturing. We match your brand with GMP-certified factories in South Korea, Japan, and Vietnam for custom cosmetics, supplements, beverages, and personal care lines.
+                {oem.paragraph ?? 'Have a proprietary product concept? UNT Company provides end-to-end private label manufacturing. We match your brand with GMP-certified factories in South Korea, Japan, and Vietnam for custom cosmetics, supplements, beverages, and personal care lines.'}
               </p>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
-                <div className="p-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-xs">
-                  <span className="font-bold text-emerald-300 block">Custom Formulas</span>
-                  <span className="text-emerald-100 text-[10px]">R&amp;D &amp; Lab Stability</span>
-                </div>
-                <div className="p-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-xs">
-                  <span className="font-bold text-emerald-300 block">Package Design</span>
-                  <span className="text-emerald-100 text-[10px]">Khmer Label Compliant</span>
-                </div>
-                <div className="p-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-xs">
-                  <span className="font-bold text-emerald-300 block">Low Trial MOQs</span>
-                  <span className="text-emerald-100 text-[10px]">Flexible Batch Sizes</span>
-                </div>
-                <div className="p-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-xs">
-                  <span className="font-bold text-emerald-300 block">Turnkey Clearance</span>
-                  <span className="text-emerald-100 text-[10px]">Ministry Permit Filing</span>
-                </div>
+                {[1, 2, 3, 4].map((n) => (
+                  <div key={n} className="p-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-xs">
+                    <span className="font-bold text-emerald-300 block">
+                      {oem[`chip${n}_title`] ?? ['Custom Formulas', 'Package Design', 'Low Trial MOQs', 'Turnkey Clearance'][n - 1]}
+                    </span>
+                    <span className="text-emerald-100 text-[10px]">
+                      {oem[`chip${n}_sub`] ?? ['R&D & Lab Stability', 'Khmer Label Compliant', 'Flexible Batch Sizes', 'Ministry Permit Filing'][n - 1]}
+                    </span>
+                  </div>
+                ))}
               </div>
 
               <div className="pt-4 flex flex-col sm:flex-row gap-4">
@@ -651,21 +637,32 @@ export const HomePage: React.FC<HomePageProps> = ({
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
             <div className="text-center">
               <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
-                Trusted Global Manufacturing Partners &amp; Supplier Alliances
+                {partnersSec.label ?? 'Trusted Global Manufacturing Partners & Supplier Alliances'}
               </span>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              {PARTNERS.map((partner, idx) => (
+              {DB_PARTNERS.map((partner) => (
                 <div
                   key={partner.id}
-                  className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-center space-y-1 hover:border-emerald-400 transition-colors shadow-sm"
+                  className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-center space-y-2 hover:border-emerald-400 transition-colors shadow-sm flex flex-col items-center justify-between"
                 >
-                  <div className="font-display font-black text-slate-900 dark:text-white text-sm tracking-wide">
-                    {partner.logoText}
+                  <div className="flex flex-col items-center w-full">
+                    {partner.image ? (
+                      <img src={partner.image} alt={partner.name} className="h-12 w-auto object-contain mb-2" />
+                    ) : (
+                      <div className="font-display font-black text-slate-900 dark:text-white text-sm tracking-wide mb-2 h-12 flex items-center justify-center text-center">
+                        {partner.logoText}
+                      </div>
+                    )}
+                    <div className="text-[10px] text-emerald-700 dark:text-emerald-400 font-semibold leading-tight">{partner.category}</div>
+                    <div className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">{partner.country}</div>
                   </div>
-                  <div className="text-[10px] text-emerald-700 dark:text-emerald-400 font-semibold">{partner.category}</div>
-                  <div className="text-[10px] text-slate-500 dark:text-slate-400">{partner.country}</div>
+                  {partner.description && (
+                    <div className="text-[10px] text-slate-600 dark:text-slate-400 pt-2 border-t border-slate-200 dark:border-slate-700 mt-2 line-clamp-3 w-full">
+                      {partner.description}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -679,24 +676,24 @@ export const HomePage: React.FC<HomePageProps> = ({
           <div className="flex items-end justify-between">
             <div className="text-left">
               <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider rounded-full">
-                Market Intelligence
+                {insights.badge ?? 'Market Intelligence'}
               </span>
               <h2 className="text-3xl font-display font-bold text-slate-900 dark:text-white mt-2">
-                Latest Regulatory &amp; Trade Insights
+                {insights.heading ?? 'Latest Regulatory & Trade Insights'}
               </h2>
             </div>
             <button
               onClick={() => setActiveTab('blog')}
               className="text-xs font-bold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 transition-colors flex items-center space-x-1"
             >
-              <span>View All Articles</span>
+              <span>{insights.cta ?? 'View All Articles'}</span>
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
         </ScrollReveal>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {ARTICLES.slice(0, 2).map((article, idx) => (
+          {DB_ARTICLES.slice(0, 2).map((article, idx) => (
             <ScrollReveal key={article.id} animation="up" delay={idx * 150}>
               <div
                 onClick={() => onOpenArticleModal(article)}

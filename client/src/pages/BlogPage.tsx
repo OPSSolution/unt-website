@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { ARTICLES } from '../data/mockData';
 import { Article } from '../types';
+import { useArticles } from '../hooks/useArticles';
+import { useHomepageSections } from '../hooks/useHomepageSections';
 import { Search, ArrowRight } from 'lucide-react';
 import { ScrollReveal } from '../components/ScrollReveal';
 import { Card3D } from '../components/Card3D';
@@ -11,6 +12,9 @@ interface BlogPageProps {
 }
 
 export const BlogPage: React.FC<BlogPageProps> = ({ onOpenArticleModal }) => {
+  const ARTICLES = useArticles();
+  const sections = useHomepageSections();
+  const data = sections.blog_page ?? {};
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -37,13 +41,15 @@ export const BlogPage: React.FC<BlogPageProps> = ({ onOpenArticleModal }) => {
         <ScrollReveal animation="up">
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
             <span className="px-3.5 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-widest rounded-full inline-block">
-              Cambodia &amp; ASEAN Trade Intelligence
+              {data.badge ?? 'Cambodia & ASEAN Trade Intelligence'}
             </span>
             <h1 className="text-4xl sm:text-6xl font-display font-black tracking-tight text-slate-900 dark:text-white">
-              Market Insights &amp; <span className="emerald-gradient-text">Regulatory News</span>
+              {data.headline
+                ? data.headline
+                : <>Market Insights &amp; <span className="emerald-gradient-text">Regulatory News</span></>}
             </h1>
             <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base max-w-2xl mx-auto">
-              Stay informed on GDCE customs updates, Ministry of Commerce regulations, regional FMCG trends, and OEM private label innovations.
+              {data.subheadline ?? 'Stay informed on GDCE customs updates, Ministry of Commerce regulations, regional FMCG trends, and OEM private label innovations.'}
             </p>
           </div>
         </ScrollReveal>

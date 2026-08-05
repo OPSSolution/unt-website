@@ -1,16 +1,17 @@
 import React from 'react';
-import { LayoutDashboard, Package, FileText, Users, Sparkles, LogOut, Globe, Home, Info, Wrench, GraduationCap, Newspaper, Phone, X } from 'lucide-react';
+import { LayoutDashboard, Package, FileText, Users, Sparkles, LogOut, Globe, Home, Info, Wrench, GraduationCap, Newspaper, Phone, X, Layout } from 'lucide-react';
 import { supabase } from '../../supabaseClient';
 
 export type AdminPage =
   | 'dashboard'
-  | 'home_hero' | 'home_sections' | 'trade_hubs'
+  | 'homepage' | 'trade_hubs'
   | 'about'
   | 'services'
-  | 'products' | 'partners'
+  | 'products' | 'products_page' | 'partners'
   | 'training'
-  | 'articles'
-  | 'contact';
+  | 'articles' | 'blog'
+  | 'contact'
+  | 'navbar_footer';
 
 interface Props {
   active: AdminPage;
@@ -28,9 +29,8 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Home',
     items: [
-      { id: 'home_hero',     label: 'Hero Section',  icon: <Sparkles className="w-4 h-4" /> },
-      { id: 'home_sections', label: 'Page Sections', icon: <Home className="w-4 h-4" /> },
-      { id: 'trade_hubs',   label: 'World Map Hubs', icon: <Globe className="w-4 h-4" /> },
+      { id: 'homepage',   label: 'Homepage Editor', icon: <Home className="w-4 h-4" /> },
+      { id: 'trade_hubs', label: 'World Map Hubs',  icon: <Globe className="w-4 h-4" /> },
     ],
   },
   {
@@ -44,8 +44,9 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Wholesale Catalog',
     items: [
-      { id: 'products', label: 'Products', icon: <Package className="w-4 h-4" /> },
-      { id: 'partners', label: 'Partners', icon: <Users className="w-4 h-4" /> },
+      { id: 'products_page', label: 'Catalog Page Header', icon: <Package className="w-4 h-4" /> },
+      { id: 'products',      label: 'Products',            icon: <Package className="w-4 h-4" /> },
+      { id: 'partners',      label: 'Partners',            icon: <Users className="w-4 h-4" /> },
     ],
   },
   {
@@ -54,11 +55,18 @@ const NAV_GROUPS: NavGroup[] = [
   },
   {
     label: 'Market Insights',
-    items: [{ id: 'articles', label: 'Articles', icon: <Newspaper className="w-4 h-4" /> }],
+    items: [
+      { id: 'blog',     label: 'Blog Page Header', icon: <Newspaper className="w-4 h-4" /> },
+      { id: 'articles', label: 'Articles',          icon: <Newspaper className="w-4 h-4" /> },
+    ],
   },
   {
     label: 'Contact',
     items: [{ id: 'contact', label: 'Contact Page', icon: <Phone className="w-4 h-4" /> }],
+  },
+  {
+    label: 'Global Branding',
+    items: [{ id: 'navbar_footer', label: 'Navbar & Footer', icon: <Layout className="w-4 h-4" /> }],
   },
 ];
 
@@ -68,7 +76,10 @@ interface SidebarProps extends Props {
 }
 
 function SidebarContent({ active, onChange, adminEmail, onClose }: SidebarProps) {
-  const handleLogout = async () => { await supabase?.auth.signOut(); };
+  const handleLogout = async () => {
+    // Clear local session immediately so UI redirects to login without waiting
+    await supabase?.auth.signOut();
+  };
   const handleNav = (id: AdminPage) => { onChange(id); onClose(); };
 
   return (

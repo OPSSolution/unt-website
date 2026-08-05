@@ -170,6 +170,38 @@ insert into homepage_sections (section_key, data) values
 )
 on conflict (section_key) do nothing;
 
+-- Products section & Market Insights section labels
+insert into homepage_sections (section_key, data) values
+(
+  'products_section',
+  $json${"badge": "Wholesale & OEM Catalog", "heading": "Featured Import Catalog Items", "subheading": "Verified quality products ready for immediate Cambodian distribution or custom private label rebranding.", "cta": "View Full Catalog", "all_origins_label": "\u2726 All Origins", "all_origins_inactive": "All Origins", "all_origins_banner": "Full product catalog from South Korea, Japan, China & Vietnam", "lead_time_label": "Lead Time", "min_order_label": "Min. Order"}$json$::jsonb
+),
+(
+  'partners_section',
+  $json${"label": "Trusted Global Manufacturing Partners & Supplier Alliances"}$json$::jsonb
+),
+(
+  'insights_section',
+  $json${"badge": "Market Intelligence", "heading": "Latest Regulatory & Trade Insights", "cta": "View All Articles"}$json$::jsonb
+),
+(
+  'about_page',
+  $json${"badge": "About UNT Company", "headline": "The Bridge to Global Trade", "subheadline": "Unique Noble Trading Co., Ltd. (UNT Company) is a premier Cambodian trading, sourcing, OEM manufacturing, and commercial capacity building ecosystem headquartered in Phnom Penh.", "mission_badge": "Our Purpose & Mission", "mission_heading": "Connecting World-Class Manufacturers with Emerging ASEAN Markets", "mission_p1": "Founded with the vision of modernizing Cambodian import commerce, UNT Company acts as an essential catalyst for local retailers, pharmacy chains, FMCG distributors, and brand owners. We remove cross-border trade friction by taking full responsibility for supplier auditing, volume pricing negotiation, quality control, customs clearance, and product compliance.", "mission_p2": "Our dual focus on physical distribution and commercial training ensures that our clients not only secure top-tier products, but also possess the negotiation and sales capabilities required to achieve market leadership.", "mission_image": "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=1000&auto=format&fit=crop", "hq_label": "Phnom Penh Corporate Headquarters", "hq_address": "Phnom Penh Tower, Monivong Blvd, Doun Penh, Phnom Penh", "stat1_value": "100%", "stat1_label": "Regulatory & Tax Audit Compliant", "stat2_value": "1,200+", "stat2_label": "Trade & Sales Professionals Trained", "adv_badge": "Why Business Leaders Choose UNT", "adv_heading": "The UNT Advantage", "adv1_title": "Direct Factory Audit", "adv1_desc": "We physically audit ISO and GMP facilities across Thailand, Vietnam, Korea, Japan, and China.", "adv2_title": "In-House Customs Brokerage", "adv2_desc": "Licensed GDCE customs brokers handle tax classification, ASYCUDA filings, and ministry permits.", "adv3_title": "Cold Chain & Logistics", "adv3_desc": "Temperature-monitored reefer trucking and Phnom Penh warehousing protect delicate products.", "adv4_title": "Sales & Capacity Building", "adv4_desc": "We train client commercial teams in consultative selling, buyer psychology, and key account growth.", "net_badge": "Strategic Infrastructure", "net_heading": "Our Global Network & Operations Hubs", "net_sub": "Local presence in key manufacturing capitals ensures rapid sampling, immediate factory audits, and direct supplier oversight.", "hub1_flags": "🇹🇭 🇻🇳", "hub1_title": "Bangkok & Ho Chi Minh Corridors", "hub1_desc": "Cross-border overland logistics hub for rapid F&B, organic coconut water, teas, and household consumer product shipments into Cambodia.", "hub2_flags": "🇰🇷 🇯🇵", "hub2_title": "Seoul & Tokyo OEM Laboratories", "hub2_desc": "Access to audited GMP cosmetics laboratories and health supplement formulators for premium skincare lines.", "hub3_flags": "🇨🇳 🇰🇭", "hub3_title": "Guangzhou & Phnom Penh Central", "hub3_desc": "Bulk manufacturing, custom eco packaging, and central distribution warehouse in Phnom Penh.", "cta": "Partner with UNT Company"}$json$::jsonb
+),
+(
+  'services_page',
+  $json${"badge": "End-to-End Procurement Infrastructure", "headline": "Integrated Global Trading Solutions", "subheadline": "From factory-direct auditing and private label OEM formulation to Ministry permits, GDCE customs clearance, and door-to-door logistics in Cambodia.", "steps_badge": "Methodology", "steps_heading": "The UNT Sourcing-as-a-Service Process", "steps_sub": "We simplify global procurement into five fully transparent, risk-managed stages.", "oem_title": "Turnkey OEM & Private Label Formulations", "oem_desc": "Launch proprietary brand lines with minimal upfront R&D costs. We handle formula matching, stability testing, custom bottle/jar selection, foil printing, and multi-lingual packaging.", "oem_cta": "Discuss Private Label Project", "customs_title": "GDCE Customs Brokerage & Ministry Registration", "customs_desc": "Avoid port fines and shipping delays. Our dedicated customs unit files ASYCUDA manifests, secures Ministry of Health product notifications, and manages Ministry of Commerce import audits.", "customs_cta": "Consult Customs Specialist"}$json$::jsonb
+),
+(
+  'training_page',
+  $json${"badge": "UNT Trade Capacity Building Institute", "headline": "Mastering the Art of Global Commerce", "subheadline": "Elevate your commercial team\u0027s B2B negotiation skills, buyer psychology, key account retention, and international supply chain management.", "stat1_value": "1,200+", "stat1_label": "Professionals Certified", "stat2_value": "4.9 / 5.0", "stat2_label": "Average Course Rating", "stat3_value": "15+", "stat3_label": "Senior Trade Instructors", "stat4_value": "34%", "stat4_label": "Avg 90-Day Conversion Lift", "tracks_badge": "Curriculum", "tracks_heading": "Specialized B2B Commercial Tracks", "tracks_sub": "Select a track below to review full module syllabi, target audience criteria, and enrollment schedules.", "bootcamp_badge": "In-House Corporate Solutions", "bootcamp_heading": "Need a Private Masterclass for Your Commercial Team?", "bootcamp_desc": "We deliver custom on-site workshops tailored to your industry, product catalog, and specific negotiation challenges directly at your Phnom Penh corporate headquarters.", "bootcamp_cta": "Book Corporate Session"}$json$::jsonb
+),
+(
+  'contact_page',
+  $json${"badge": "Phnom Penh HQ & Regional Hubs", "headline": "Let\u0027s Bridge the Gap Between Agriculture & Logistics", "subheadline": "Get in touch with UNT Company\u0027s sourcing specialists, customs brokers, and commercial training leads.", "section_badge": "Direct Channels", "section_heading": "Connect With Our Team", "section_desc": "Whether you require urgent customs clearance support, bulk wholesale pricing, or custom OEM formulation — we respond within 4 business hours.", "hq_address": "Phnom Penh Tower, Level 14, Monivong Blvd, Sangkat Boeung Keng Kang 1, Doun Penh, Phnom Penh, Kingdom of Cambodia.", "phone_landline": "+855 23 999 888", "phone_telegram": "@untsourcing", "phone_whatsapp": "+855 12 345 678", "email_general": "info@untcompany.com", "email_customs": "customs@untcompany.com", "hours": "Mon - Sat: 8:00 AM - 6:00 PM"}$json$::jsonb
+)
+on conflict (section_key) do nothing;
+
 -- Trade Hubs (world map countries)
 insert into homepage_sections (section_key, data)
 values (

@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { QuickSearchModal } from './QuickSearchModal';
 import { QuickCalcModal } from './QuickCalcModal';
+import { useHomepageSections } from '../hooks/useHomepageSections';
 
 interface NavbarProps {
   activeTab: PageTab;
@@ -60,6 +61,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [calcModalOpen, setCalcModalOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const sections = useHomepageSections();
+  const nb = sections.navbar_footer ?? {};
 
   // Mega-menu hover state
   const [activeMegaMenu, setActiveMegaMenu] = useState<'products' | 'services' | null>(null);
@@ -119,10 +122,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
               <div className="hidden xl:block shrink-0">
                 <div className="font-display font-bold text-sm tracking-tight text-slate-900 dark:text-white leading-none">
-                  UNT COMPANY
+                  {nb.company_name ?? 'UNT COMPANY'}
                 </div>
                 <div className="text-[9px] text-emerald-600 dark:text-emerald-400 font-semibold tracking-wide mt-1 leading-none">
-                  Trusted Global Trading Partner
+                  {nb.company_tagline ?? 'Trusted Global Trading Partner'}
                 </div>
               </div>
             </button>
@@ -309,7 +312,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={onOpenQuoteModal}
                 className="btn-shine inline-flex items-center gap-1.5 px-4 sm:px-5 py-2.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold transition-all hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap shrink-0 group shadow-lg shadow-slate-900/20 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 dark:shadow-black/30"
               >
-                <span>Get a Quote</span>
+                <span>{nb.navbar_cta ?? 'Get a Quote'}</span>
                 <ArrowRight className="w-4 h-4 shrink-0 group-hover:translate-x-1 transition-transform" />
               </button>
 
@@ -387,7 +390,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 }}
                 className="btn-shine w-full flex items-center justify-center space-x-2 py-3 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm"
               >
-                <span>Request B2B Sourcing Quote</span>
+                <span>{nb.mobile_cta ?? 'Request B2B Sourcing Quote'}</span>
                 <ArrowRight className="w-4 h-4 shrink-0" />
               </button>
             </div>

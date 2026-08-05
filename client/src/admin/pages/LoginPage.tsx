@@ -30,6 +30,7 @@ export function LoginPage() {
       setError('You do not have admin access.');
       setLoading(false);
     }
+    // On success: onAuthStateChange fires instantly, AdminGuard re-renders to the panel
   };
 
   const inp = 'w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors';
@@ -89,7 +90,7 @@ export function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="btn-shine w-full py-2.5 rounded-full bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 disabled:opacity-50 text-white dark:text-slate-900 font-bold text-sm transition-colors shadow-lg"
+            className="btn-shine w-full py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold text-sm transition-colors shadow-lg shadow-emerald-600/25"
           >
             {loading ? 'Verifying...' : 'Sign In'}
           </button>

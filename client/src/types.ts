@@ -54,6 +54,7 @@ export interface PartnerLogo {
   country: string;
   logoText: string;
   image?: string;
+  description?: string;
 }
 
 export interface QuoteRequestState {

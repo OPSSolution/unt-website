@@ -19,17 +19,21 @@ router.get("/:key", async (req, res) => {
     .from("homepage_sections")
     .select("*")
     .eq("section_key", req.params.key)
-    .single();
-  if (error) return res.status(404).json({ error: "Section not found" });
+    .maybeSingle();
+  if (error) return res.status(500).json({ error: error.message });
+  if (!data) return res.json({ section_key: req.params.key, data: null });
   return res.json(data);
 });
 
-// PUT update section by key (admin only)
+// PUT upsert section by key (admin only) — creates the row if it doesn't exist,
+// so editors (about/services/training/contact pages) work on first save too.
 router.put("/:key", requireAdmin, async (req, res) => {
   const { data, error } = await supabase
     .from("homepage_sections")
-    .update({ data: req.body, updated_at: new Date().toISOString() })
-    .eq("section_key", req.params.key)
+    .upsert(
+      { section_key: req.params.key, data: req.body, updated_at: new Date().toISOString() },
+      { onConflict: "section_key" }
+    )
     .select()
     .single();
   if (error) return res.status(400).json({ error: error.message });
