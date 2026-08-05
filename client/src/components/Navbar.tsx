@@ -97,7 +97,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* ─── Floating Super-Prime Pill Header (Light & Dark) ─── */}
       <header className="sticky top-0 z-50 w-full pointer-events-none px-3 sm:px-6 pt-3 sm:pt-4">
         <div
-          className={`pointer-events-auto relative mx-auto max-w-6xl 2xl:max-w-7xl nav-pill transition-all duration-300 ${
+          className={`pointer-events-auto relative mx-auto max-w-[1700px] w-full nav-pill transition-all duration-300 ${
             isScrolled ? 'nav-pill-scrolled py-1.5' : 'py-2'
           } ${mobileMenuOpen ? 'rounded-[2rem]' : 'rounded-full'}`}
         >
@@ -295,14 +295,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <Calculator className="w-4 h-4 group-hover:rotate-12 transition-transform" />
               </button>
 
-              {/* Portal Login (icon on md, text on lg) */}
-              <button
-                onClick={onOpenQuoteModal}
-                className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-full text-slate-700 hover:text-emerald-700 hover:bg-slate-100 text-xs font-bold transition-all dark:text-white/75 dark:hover:text-white dark:hover:bg-white/10"
-              >
-                <UserCheck className="w-4 h-4" />
-                <span>Login</span>
-              </button>
 
               {/* Primary CTA — high contrast pill */}
               <button

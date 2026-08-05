@@ -12,6 +12,7 @@ import { PartnersManager } from '../pages/PartnersManager';
 import { TrainingEditor } from '../pages/TrainingEditor';
 import { ArticlesManager } from '../pages/ArticlesManager';
 import { TradeHubsEditor } from '../pages/TradeHubsEditor';
+import { ContactEditor } from '../pages/ContactEditor';
 import { Menu, Sun, Moon } from 'lucide-react';
 
 const PAGE_LABELS: Record<AdminPage, string> = {

@@ -35,7 +35,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ onOpenArticleModal }) => {
       {/* 1. Hero */}
       <section className="relative py-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
         <ScrollReveal animation="up">
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+          <div className="relative z-10 max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 text-center space-y-3">
             <span className="px-3.5 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-widest rounded-full inline-block">
               Cambodia &amp; ASEAN Trade Intelligence
             </span>
@@ -51,7 +51,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ onOpenArticleModal }) => {
 
       {/* 2. Featured Article Banner */}
       {featuredArticle && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
           <div
             onClick={() => onOpenArticleModal(featuredArticle)}
             className="group cursor-pointer rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl hover:border-emerald-400 dark:hover:border-emerald-500 transition-all grid grid-cols-1 lg:grid-cols-2 items-center text-left"
@@ -106,7 +106,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ onOpenArticleModal }) => {
       )}
 
       {/* 3. Search & Filter Bar */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      <section className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 space-y-6">
         <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 text-left">
           <div className="relative">
             <Search className="absolute left-4 top-3.5 w-5 h-5 text-emerald-600 dark:text-emerald-400" />

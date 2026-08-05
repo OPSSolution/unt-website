@@ -27,9 +27,9 @@ export function SectionDivider({ label }: { label: string }) {
   );
 }
 
-export function Card({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+export function Card({ children, className = '', ...props }: React.HTMLAttributes<HTMLDivElement> & { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-white/10 rounded-2xl p-5 sm:p-6 shadow-sm dark:shadow-none backdrop-blur-sm ${className}`}>
+    <div className={`bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-white/10 rounded-2xl p-5 sm:p-6 shadow-sm dark:shadow-none backdrop-blur-sm ${className}`} {...props}>
       {children}
     </div>
   );
