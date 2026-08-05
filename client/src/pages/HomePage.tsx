@@ -155,22 +155,22 @@ export const HomePage: React.FC<HomePageProps> = ({
           </p>
 
           {/* Interactive Productive 3D B2B Origin Selector */}
-          <div className="pt-2 max-w-4xl mx-auto space-y-4">
+          <div className="pt-2 max-w-6xl mx-auto space-y-4">
             <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center justify-center space-x-2">
               <Globe className="w-4 h-4 text-emerald-600 dark:text-emerald-400 animate-spin" />
               <span>{sections.hero_globe?.globe_label ?? 'Interactive 3D Trade Hub Focus: Select Origin to Rotate 3D Globe'}</span>
             </div>
 
-            <div className="inline-flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 p-1.5 sm:p-2 rounded-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 shadow-lg max-w-full">
+            <div className="inline-flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 p-2 rounded-2xl sm:rounded-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 shadow-lg max-w-full">
               {/* Global ASEAN Network Button */}
               <button
                 onClick={() => setSelectedOrigin('all')}
-                className={`h-9 sm:h-10 px-3.5 sm:px-4 rounded-full text-xs font-bold transition-all duration-300 flex items-center space-x-2 shrink-0 ${selectedOrigin === 'all'
+                className={`h-9 sm:h-10 px-3 sm:px-3.5 rounded-full text-xs font-bold transition-all duration-300 flex items-center space-x-1.5 sm:space-x-2 shrink-0 ${selectedOrigin === 'all'
                   ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/25 scale-105'
                   : 'bg-slate-100/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                   }`}
               >
-                <Globe className={`w-4 h-4 shrink-0 ${selectedOrigin === 'all' ? 'text-white animate-spin' : 'text-emerald-600 dark:text-emerald-400'}`} />
+                <Globe className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 ${selectedOrigin === 'all' ? 'text-white animate-spin' : 'text-emerald-600 dark:text-emerald-400'}`} />
                 <span>Global ASEAN Network</span>
                 {selectedOrigin === 'all' && (
                   <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
@@ -184,7 +184,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                   <button
                     key={hub.id}
                     onClick={() => setSelectedOrigin(hub.id)}
-                    className={`h-9 sm:h-10 px-3.5 sm:px-4 rounded-full text-xs font-bold transition-all duration-300 flex items-center space-x-2 shrink-0 ${isSelected
+                    className={`h-9 sm:h-10 px-3 sm:px-3.5 rounded-full text-xs font-bold transition-all duration-300 flex items-center space-x-1.5 sm:space-x-2 shrink-0 ${isSelected
                       ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/25 scale-105'
                       : 'bg-slate-100/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                       }`}
@@ -192,7 +192,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     <img
                       src={hub.flagUrl}
                       alt={hub.name}
-                      className="w-4.5 h-3 object-cover rounded-sm border border-slate-200/80 dark:border-slate-700/80 shrink-0"
+                      className="w-4 h-3 object-cover rounded-sm border border-slate-200/80 dark:border-slate-700/80 shrink-0"
                     />
                     <span>{hub.name}</span>
                     {isSelected && (
