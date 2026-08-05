@@ -27,7 +27,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }
 
   return (
     <footer className="bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-300 border-t border-slate-200 dark:border-slate-800 pt-16 pb-12 shadow-inner transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
         {/* Top Callout Banner */}
         <div className="mb-16 rounded-3xl bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-emerald-500/10 dark:from-emerald-950/50 dark:via-slate-900/50 dark:to-emerald-950/50 border border-emerald-200 dark:border-emerald-800/80 p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden shadow-sm">
           <div className="relative z-10 max-w-2xl text-left">
@@ -63,10 +63,8 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }
           {/* Col 1: Brand & Identity */}
           <div className="lg:col-span-2 space-y-4 text-left">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full p-0.5 brand-logo-ring shrink-0">
-                <div className="w-full h-full bg-white dark:bg-slate-900 rounded-full flex flex-col items-center justify-center">
-                  <span className="font-display font-black text-xs text-slate-900 dark:text-white">UNT</span>
-                </div>
+              <div className="w-12 h-12 rounded-xl bg-white border border-emerald-200 shadow-sm p-1 shrink-0">
+                <img src="/images/logos/image.png" alt="UNT Logo" className="w-full h-full object-contain" />
               </div>
               <div>
                 <span className="font-display font-bold text-xl text-slate-900 dark:text-white block">UNT COMPANY</span>
