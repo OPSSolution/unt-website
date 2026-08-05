@@ -221,16 +221,17 @@ export const HomePage: React.FC<HomePageProps> = ({
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
             <button
               onClick={() => setActiveTab('services')}
-              className="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold text-base shadow-lg shadow-emerald-600/25 transition-all hover:scale-105 flex items-center justify-center space-x-2"
+              className="btn-shine group w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-600 hover:from-emerald-500 hover:to-emerald-500 text-white font-bold text-base shadow-xl shadow-emerald-600/20 hover:shadow-emerald-500/30 transition-all duration-300 hover:scale-[1.03] active:scale-95 flex items-center justify-center space-x-2 relative overflow-hidden"
             >
               <span>Explore Sourcing Solutions</span>
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform duration-300" />
             </button>
             <button
               onClick={onOpenQuoteModal}
-              className="w-full sm:w-auto px-8 py-4 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-bold text-base border border-slate-300 dark:border-slate-700 shadow-md transition-all flex items-center justify-center space-x-2"
+              className="group w-full sm:w-auto px-8 py-4 rounded-xl bg-slate-900/60 dark:bg-slate-900/40 hover:bg-slate-900 dark:hover:bg-slate-800 text-slate-100 hover:text-white font-bold text-base border border-slate-700/80 hover:border-emerald-500/60 shadow-lg transition-all duration-300 hover:scale-[1.03] active:scale-95 flex items-center justify-center space-x-2 backdrop-blur-sm"
             >
               <span>Request B2B Quote</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 group-hover:animate-ping" />
             </button>
           </div>
 
@@ -292,8 +293,8 @@ export const HomePage: React.FC<HomePageProps> = ({
                     type="button"
                     onClick={() => setDisplayMode('grid')}
                     className={`px-4 py-1.5 rounded-full transition-all duration-300 flex items-center space-x-2 cursor-pointer ${displayMode === 'grid'
-                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/30 scale-105'
-                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/30 scale-105'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                       }`}
                   >
                     <LayoutGrid className="w-3.5 h-3.5" />
@@ -303,8 +304,8 @@ export const HomePage: React.FC<HomePageProps> = ({
                     type="button"
                     onClick={() => setDisplayMode('carousel')}
                     className={`px-4 py-1.5 rounded-full transition-all duration-300 flex items-center space-x-2 cursor-pointer ${displayMode === 'carousel'
-                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/30 scale-105'
-                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/30 scale-105'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                       }`}
                   >
                     <Layers className="w-3.5 h-3.5" />
@@ -632,8 +633,8 @@ export const HomePage: React.FC<HomePageProps> = ({
                           onClick={() => setActiveFeature(feat.id)}
                           onMouseEnter={() => setActiveFeature(feat.id)}
                           className={`group relative cursor-pointer p-6 rounded-3xl transition-all duration-500 flex items-start space-x-5 overflow-hidden isolate border shadow-xl hover:shadow-2xl ${isActive
-                              ? 'bg-white dark:bg-[#0c1322] border-emerald-500 dark:border-emerald-400 shadow-emerald-500/10 scale-[1.02]'
-                              : 'bg-white dark:bg-[#0c1322] border-slate-200/90 dark:border-slate-800 hover:border-emerald-400/90 dark:hover:border-emerald-400/70'
+                            ? 'bg-white dark:bg-[#0c1322] border-emerald-500 dark:border-emerald-400 shadow-emerald-500/10 scale-[1.02]'
+                            : 'bg-white dark:bg-[#0c1322] border-slate-200/90 dark:border-slate-800 hover:border-emerald-400/90 dark:hover:border-emerald-400/70'
                             }`}
                         >
                           {/* Specular Top-Edge Glare Highlight */}
@@ -641,8 +642,8 @@ export const HomePage: React.FC<HomePageProps> = ({
 
                           <div
                             className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 shrink-0 shadow-md ${isActive
-                                ? 'bg-emerald-600 text-white shadow-emerald-500/30 scale-110'
-                                : 'bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white'
+                              ? 'bg-emerald-600 text-white shadow-emerald-500/30 scale-110'
+                              : 'bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white'
                               }`}
                           >
                             <IconComp className="w-6 h-6" />
@@ -652,16 +653,16 @@ export const HomePage: React.FC<HomePageProps> = ({
                             <div className="flex items-center justify-between">
                               <h4
                                 className={`text-base font-bold transition-colors ${isActive
-                                    ? 'text-emerald-600 dark:text-emerald-400'
-                                    : 'text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400'
+                                  ? 'text-emerald-600 dark:text-emerald-400'
+                                  : 'text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400'
                                   }`}
                               >
                                 {feat.title}
                               </h4>
                               <span
                                 className={`text-[11px] font-bold px-3 py-1 rounded-full border transition-all ${isActive
-                                    ? 'bg-emerald-100 dark:bg-emerald-950/90 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700'
-                                    : 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                                  ? 'bg-emerald-100 dark:bg-emerald-950/90 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700'
+                                  : 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
                                   }`}
                               >
                                 {feat.metrics}

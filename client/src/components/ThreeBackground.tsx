@@ -375,9 +375,9 @@ export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ activeOrigin =
     const FLAG_HOLD_TIME = 2.0;   // seconds each flag stays fully visible (solo)
     const FLAG_FADE_TIME = 0.5;   // seconds to fade in / fade out
     const FLAG_CYCLE_TIME = FLAG_HOLD_TIME + FLAG_FADE_TIME * 2; // per-flag slot
-    const FLAG_SEQ_TOTAL  = FLAG_CYCLE_TIME * sequentialFlags.length; // sequential phase length
-    const FLAG_ALL_HOLD   = 2.5;  // seconds all flags are shown together
-    const FLAG_ALL_FADE   = 0.6;  // fade in/out for the all-visible phase
+    const FLAG_SEQ_TOTAL = FLAG_CYCLE_TIME * sequentialFlags.length; // sequential phase length
+    const FLAG_ALL_HOLD = 2.5;  // seconds all flags are shown together
+    const FLAG_ALL_FADE = 0.6;  // fade in/out for the all-visible phase
     const FLAG_TOTAL_CYCLE = FLAG_SEQ_TOTAL + FLAG_ALL_FADE * 2 + FLAG_ALL_HOLD; // full loop
 
     // 8. Animated Trade Routes & Moving Containers / Cargo Pulses
@@ -540,8 +540,8 @@ export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ activeOrigin =
           // Phase 1 — one by one sequential spotlight
           sequentialFlags.forEach((entry, idx) => {
             const slotStart = idx * FLAG_CYCLE_TIME;
-            const slotEnd   = slotStart + FLAG_CYCLE_TIME;
-            const localT    = cycleT - slotStart;
+            const slotEnd = slotStart + FLAG_CYCLE_TIME;
+            const localT = cycleT - slotStart;
 
             let targetOpacity = 0;
             if (cycleT >= slotStart && cycleT < slotEnd) {

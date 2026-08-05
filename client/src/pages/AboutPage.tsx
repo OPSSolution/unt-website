@@ -55,25 +55,21 @@ const CORE_VALUES = [
     icon: ShieldCheck,
     title: 'Integrity First',
     desc: 'Every product we source, every factory we audit, and every deal we broker is grounded in transparency and ethical business practices.',
-    color: 'from-emerald-500 to-emerald-700',
   },
   {
     icon: Sparkles,
     title: 'Innovation',
     desc: 'We continuously modernize supply chains with technology, data-driven sourcing decisions, and new commercial training methodologies.',
-    color: 'from-cyan-500 to-blue-600',
   },
   {
     icon: Users,
     title: 'Partnership',
     desc: 'We don\'t just sell products — we build long-term relationships with our clients, becoming an extension of their procurement team.',
-    color: 'from-violet-500 to-purple-600',
   },
   {
     icon: Award,
     title: 'Excellence',
     desc: 'From AQL 2.5 quality inspections to 99.4% on-time customs clearance, we hold ourselves to the highest operational standards.',
-    color: 'from-amber-500 to-yellow-600',
   },
 ];
 
@@ -278,18 +274,26 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onOpenQuoteModal }) => {
               const Icon = val.icon;
               return (
                 <ScrollReveal key={idx} animation="up" delay={idx * 100}>
-                  <Card3D intensity={12}>
-                    <div className="group p-6 rounded-3xl bg-slate-50 dark:bg-[#0c1322] border border-slate-200 dark:border-slate-800 shadow-lg hover:shadow-xl transition-all duration-500 h-full flex flex-col">
-                      {/* Gradient Icon */}
-                      <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${val.color} flex items-center justify-center text-white shadow-lg mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                        <Icon className="w-7 h-7" />
+                  <Card3D intensity={18}>
+                    <div className="group p-7 rounded-3xl bg-white/80 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-800/80 hover:border-emerald-500/30 dark:hover:border-emerald-400/20 shadow-lg hover:shadow-2xl transition-all duration-500 h-full flex flex-col justify-between [transform-style:preserve-3d] backdrop-blur-sm select-none">
+                      <div className="[transform-style:preserve-3d]">
+                        {/* 3D Floating Icon Box */}
+                        <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200/80 dark:border-emerald-800/80 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white group-hover:scale-110 transition-all duration-300 shadow-md mb-6 [transform:translateZ(45px)]">
+                          <Icon className="w-6 h-6" />
+                        </div>
+                        {/* 3D Floating Title */}
+                        <h3 className="text-lg font-display font-bold text-slate-900 dark:text-white mb-2.5 [transform:translateZ(30px)] transition-colors group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                          {val.title}
+                        </h3>
+                        {/* 3D Floating Description */}
+                        <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed [transform:translateZ(15px)]">
+                          {val.desc}
+                        </p>
                       </div>
-                      <h3 className="text-lg font-display font-bold text-slate-900 dark:text-white mb-2">
-                        {val.title}
-                      </h3>
-                      <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed flex-1">
-                        {val.desc}
-                      </p>
+                      {/* 3D Floating Index */}
+                      <div className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mt-5 [transform:translateZ(20px)]">
+                        Value 0{idx + 1}
+                      </div>
                     </div>
                   </Card3D>
                 </ScrollReveal>
@@ -386,25 +390,22 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onOpenQuoteModal }) => {
                       key={idx}
                       type="button"
                       onClick={() => setActiveTimeline(idx)}
-                      className={`group w-full text-left flex items-start gap-4 p-4 rounded-2xl transition-all duration-300 ${
-                        isActive
+                      className={`group w-full text-left flex items-start gap-4 p-4 rounded-2xl transition-all duration-300 ${isActive
                           ? 'bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300/60 dark:border-emerald-700/60 shadow-md'
                           : 'hover:bg-slate-50 dark:hover:bg-slate-800/40 border border-transparent'
-                      }`}
+                        }`}
                     >
                       {/* Year Badge */}
-                      <div className={`shrink-0 w-16 h-10 rounded-xl flex items-center justify-center text-xs font-extrabold transition-all duration-300 ${
-                        isActive
+                      <div className={`shrink-0 w-16 h-10 rounded-xl flex items-center justify-center text-xs font-extrabold transition-all duration-300 ${isActive
                           ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/25'
                           : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:bg-emerald-100 dark:group-hover:bg-emerald-950 group-hover:text-emerald-700 dark:group-hover:text-emerald-400'
-                      }`}>
+                        }`}>
                         {item.year}
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <h4 className={`text-sm font-bold transition-colors ${
-                          isActive ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-800 dark:text-slate-200'
-                        }`}>
+                        <h4 className={`text-sm font-bold transition-colors ${isActive ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-800 dark:text-slate-200'
+                          }`}>
                           {item.title}
                         </h4>
                         {isActive && (
@@ -452,9 +453,8 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onOpenQuoteModal }) => {
                       {TIMELINE.map((_, i) => (
                         <div
                           key={i}
-                          className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                            i === activeTimeline ? 'bg-emerald-400 scale-125' : i < activeTimeline ? 'bg-emerald-600' : 'bg-white/20'
-                          }`}
+                          className={`w-2 h-2 rounded-full transition-all duration-300 ${i === activeTimeline ? 'bg-emerald-400 scale-125' : i < activeTimeline ? 'bg-emerald-600' : 'bg-white/20'
+                            }`}
                         />
                       ))}
                     </div>
