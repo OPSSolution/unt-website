@@ -25,6 +25,7 @@ const CAMBODIA_HUB = { id: 'cambodia', name: 'Cambodia', flag: '🇰🇭', flagU
 
 interface ThreeBackgroundProps {
   activeOrigin?: string;
+  hubs?: TradeHub[];
   onSelectHub?: (hub: TradeHub) => void;
 }
 
@@ -79,7 +80,8 @@ const createContainerMesh = (): THREE.Mesh => {
   return new THREE.Mesh(geo, mat);
 };
 
-export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ activeOrigin = 'all' }) => {
+export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ activeOrigin = 'all', hubs: hubsProp }) => {
+  const activeHubs = hubsProp ?? TRADE_HUBS;
   const mountRef = useRef<HTMLDivElement>(null);
   const globeGroupRef = useRef<THREE.Group | null>(null);
   const targetRotationYRef = useRef<number>(0);
@@ -343,7 +345,7 @@ export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ activeOrigin =
     const sequentialFlags: { group: THREE.Group; mats: THREE.Material[] }[] = [];
 
     // B2B Origin Hubs with Wikipedia Flag Badges — start hidden, animate one by one
-    TRADE_HUBS.forEach((hub) => {
+    activeHubs.forEach((hub) => {
       const pos = latLonToVector3(hub.lat, hub.lon, R);
 
       const ringGeo = new THREE.RingGeometry(0.18, 0.3, 24);
@@ -381,7 +383,7 @@ export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ activeOrigin =
     // 8. Animated Trade Routes & Moving Containers / Cargo Pulses
     const routesData: { curve: THREE.QuadraticBezierCurve3; containerMesh: THREE.Mesh }[] = [];
 
-    TRADE_HUBS.forEach((hub) => {
+    activeHubs.forEach((hub) => {
       const originPos = latLonToVector3(hub.lat, hub.lon, R);
       const mid = originPos.clone().add(khPos).multiplyScalar(0.5);
       const dist = originPos.distanceTo(khPos);
@@ -630,12 +632,12 @@ export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ activeOrigin =
       khRingMat.dispose();
       renderer.dispose();
     };
-  }, []);
+  }, [activeHubs]);
 
   // Rotate globe smoothly when activeOrigin changes
   useEffect(() => {
     if (activeOrigin && activeOrigin !== 'all') {
-      const selectedHub = TRADE_HUBS.find((h) => h.id === activeOrigin);
+      const selectedHub = activeHubs.find((h) => h.id === activeOrigin);
       if (selectedHub) {
         const R = 7.5;
         const vec = latLonToVector3(selectedHub.lat, selectedHub.lon, R);

@@ -114,15 +114,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="flex items-center space-x-2.5 text-left group focus:outline-none shrink-0"
               aria-label="UNT Company home"
             >
-              <div className="relative w-10 h-10 rounded-full p-[2px] brand-logo-ring group-hover:scale-105 transition-all duration-300 shrink-0">
-                <div className="w-full h-full bg-white rounded-full flex flex-col items-center justify-center relative overflow-hidden">
-                  <svg className="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M17.5 3C14.5 3 12 5.5 12 8.5C12 7 10 5.5 7.5 5.5C4.5 5.5 2 8 2 11C2 15 6 18 12 21C18 18 22 15 22 11C22 6.5 19.5 3 17.5 3ZM7.5 14C5.5 14 4 12.5 4 11C4 9.5 5.5 8 7.5 8C9 8 10.5 9 11 10.5C9.5 11.5 8.5 12.8 7.5 14ZM16.5 14.5C15 13.5 13.5 11.5 13 9.5C14 8 15.5 7 17.5 7C19.5 7 20 9 20 11C20 12.5 18.5 14 16.5 14.5Z" />
-                  </svg>
-                  <span className="font-display font-black text-[9px] tracking-tight text-slate-900 -mt-0.5 leading-none">
-                    UNT
-                  </span>
-                </div>
+              <div className="relative w-10 h-10 rounded-xl bg-white border border-emerald-200 shadow-sm p-1 group-hover:scale-105 transition-all duration-300 shrink-0">
+                <img src="/images/logos/image.png" alt="UNT Logo" className="w-full h-full object-contain" />
               </div>
               <div className="hidden xl:block shrink-0">
                 <div className="font-display font-bold text-sm tracking-tight text-slate-900 dark:text-white leading-none">
