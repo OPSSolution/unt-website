@@ -19,6 +19,8 @@ export const TRADE_HUBS: TradeHub[] = [
   { id: 'japan', name: 'Japan', flag: '🇯🇵', flagUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Flag_of_Japan.svg/250px-Flag_of_Japan.svg.png', lat: 35.67, lon: 139.65, leadTime: '6-9 Days', categories: 'Personal Care & Health', moq: '800 Units', type: 'port' },
   { id: 'china', name: 'China', flag: '🇨🇳', flagUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/250px-Flag_of_the_People%27s_Republic_of_China.svg.png', lat: 23.12, lon: 113.26, leadTime: '4-6 Days', categories: 'Packaging & Wholesale Goods', moq: '2,000 Units', type: 'factory' },
   { id: 'vietnam', name: 'Vietnam', flag: '🇻🇳', flagUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Vietnam.svg/250px-Flag_of_Vietnam.svg.png', lat: 10.82, lon: 106.62, leadTime: '1-3 Days', categories: 'Food Processing & Agribusiness', moq: '300 Units', type: 'port' },
+  { id: 'laos', name: 'Laos', flag: '🇱🇦', flagUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Flag_of_Laos.svg/250px-Flag_of_Laos.svg.png', lat: 17.97, lon: 102.63, leadTime: '2-4 Days', categories: 'Agricultural & Organic Goods', moq: '500 Units', type: 'warehouse' },
+  { id: 'malaysia', name: 'Malaysia', flag: '🇲🇾', flagUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Flag_of_Malaysia.svg/250px-Flag_of_Malaysia.svg.png', lat: 3.13, lon: 101.68, leadTime: '3-5 Days', categories: 'Halal Certified F&B & Cosmetics', moq: '600 Units', type: 'factory' },
 ];
 
 const CAMBODIA_HUB = { id: 'cambodia', name: 'Cambodia', flag: '🇰🇭', flagUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Flag_of_Cambodia.svg/250px-Flag_of_Cambodia.svg.png', lat: 11.55, lon: 104.91 };
@@ -86,6 +88,11 @@ export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ activeOrigin =
   const globeGroupRef = useRef<THREE.Group | null>(null);
   const targetRotationYRef = useRef<number>(0);
   const targetRotationXRef = useRef<number>(0);
+  const activeOriginRef = useRef<string>(activeOrigin);
+
+  useEffect(() => {
+    activeOriginRef.current = activeOrigin;
+  }, [activeOrigin]);
 
   useEffect(() => {
     const container = mountRef.current;
@@ -342,7 +349,7 @@ export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ activeOrigin =
     };
 
     // Build sequential flag groups array (trade hubs only, Cambodia is always on)
-    const sequentialFlags: { group: THREE.Group; mats: THREE.Material[] }[] = [];
+    const sequentialFlags: { hubId: string; group: THREE.Group; mats: THREE.Material[] }[] = [];
 
     // B2B Origin Hubs with Wikipedia Flag Badges — start hidden, animate one by one
     activeHubs.forEach((hub) => {
@@ -368,7 +375,7 @@ export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ activeOrigin =
       const mats = getFlagMaterials(flagGroup);
       mats.forEach((m) => { m.transparent = true; (m as THREE.MeshBasicMaterial).opacity = 0; });
       globeGroup.add(flagGroup);
-      sequentialFlags.push({ group: flagGroup, mats });
+      sequentialFlags.push({ hubId: hub.id, group: flagGroup, mats });
     });
 
     // Timing constants for the one-by-one flow
@@ -510,57 +517,73 @@ export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ activeOrigin =
       const pulseScale = 1 + Math.sin(elapsedTime * 4) * 0.25;
       khRing.scale.set(pulseScale, pulseScale, 1);
 
-      // ── Sequential Country Flag Flow Animation ──
-      // Phase 1: one-by-one spotlight │ Phase 2: all visible together │ repeat
+      // ── Sequential & Focus Country Flag Flow Animation ──
       if (sequentialFlags.length > 0) {
-        const cycleT = elapsedTime % FLAG_TOTAL_CYCLE;
-        const inAllPhase = cycleT >= FLAG_SEQ_TOTAL;
+        const selectedId = activeOriginRef.current;
+        const isSingleSelected = selectedId && selectedId !== 'all';
 
-        if (inAllPhase) {
-          // Phase 2 — ALL flags visible simultaneously
-          const allLocalT = cycleT - FLAG_SEQ_TOTAL;
-          let allTarget = 0;
-          if (allLocalT < FLAG_ALL_FADE) {
-            allTarget = allLocalT / FLAG_ALL_FADE;               // fade in together
-          } else if (allLocalT < FLAG_ALL_FADE + FLAG_ALL_HOLD) {
-            allTarget = 1;                                        // hold all visible
-          } else {
-            allTarget = 1 - (allLocalT - FLAG_ALL_FADE - FLAG_ALL_HOLD) / FLAG_ALL_FADE; // fade out
-          }
-
+        if (isSingleSelected) {
+          // Highlight selected country hub flag continuously
           sequentialFlags.forEach((entry) => {
+            const targetOpacity = entry.hubId === selectedId ? 1 : 0.25;
             entry.mats.forEach((mat) => {
               const cur = (mat as THREE.MeshBasicMaterial).opacity;
-              (mat as THREE.MeshBasicMaterial).opacity = cur + (allTarget - cur) * 0.12;
+              (mat as THREE.MeshBasicMaterial).opacity = cur + (targetOpacity - cur) * 0.15;
             });
             const sc = 0.6 + (entry.mats[0] as THREE.MeshBasicMaterial).opacity * 0.4;
             entry.group.scale.set(sc, sc, sc);
           });
         } else {
-          // Phase 1 — one by one sequential spotlight
-          sequentialFlags.forEach((entry, idx) => {
-            const slotStart = idx * FLAG_CYCLE_TIME;
-            const slotEnd = slotStart + FLAG_CYCLE_TIME;
-            const localT = cycleT - slotStart;
+          // Phase 1: one-by-one spotlight │ Phase 2: all visible together │ repeat
+          const cycleT = elapsedTime % FLAG_TOTAL_CYCLE;
+          const inAllPhase = cycleT >= FLAG_SEQ_TOTAL;
 
-            let targetOpacity = 0;
-            if (cycleT >= slotStart && cycleT < slotEnd) {
-              if (localT < FLAG_FADE_TIME) {
-                targetOpacity = localT / FLAG_FADE_TIME;          // fade in
-              } else if (localT < FLAG_FADE_TIME + FLAG_HOLD_TIME) {
-                targetOpacity = 1;                                // hold
-              } else {
-                targetOpacity = 1 - (localT - FLAG_FADE_TIME - FLAG_HOLD_TIME) / FLAG_FADE_TIME; // fade out
-              }
+          if (inAllPhase) {
+            // Phase 2 — ALL flags visible simultaneously
+            const allLocalT = cycleT - FLAG_SEQ_TOTAL;
+            let allTarget = 0;
+            if (allLocalT < FLAG_ALL_FADE) {
+              allTarget = allLocalT / FLAG_ALL_FADE;               // fade in together
+            } else if (allLocalT < FLAG_ALL_FADE + FLAG_ALL_HOLD) {
+              allTarget = 1;                                        // hold all visible
+            } else {
+              allTarget = 1 - (allLocalT - FLAG_ALL_FADE - FLAG_ALL_HOLD) / FLAG_ALL_FADE; // fade out
             }
 
-            entry.mats.forEach((mat) => {
-              const cur = (mat as THREE.MeshBasicMaterial).opacity;
-              (mat as THREE.MeshBasicMaterial).opacity = cur + (targetOpacity - cur) * 0.12;
+            sequentialFlags.forEach((entry) => {
+              entry.mats.forEach((mat) => {
+                const cur = (mat as THREE.MeshBasicMaterial).opacity;
+                (mat as THREE.MeshBasicMaterial).opacity = cur + (allTarget - cur) * 0.12;
+              });
+              const sc = 0.6 + (entry.mats[0] as THREE.MeshBasicMaterial).opacity * 0.4;
+              entry.group.scale.set(sc, sc, sc);
             });
-            const sc = 0.6 + (entry.mats[0] as THREE.MeshBasicMaterial).opacity * 0.4;
-            entry.group.scale.set(sc, sc, sc);
-          });
+          } else {
+            // Phase 1 — one by one sequential spotlight
+            sequentialFlags.forEach((entry, idx) => {
+              const slotStart = idx * FLAG_CYCLE_TIME;
+              const slotEnd = slotStart + FLAG_CYCLE_TIME;
+              const localT = cycleT - slotStart;
+
+              let targetOpacity = 0;
+              if (cycleT >= slotStart && cycleT < slotEnd) {
+                if (localT < FLAG_FADE_TIME) {
+                  targetOpacity = localT / FLAG_FADE_TIME;          // fade in
+                } else if (localT < FLAG_FADE_TIME + FLAG_HOLD_TIME) {
+                  targetOpacity = 1;                                // hold
+                } else {
+                  targetOpacity = 1 - (localT - FLAG_FADE_TIME - FLAG_HOLD_TIME) / FLAG_FADE_TIME; // fade out
+                }
+              }
+
+              entry.mats.forEach((mat) => {
+                const cur = (mat as THREE.MeshBasicMaterial).opacity;
+                (mat as THREE.MeshBasicMaterial).opacity = cur + (targetOpacity - cur) * 0.12;
+              });
+              const sc = 0.6 + (entry.mats[0] as THREE.MeshBasicMaterial).opacity * 0.4;
+              entry.group.scale.set(sc, sc, sc);
+            });
+          }
         }
       }
 
