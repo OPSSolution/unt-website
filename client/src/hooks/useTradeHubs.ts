@@ -10,26 +10,34 @@ let fetchPromise: Promise<void> | null = null;
 function loadHubs(): Promise<void> {
   if (cachedHubs || fetchPromise) return fetchPromise ?? Promise.resolve();
   fetchPromise = fetch(`${BASE}/api/homepage/trade_hubs`)
-    .then((r) => r.ok ? r.json() : null)
+    .then((r) => (r.ok ? r.json() : null))
     .then((r) => {
       if (r?.data?.hubs?.length) {
-        cachedHubs = r.data.hubs.map((h: any) => ({
+        const fetchedHubs = r.data.hubs.map((h: any) => ({
           ...h,
           lat: Number(h.lat),
           lon: Number(h.lon),
         }));
+        const existingIds = new Set(fetchedHubs.map((h: any) => h.id));
+        const missingHubs = TRADE_HUBS.filter((h) => !existingIds.has(h.id));
+        cachedHubs = [...fetchedHubs, ...missingHubs];
+      } else {
+        cachedHubs = TRADE_HUBS;
       }
     })
-    .catch(() => {});
+    .catch(() => {
+      cachedHubs = TRADE_HUBS;
+    });
   return fetchPromise;
 }
 
 export function useTradeHubs(): TradeHub[] {
-  const [hubs, setHubs] = useState<TradeHub[]>(cachedHubs ?? TRADE_HUBS);
+  const [hubs, setHubs] = useState<TradeHub[]>(TRADE_HUBS);
 
   useEffect(() => {
-    if (cachedHubs) { setHubs(cachedHubs); return; }
-    loadHubs().then(() => { if (cachedHubs) setHubs(cachedHubs); });
+    loadHubs().then(() => {
+      if (cachedHubs) setHubs(cachedHubs);
+    });
   }, []);
 
   return hubs;
