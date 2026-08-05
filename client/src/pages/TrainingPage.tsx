@@ -20,7 +20,7 @@ export const TrainingPage: React.FC<TrainingPageProps> = ({ onOpenQuoteModal }) 
       {/* 1. Hero */}
       <section className="relative py-20 bg-white dark:bg-slate-900 text-slate-900 dark:text-white overflow-hidden border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
         <ScrollReveal animation="up">
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+          <div className="relative z-10 max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 text-center space-y-4">
             <span className="px-3.5 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-widest rounded-full inline-block">
               {data.badge ?? 'UNT Trade Capacity Building Institute'}
             </span>
@@ -47,7 +47,7 @@ export const TrainingPage: React.FC<TrainingPageProps> = ({ onOpenQuoteModal }) 
       </section>
 
       {/* 2. Specialized Training Tracks */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      <section className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 space-y-8">
         <div className="text-center space-y-3 max-w-2xl mx-auto">
           <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider rounded-full">
             {data.tracks_badge ?? 'Curriculum'}
@@ -125,7 +125,7 @@ export const TrainingPage: React.FC<TrainingPageProps> = ({ onOpenQuoteModal }) 
       </section>
 
       {/* 3. Corporate Custom Bootcamps Banner */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
         <div className="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 sm:p-10 text-slate-900 dark:text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-lg text-left">
           <div className="space-y-2 max-w-2xl">
             <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider rounded-full border border-emerald-200 dark:border-emerald-800">

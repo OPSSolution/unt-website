@@ -49,7 +49,7 @@ export const ContactPage: React.FC = () => {
       {/* 1. Header Banner */}
       <section className="relative py-20 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
         <ScrollReveal animation="up">
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+          <div className="relative z-10 max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 text-center space-y-4">
             <span className="px-3.5 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-widest rounded-full inline-block">
               {data.badge ?? 'Direct B2B Communication Portal'}
             </span>
@@ -66,7 +66,7 @@ export const ContactPage: React.FC = () => {
       </section>
 
       {/* 2. Main Contact Grid */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 text-left">
+      <section className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 grid grid-cols-1 lg:grid-cols-12 gap-12 text-left">
         {/* Left Col: Contact Cards & Info (5 cols) */}
         <div className="lg:col-span-5 space-y-6">
           <div className="space-y-3">

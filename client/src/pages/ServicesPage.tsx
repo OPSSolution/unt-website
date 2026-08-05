@@ -20,7 +20,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ setActiveTab, onOpen
       {/* 1. Hero */}
       <section className="relative py-20 bg-white dark:bg-slate-900 text-slate-900 dark:text-white overflow-hidden border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
         <ScrollReveal animation="up">
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+          <div className="relative z-10 max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 text-center space-y-4">
             <span className="px-3.5 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-widest rounded-full inline-block">
               {data.badge ?? 'End-to-End Procurement Infrastructure'}
             </span>
@@ -37,7 +37,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ setActiveTab, onOpen
       </section>
 
       {/* 2. Sourcing-as-a-Service 5 Step Process */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <section className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 space-y-12">
         <ScrollReveal animation="up">
           <div className="text-center space-y-3 max-w-2xl mx-auto">
             <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider rounded-full">
@@ -81,14 +81,14 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ setActiveTab, onOpen
       </section>
 
       {/* 3. Interactive Sourcing Calculator Widget */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
         <ScrollReveal animation="scale">
           <SourcingCalculator onOpenQuoteModal={onOpenQuoteModal} />
         </ScrollReveal>
       </section>
 
       {/* 4. Service Pillar Breakdown */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <section className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 space-y-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Box 1: Custom OEM Private Labeling */}
           <ScrollReveal animation="right">

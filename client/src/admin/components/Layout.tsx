@@ -7,13 +7,13 @@ import { HomepageEditor } from '../pages/HomepageEditor';
 import { AboutEditor } from '../pages/AboutEditor';
 import { ServicesEditor } from '../pages/ServicesEditor';
 import { ProductsManager } from '../pages/ProductsManager';
+import { ProductsPageEditor } from '../pages/ProductsPageEditor';
 import { PartnersManager } from '../pages/PartnersManager';
 import { TrainingEditor } from '../pages/TrainingEditor';
 import { ArticlesManager } from '../pages/ArticlesManager';
+import { BlogEditor } from '../pages/BlogEditor';
 import { TradeHubsEditor } from '../pages/TradeHubsEditor';
 import { ContactEditor } from '../pages/ContactEditor';
-import { BlogEditor } from '../pages/BlogEditor';
-import { ProductsPageEditor } from '../pages/ProductsPageEditor';
 import { NavbarFooterEditor } from '../pages/NavbarFooterEditor';
 import { Menu, Sun, Moon } from 'lucide-react';
 
