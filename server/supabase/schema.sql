@@ -170,6 +170,19 @@ insert into homepage_sections (section_key, data) values
 )
 on conflict (section_key) do nothing;
 
+-- Trade Hubs (world map countries)
+insert into homepage_sections (section_key, data)
+values (
+  'trade_hubs',
+  $json${"hubs": [
+    {"id": "korea", "name": "South Korea", "flag": "🇰🇷", "flagUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Flag_of_South_Korea.svg/250px-Flag_of_South_Korea.svg.png", "lat": 37.56, "lon": 126.97, "leadTime": "5-7 Days", "categories": "K-Beauty & OEM Supplements", "moq": "1,000 Units", "type": "warehouse"},
+    {"id": "japan", "name": "Japan", "flag": "🇯🇵", "flagUrl": "https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Flag_of_Japan.svg/250px-Flag_of_Japan.svg.png", "lat": 35.67, "lon": 139.65, "leadTime": "6-9 Days", "categories": "Personal Care & Health", "moq": "800 Units", "type": "port"},
+    {"id": "china", "name": "China", "flag": "🇨🇳", "flagUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/250px-Flag_of_the_People%27s_Republic_of_China.svg.png", "lat": 23.12, "lon": 113.26, "leadTime": "4-6 Days", "categories": "Packaging & Wholesale Goods", "moq": "2,000 Units", "type": "factory"},
+    {"id": "vietnam", "name": "Vietnam", "flag": "🇻🇳", "flagUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Vietnam.svg/250px-Flag_of_Vietnam.svg.png", "lat": 10.82, "lon": 106.62, "leadTime": "1-3 Days", "categories": "Food Processing & Agribusiness", "moq": "300 Units", "type": "port"}
+  ]}$json$::jsonb
+)
+on conflict (section_key) do nothing;
+
 insert into hero_stats (label, value, sort_order) values
   ('Annual Trade Volume', '$50M+', 1),
   ('Audited Factories', '500+', 2),

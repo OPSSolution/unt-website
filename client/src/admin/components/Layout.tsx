@@ -11,13 +11,14 @@ import { ProductsManager } from '../pages/ProductsManager';
 import { PartnersManager } from '../pages/PartnersManager';
 import { TrainingEditor } from '../pages/TrainingEditor';
 import { ArticlesManager } from '../pages/ArticlesManager';
-import { ContactEditor } from '../pages/ContactEditor';
+import { TradeHubsEditor } from '../pages/TradeHubsEditor';
 import { Menu, Sun, Moon } from 'lucide-react';
 
 const PAGE_LABELS: Record<AdminPage, string> = {
   dashboard: 'Dashboard',
   home_hero: 'Hero Section',
   home_sections: 'Homepage Sections',
+  trade_hubs: 'World Map Hubs',
   about: 'About Page',
   services: 'Services Page',
   products: 'Products',
@@ -38,6 +39,7 @@ export function Layout() {
       case 'dashboard':     return <DashboardPage onNavigate={setPage} />;
       case 'home_hero':     return <HeroEditor />;
       case 'home_sections': return <HomeSectionsEditor />;
+      case 'trade_hubs':    return <TradeHubsEditor />;
       case 'about':         return <AboutEditor />;
       case 'services':      return <ServicesEditor />;
       case 'products':      return <ProductsManager />;
@@ -49,7 +51,7 @@ export function Layout() {
   };
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
+    <div className="flex h-screen w-screen overflow-hidden bg-slate-50 dark:bg-[#090D16] text-slate-900 dark:text-slate-100 transition-colors">
       <Sidebar
         active={page}
         onChange={setPage}
@@ -59,7 +61,7 @@ export function Layout() {
       />
       <div className="flex flex-col flex-1 min-w-0 h-full">
         {/* Top bar — mobile hamburger + theme toggle */}
-        <header className="flex items-center justify-between px-4 py-3 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shrink-0">
+        <header className="flex items-center justify-between px-4 py-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-white/10 shrink-0">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}
@@ -75,16 +77,16 @@ export function Layout() {
           </div>
           <button
             onClick={toggle}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-medium transition-colors"
+            className="btn-shine flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 text-xs font-bold transition-colors shadow-sm"
             title="Toggle theme"
           >
-            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            {theme === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
             <span className="hidden sm:inline">{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
           </button>
         </header>
 
         <div className="flex-1 flex flex-col min-h-0">
-          <div className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-950" id="admin-scroll">
+          <div className="flex-1 overflow-y-auto bg-slate-50 dark:bg-[#090D16] bg-ambient-mesh" id="admin-scroll">
             <div className="p-4 sm:p-6 lg:p-8">
               {renderPage()}
             </div>

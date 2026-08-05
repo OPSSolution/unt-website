@@ -35,11 +35,11 @@ export function LoginPage() {
   const inp = 'w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors';
 
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex items-center justify-center p-4 transition-colors">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#090D16] bg-ambient-mesh flex items-center justify-center p-4 transition-colors">
       {/* Theme toggle */}
       <button
         onClick={toggle}
-        className="fixed top-4 right-4 p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+        className="fixed top-4 right-4 p-2 rounded-full bg-white dark:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors backdrop-blur-sm"
       >
         {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
       </button>
@@ -53,7 +53,7 @@ export function LoginPage() {
           <p className="text-slate-500 dark:text-slate-500 text-sm">Restricted access — authorized personnel only</p>
         </div>
 
-        <form onSubmit={handleLogin} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-4 shadow-sm">
+        <form onSubmit={handleLogin} className="stripe-glass-card rounded-2xl p-6 space-y-4">
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Email</label>
             <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className={inp} placeholder="admin@untcompany.com" />
@@ -89,7 +89,7 @@ export function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold text-sm transition-colors"
+            className="btn-shine w-full py-2.5 rounded-full bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 disabled:opacity-50 text-white dark:text-slate-900 font-bold text-sm transition-colors shadow-lg"
           >
             {loading ? 'Verifying...' : 'Sign In'}
           </button>

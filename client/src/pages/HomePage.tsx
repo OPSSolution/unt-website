@@ -2,7 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { PageTab } from '../types';
 import { PRODUCTS, ARTICLES, PARTNERS } from '../data/mockData';
 import { ArrowRight, ShieldCheck, Globe, Truck, Package, Sparkles, CheckCircle2, ChevronRight, GraduationCap } from 'lucide-react';
-import { ThreeBackground, TRADE_HUBS } from '../components/ThreeBackground';
+import { ThreeBackground } from '../components/ThreeBackground';
+import { useTradeHubs } from '../hooks/useTradeHubs';
 import { ScrollReveal } from '../components/ScrollReveal';
 import { Card3D } from '../components/Card3D';
 import { CardSwiper } from '../components/CardSwiper';
@@ -20,6 +21,7 @@ export const HomePage: React.FC<HomePageProps> = ({
   onOpenProductModal,
   onOpenArticleModal,
 }) => {
+  const TRADE_HUBS = useTradeHubs();
   const [selectedOrigin, setSelectedOrigin] = useState<string>('all');
   const selectedHub = TRADE_HUBS.find((h) => h.id === selectedOrigin);
 
@@ -86,7 +88,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       {/* 1. Hero Section - Stripe Crypto Style Mesh Background with Interactive 3D Logistics Globe */}
       <section className="relative py-20 lg:py-28 flex items-center justify-center overflow-hidden bg-white/80 dark:bg-[#0B0F17]/90 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-300">
         {/* Interactive 3D Logistics Globe */}
-        <ThreeBackground activeOrigin={selectedOrigin} />
+        <ThreeBackground activeOrigin={selectedOrigin} hubs={TRADE_HUBS} />
 
         <div className="absolute inset-0 z-0 opacity-50 dark:opacity-30 pointer-events-none">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-400/20 via-cyan-500/10 to-transparent" />

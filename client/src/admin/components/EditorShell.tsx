@@ -29,7 +29,7 @@ export function SectionDivider({ label }: { label: string }) {
 
 export function Card({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 sm:p-6 ${className}`}>
+    <div className={`bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-white/10 rounded-2xl p-5 sm:p-6 shadow-sm dark:shadow-none backdrop-blur-sm ${className}`}>
       {children}
     </div>
   );
@@ -72,7 +72,7 @@ export function EditorShell({
         <button
           onClick={onSave}
           disabled={saving}
-          className="flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-60 text-white font-bold text-sm transition-colors shrink-0"
+          className="btn-shine flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-full bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 disabled:opacity-60 text-white dark:text-slate-900 font-bold text-sm transition-colors shrink-0 shadow-lg shadow-slate-900/20 dark:shadow-black/30"
         >
           {saved ? <CheckCircle className="w-4 h-4" /> : <Save className="w-4 h-4" />}
           <span className="hidden sm:inline">{saving ? 'Saving...' : saved ? 'Saved ✓' : 'Save Changes'}</span>
@@ -87,15 +87,15 @@ export function EditorShell({
       )}
 
       {tabs && onTabChange && (
-        <div className="flex gap-1 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-1 mt-5 mb-6 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+        <div className="flex gap-1 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-full p-1 mt-5 mb-6 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
           {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => onTabChange(tab)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${
                 activeTab === tab
-                  ? 'bg-emerald-600 text-white'
-                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white dark:hover:bg-slate-800'
+                  ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-sm'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/10'
               }`}
             >
               {tab}

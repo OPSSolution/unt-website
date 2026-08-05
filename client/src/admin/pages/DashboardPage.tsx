@@ -46,21 +46,26 @@ export function DashboardPage({ onNavigate }: Props) {
           <button
             key={card.id}
             onClick={() => onNavigate(card.id)}
-            className="group text-left p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-600 hover:shadow-md transition-all"
+            className="group text-left p-6 rounded-2xl stripe-glass-card stripe-card-tilt hover:border-emerald-400 dark:hover:border-emerald-500/60 transition-all"
           >
             <div className="flex items-start justify-between">
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-600/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/15 border border-emerald-200 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                 {card.icon}
               </div>
-              {card.count !== null && (
+              {card.count !== null ? (
                 <span className="text-2xl font-bold text-slate-900 dark:text-white">{card.count}</span>
+              ) : (
+                <span className="live-pulse-badge">
+                  <span className="live-pulse-dot" />
+                  <span>Live</span>
+                </span>
               )}
             </div>
             <div className="mt-4">
               <div className="text-slate-900 dark:text-white font-semibold">{card.label}</div>
-              <div className="text-slate-500 dark:text-slate-500 text-xs mt-0.5">{card.desc}</div>
+              <div className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">{card.desc}</div>
             </div>
-            <div className="mt-4 flex items-center text-xs font-semibold text-emerald-600 dark:text-emerald-500 group-hover:text-emerald-500 dark:group-hover:text-emerald-400">
+            <div className="mt-4 flex items-center text-xs font-semibold text-emerald-600 dark:text-emerald-400 group-hover:text-emerald-500 dark:group-hover:text-emerald-300">
               <span>Manage</span>
               <ArrowRight className="w-3.5 h-3.5 ml-1 group-hover:translate-x-1 transition-transform" />
             </div>
