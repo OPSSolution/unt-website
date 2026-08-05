@@ -4,6 +4,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
+
   html.dark,
   html.dark body,
   html.dark #root {
@@ -14,8 +15,14 @@
   body {
     font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
   }
-  
-  h1, h2, h3, h4, h5, h6, .font-display {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .font-display {
     font-family: 'Montserrat', system-ui, sans-serif;
   }
 
@@ -68,10 +75,10 @@
 
 .material-symbols-outlined {
   font-variation-settings:
-  'FILL' 0,
-  'wght' 400,
-  'GRAD' 0,
-  'opsz' 24;
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
   vertical-align: middle;
 }
 
@@ -84,25 +91,32 @@
   background-color: #0F172A;
 }
 
-.bg-unt-gold, .bg-unt-green {
+.bg-unt-gold,
+.bg-unt-green {
   background-color: #059669;
 }
 
-.text-unt-gold, .text-unt-green {
+.text-unt-gold,
+.text-unt-green {
   color: #10B981;
 }
 
-.border-unt-gold, .border-unt-green {
+.border-unt-gold,
+.border-unt-green {
   border-color: #059669;
 }
 
-.gold-gradient-text, .emerald-gradient-text, .green-gradient-text {
+.gold-gradient-text,
+.emerald-gradient-text,
+.green-gradient-text {
   background: linear-gradient(135deg, #34D399 0%, #10B981 50%, #059669 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.gold-gradient-bg, .emerald-gradient-bg, .green-gradient-bg {
+.gold-gradient-bg,
+.emerald-gradient-bg,
+.green-gradient-bg {
   background: linear-gradient(135deg, #10B981 0%, #059669 100%);
 }
 
@@ -112,7 +126,7 @@
 
 /* Executive Ambient Backgrounds & Glassmorphism */
 .bg-ambient-mesh {
-  background-image: 
+  background-image:
     radial-gradient(at 10% 10%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
     radial-gradient(at 90% 20%, rgba(52, 211, 153, 0.06) 0px, transparent 50%),
     radial-gradient(at 50% 80%, rgba(6, 78, 59, 0.08) 0px, transparent 50%);
@@ -120,7 +134,7 @@
 
 .dark .bg-ambient-mesh {
   background-color: #090D16 !important;
-  background-image: 
+  background-image:
     radial-gradient(at 50% 0%, rgba(16, 185, 129, 0.16) 0px, transparent 60%),
     radial-gradient(at 90% 20%, rgba(6, 182, 212, 0.1) 0px, transparent 50%),
     radial-gradient(at 10% 80%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
@@ -139,14 +153,14 @@
 
 .bg-grid-pattern {
   background-size: 40px 40px;
-  background-image: 
+  background-image:
     linear-gradient(to right, rgba(148, 163, 184, 0.1) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(148, 163, 184, 0.1) 1px, transparent 1px);
 }
 
 .dark .bg-grid-pattern {
   background-size: 48px 48px;
-  background-image: 
+  background-image:
     linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
 }
@@ -214,14 +228,14 @@
 }
 
 .stripe-mesh-glow {
-  background-image: 
+  background-image:
     radial-gradient(ellipse at 50% -10%, rgba(16, 185, 129, 0.22) 0%, transparent 60%),
     radial-gradient(at 80% 40%, rgba(6, 182, 212, 0.12) 0%, transparent 50%),
     radial-gradient(at 20% 80%, rgba(99, 102, 241, 0.08) 0%, transparent 50%);
 }
 
 .dark .stripe-mesh-glow {
-  background-image: 
+  background-image:
     radial-gradient(ellipse at 50% -5%, rgba(16, 185, 129, 0.25) 0%, transparent 60%),
     radial-gradient(at 85% 35%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
     radial-gradient(at 15% 75%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
@@ -244,11 +258,14 @@
 
 /* ── Live Show Pulse Badges & 3D Interactive Card Upgrades ── */
 @keyframes liveDotPulse {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
     box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
   }
+
   50% {
     transform: scale(1.15);
     opacity: 0.8;
@@ -327,10 +344,12 @@
     opacity: 0;
     transform: translateY(24px) scale(0.94);
   }
+
   60% {
     opacity: 1;
     transform: translateY(-4px) scale(1.01);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -342,6 +361,7 @@
     opacity: 0;
     transform: translateY(12px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -349,8 +369,13 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .animate-fadeIn {
@@ -377,19 +402,50 @@
 }
 
 /* Depth layers for parallax inside 3D tilt cards */
-.tz-10  { transform: translateZ(10px)  !important; }
-.tz-16  { transform: translateZ(16px)  !important; }
-.tz-20  { transform: translateZ(20px)  !important; }
-.tz-28  { transform: translateZ(28px)  !important; }
-.tz-36  { transform: translateZ(36px)  !important; }
-.tz-48  { transform: translateZ(48px)  !important; }
-.tz-64  { transform: translateZ(64px)  !important; }
+.tz-10 {
+  transform: translateZ(10px) !important;
+}
+
+.tz-16 {
+  transform: translateZ(16px) !important;
+}
+
+.tz-20 {
+  transform: translateZ(20px) !important;
+}
+
+.tz-28 {
+  transform: translateZ(28px) !important;
+}
+
+.tz-36 {
+  transform: translateZ(36px) !important;
+}
+
+.tz-48 {
+  transform: translateZ(48px) !important;
+}
+
+.tz-64 {
+  transform: translateZ(64px) !important;
+}
 
 /* Springy card pop-in entrance (used on scroll into view + live decks) */
 @keyframes popCard {
-  0%   { opacity: 0; transform: scale(0.86) translateY(34px); }
-  55%  { opacity: 1; transform: scale(1.035) translateY(-6px); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
+  0% {
+    opacity: 0;
+    transform: scale(0.86) translateY(34px);
+  }
+
+  55% {
+    opacity: 1;
+    transform: scale(1.035) translateY(-6px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .animate-pop-in {
@@ -398,9 +454,20 @@
 
 /* 3D flip-in animation for modals & swappable panels */
 @keyframes flipIn {
-  0%   { opacity: 0; transform: perspective(1200px) rotateX(18deg) scale(0.92) translateY(28px); }
-  60%  { opacity: 1; transform: perspective(1200px) rotateX(-3deg) scale(1.015) translateY(-4px); }
-  100% { opacity: 1; transform: perspective(1200px) rotateX(0deg) scale(1) translateY(0); }
+  0% {
+    opacity: 0;
+    transform: perspective(1200px) rotateX(18deg) scale(0.92) translateY(28px);
+  }
+
+  60% {
+    opacity: 1;
+    transform: perspective(1200px) rotateX(-3deg) scale(1.015) translateY(-4px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: perspective(1200px) rotateX(0deg) scale(1) translateY(0);
+  }
 }
 
 .animate-flip-in {
@@ -432,8 +499,13 @@
 
 /* Live progress bar for auto-cycling showcase */
 @keyframes liveProgress {
-  from { width: 0%; }
-  to   { width: 100%; }
+  from {
+    width: 0%;
+  }
+
+  to {
+    width: 100%;
+  }
 }
 
 .live-progress {
@@ -448,9 +520,17 @@
 
 /* Live pulse dot */
 @keyframes livePing {
-  0%   { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-  70%  { box-shadow: 0 0 0 9px rgba(239, 68, 68, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+
+  70% {
+    box-shadow: 0 0 0 9px rgba(239, 68, 68, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
 }
 
 .live-ping {
@@ -459,8 +539,13 @@
 
 /* Endless marquee for partner / brand live ticker */
 @keyframes marquee {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 .marquee-track {
@@ -488,8 +573,15 @@
 
 /* Card entrance rise for grids */
 @keyframes riseIn {
-  from { opacity: 0; transform: translateY(26px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(26px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .animate-rise-in {
@@ -501,7 +593,7 @@
   opacity: 0;
   will-change: opacity, transform;
   transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .reveal-up {
@@ -534,14 +626,37 @@
 }
 
 /* Stagger Delay Classes */
-.delay-75 { transition-delay: 75ms; }
-.delay-100 { transition-delay: 100ms; }
-.delay-150 { transition-delay: 150ms; }
-.delay-200 { transition-delay: 200ms; }
-.delay-300 { transition-delay: 300ms; }
-.delay-400 { transition-delay: 400ms; }
-.delay-500 { transition-delay: 500ms; }
-.delay-600 { transition-delay: 600ms; }
+.delay-75 {
+  transition-delay: 75ms;
+}
+
+.delay-100 {
+  transition-delay: 100ms;
+}
+
+.delay-150 {
+  transition-delay: 150ms;
+}
+
+.delay-200 {
+  transition-delay: 200ms;
+}
+
+.delay-300 {
+  transition-delay: 300ms;
+}
+
+.delay-400 {
+  transition-delay: 400ms;
+}
+
+.delay-500 {
+  transition-delay: 500ms;
+}
+
+.delay-600 {
+  transition-delay: 600ms;
+}
 
 /* ═══ Floating Super-Prime Pill Navigation (Dual Theme) ═══ */
 
@@ -598,15 +713,30 @@
 }
 
 @keyframes shineSweep {
-  0%   { left: -75%; }
-  55%  { left: 130%; }
-  100% { left: 130%; }
+  0% {
+    left: -75%;
+  }
+
+  55% {
+    left: 130%;
+  }
+
+  100% {
+    left: 130%;
+  }
 }
 
 /* Pulsing scan ring for AI search */
 @keyframes scanPulse {
-  0%, 100% { opacity: 0.35; }
-  50%      { opacity: 1; }
+
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 
 .ai-scan-icon {
@@ -634,13 +764,27 @@
 
 /* ═══ Circle Morphism UI System ═══ */
 @keyframes floatOrbSlow {
-  0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
-  50%      { transform: translateY(-18px) rotate(6deg) scale(1.04); }
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+
+  50% {
+    transform: translateY(-18px) rotate(6deg) scale(1.04);
+  }
 }
 
 @keyframes floatOrbReverse {
-  0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
-  50%      { transform: translateY(16px) rotate(-6deg) scale(0.96); }
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+
+  50% {
+    transform: translateY(16px) rotate(-6deg) scale(0.96);
+  }
 }
 
 .animate-float-orb {
@@ -673,6 +817,7 @@
     opacity: 0;
     transform: translateX(24px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -684,6 +829,7 @@
     opacity: 0;
     transform: translateX(-24px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
