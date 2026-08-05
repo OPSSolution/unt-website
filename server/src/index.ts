@@ -23,6 +23,10 @@ app.use("/api/partners", partnersRouter);
 app.use("/api/hero", heroRouter);
 app.use("/api/homepage", homepageRouter);
 
+app.get(["/admin", "/admin/"], (_req, res) => {
+  res.sendFile(path.join(clientDistPath, "admin.html"));
+});
+
 app.use(express.static(clientDistPath));
 
 const PORT = Number(process.env.PORT ?? 5000);
