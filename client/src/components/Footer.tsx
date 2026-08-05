@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { PageTab } from '../types';
-import { Mail, Phone, MapPin, Send, ShieldCheck, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Mail, Phone, MapPin, ShieldCheck, ArrowRight } from 'lucide-react';
 import { useHomepageSections } from '../hooks/useHomepageSections';
+import { footerNavigation, legalLinks, tradingSolutions } from './footer/data';
+import { NewsletterSignup } from './footer/NewsletterSignup';
 
 interface FooterProps {
   setActiveTab: (tab: PageTab) => void;
@@ -9,19 +11,8 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }) => {
-  const [newsletterEmail, setNewsletterEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
   const sections = useHomepageSections();
   const nb = sections.navbar_footer ?? {};
-
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newsletterEmail.trim()) {
-      setSubscribed(true);
-      setNewsletterEmail('');
-      setTimeout(() => setSubscribed(false), 5000);
-    }
-  };
 
   const navigateTo = (tab: PageTab) => {
     setActiveTab(tab);
@@ -89,41 +80,13 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }
           <div className="space-y-3 text-left">
             <h4 className="text-xs font-extrabold text-emerald-700 uppercase tracking-wider">Navigation</h4>
             <ul className="space-y-2 text-sm">
-              <li>
-                <button onClick={() => navigateTo('home')} className="hover:text-emerald-600 transition-colors">
-                  Home
-                </button>
-              </li>
-              <li>
-                <button onClick={() => navigateTo('about')} className="hover:text-emerald-600 transition-colors">
-                  About UNT Company
-                </button>
-              </li>
-              <li>
-                <button onClick={() => navigateTo('services')} className="hover:text-emerald-600 transition-colors">
-                  Sourcing-as-a-Service
-                </button>
-              </li>
-              <li>
-                <button onClick={() => navigateTo('products')} className="hover:text-emerald-600 transition-colors">
-                  Wholesale Catalog
-                </button>
-              </li>
-              <li>
-                <button onClick={() => navigateTo('training')} className="hover:text-emerald-600 transition-colors">
-                  Sales Capacity Training
-                </button>
-              </li>
-              <li>
-                <button onClick={() => navigateTo('blog')} className="hover:text-emerald-600 transition-colors">
-                  Market Insights & Reports
-                </button>
-              </li>
-              <li>
-                <button onClick={() => navigateTo('contact')} className="hover:text-emerald-600 transition-colors">
-                  Contact & Location
-                </button>
-              </li>
+              {footerNavigation.map(({ label, tab }) => (
+                <li key={tab}>
+                  <button onClick={() => navigateTo(tab)} className="hover:text-emerald-600 transition-colors">
+                    {label}
+                  </button>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -131,12 +94,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }
           <div className="space-y-3 text-left">
             <h4 className="text-xs font-extrabold text-emerald-700 uppercase tracking-wider">Trading Solutions</h4>
             <ul className="space-y-2 text-sm text-slate-600">
-              <li>OEM & Private Label Manufacturing</li>
-              <li>FMCG Distribution (F&B, Skincare)</li>
-              <li>Customs Clearance & Brokerage</li>
-              <li>Cold Chain & Warehousing</li>
-              <li>Quality Control & Audit Inspection</li>
-              <li>Corporate Sales Masterclasses</li>
+              {tradingSolutions.map((solution) => <li key={solution}>{solution}</li>)}
             </ul>
           </div>
 
@@ -147,31 +105,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }
               Subscribe to our bi-weekly ASEAN trade regulatory updates and wholesale tariff briefings.
             </p>
 
-            {subscribed ? (
-              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs flex items-center space-x-2">
-                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
-                <span>Subscribed successfully! Briefings sent bi-weekly.</span>
-              </div>
-            ) : (
-              <form onSubmit={handleNewsletterSubmit} className="space-y-2">
-                <div className="relative">
-                  <input
-                    type="email"
-                    required
-                    placeholder="Enter business email"
-                    value={newsletterEmail}
-                    onChange={(e) => setNewsletterEmail(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:bg-white transition-colors pr-10"
-                  />
-                  <button
-                    type="submit"
-                    className="absolute right-1 top-1 bottom-1 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg flex items-center justify-center transition-colors shadow-sm"
-                  >
-                    <Send className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </form>
-            )}
+            <NewsletterSignup />
 
             <div className="pt-2 text-xs space-y-1.5 text-slate-600">
               <div className="flex items-center space-x-2">
@@ -196,15 +130,11 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }
             © {new Date().getFullYear()} {nb.footer_copyright ?? 'Unique Noble Trading Co., Ltd. (UNT Company). All rights reserved.'}
           </div>
           <div className="flex items-center space-x-6">
-            <button onClick={() => navigateTo('contact')} className="hover:text-slate-700 transition-colors">
-              Privacy Policy
-            </button>
-            <button onClick={() => navigateTo('contact')} className="hover:text-slate-700 transition-colors">
-              Terms of Service
-            </button>
-            <button onClick={() => navigateTo('contact')} className="hover:text-slate-700 transition-colors">
-              GDCE Compliance
-            </button>
+            {legalLinks.map((label) => (
+              <button key={label} onClick={() => navigateTo('contact')} className="hover:text-slate-700 transition-colors">
+                {label}
+              </button>
+            ))}
           </div>
         </div>
       </div>

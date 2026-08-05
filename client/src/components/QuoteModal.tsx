@@ -35,9 +35,13 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose, presele
   const [animateIn, setAnimateIn] = useState(false);
 
   useEffect(() => {
-    if (isOpen) requestAnimationFrame(() => setAnimateIn(true));
-    else setAnimateIn(false);
-  }, [isOpen]);
+    if (isOpen) {
+      setFormData(initialFormData(preselectedProduct));
+      requestAnimationFrame(() => setAnimateIn(true));
+    } else {
+      setAnimateIn(false);
+    }
+  }, [isOpen, preselectedProduct]);
 
   if (!isOpen) return null;
 

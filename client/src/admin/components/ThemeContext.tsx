@@ -9,7 +9,8 @@ const ThemeContext = createContext<{ theme: Theme; toggle: () => void }>({
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
-    return (localStorage.getItem('unt-admin-theme') as Theme) ?? 'dark';
+    const savedTheme = localStorage.getItem('unt-admin-theme');
+    return savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : 'dark';
   });
 
   useEffect(() => {

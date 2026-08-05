@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useId, useRef, useState } from 'react';
 import { Upload, X, Loader } from 'lucide-react';
 import { supabase } from '../../supabaseClient';
 
@@ -13,6 +13,7 @@ export function ImageField({ label, value, onChange, bucket = 'uploads' }: Props
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+  const fieldId = useId();
 
   const handleFile = async (file: File) => {
     if (!supabase) return;
@@ -25,8 +26,8 @@ export function ImageField({ label, value, onChange, bucket = 'uploads' }: Props
       if (error) throw error;
       const { data } = supabase.storage.from(bucket).getPublicUrl(path);
       onChange(data.publicUrl);
-    } catch (e: any) {
-      setUploadError(e.message ?? 'Upload failed');
+    } catch (error: unknown) {
+      setUploadError(error instanceof Error ? error.message : 'Upload failed');
     } finally {
       setUploading(false);
     }
@@ -34,10 +35,11 @@ export function ImageField({ label, value, onChange, bucket = 'uploads' }: Props
 
   return (
     <div className="space-y-1.5">
-      <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{label}</label>
+      <label htmlFor={fieldId} className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{label}</label>
 
       <div className="flex gap-2">
         <input
+          id={fieldId}
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
@@ -76,6 +78,7 @@ export function ImageField({ label, value, onChange, bucket = 'uploads' }: Props
           />
           <button
             type="button"
+            aria-label={`Remove ${label}`}
             onClick={() => onChange('')}
             className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
           >

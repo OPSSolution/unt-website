@@ -2,28 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { api } from '../api';
 import { useAdminAuth } from '../hooks/useAdminAuth';
 import { useAutoSave } from '../hooks/useAutoSave';
-import { ImageField } from '../components/ImageField';
 import { EditorShell, Field, Card, SectionDivider } from '../components/EditorShell';
+import { HeroTab } from './homepage-editor/HeroTab';
+import { HOMEPAGE_TABS, HomepageSection, HomepageTab, HeroStat } from './homepage-editor/types';
 
 // ── Tabs mirror the 7 sections in HomePage.tsx ──────────────────────────────
-const TABS = [
-  '1. Hero',
-  '2. Pillars',
-  '3. Heritage',
-  '4. Products Section',
-  '5. OEM Banner',
-  '6. Partners',
-  '7. Market Insights',
-] as const;
-type Tab = typeof TABS[number];
-
 export function HomepageEditor() {
   const { token } = useAdminAuth();
-  const [activeTab, setActiveTab] = useState<Tab>('1. Hero');
+  const [activeTab, setActiveTab] = useState<HomepageTab>('1. Hero');
 
   // Section data states
-  const [hero, setHero] = useState<any>(null);
-  const [stats, setStats] = useState<any[]>([]);
+  const [hero, setHero] = useState<HomepageSection | null>(null);
+  const [stats, setStats] = useState<HeroStat[]>([]);
   const [pillars, setPillars] = useState<any>(null);
   const [heritage, setHeritage] = useState<any>(null);
   const [products, setProducts] = useState<any>(null);
@@ -31,7 +21,7 @@ export function HomepageEditor() {
   const [partners, setPartners] = useState<any>(null);
   const [insights, setInsights] = useState<any>(null);
 
-  const [heroGlobe, setHeroGlobe] = useState<any>(null);
+  const [heroGlobe, setHeroGlobe] = useState<HomepageSection | null>(null);
 
   const [loaded, setLoaded] = useState(false);
   const [loadError, setLoadError] = useState('');
@@ -43,7 +33,7 @@ export function HomepageEditor() {
       if (!token) return;
       const saves: Promise<any>[] = [];
       if (d.hero) saves.push(api.updateHeroContent(d.hero, token));
-      if (d.stats?.length) saves.push(...d.stats.map((s: any) => api.updateHeroStat(s.id, s, token)));
+      if (d.stats?.length) saves.push(...d.stats.map((stat) => api.updateHeroStat(stat.id, stat, token)));
       if (d.pillars) saves.push(api.updateHomepageSection('pillars', d.pillars, token));
       if (d.heritage) saves.push(api.updateHomepageSection('heritage', d.heritage, token));
       if (d.products) saves.push(api.updateHomepageSection('products_section', d.products, token));
@@ -111,8 +101,10 @@ export function HomepageEditor() {
     } catch (e: any) { /* auto-save will show errors */ }
   };
 
-  const sh = (key: string) => (v: string) => setHero((c: any) => ({ ...c, [key]: v }));
-  const shg = (key: string) => (v: string) => setHeroGlobe((c: any) => ({ ...c, [key]: v }));
+  const sh = (key: string) => (value: string) => setHero((current) => ({ ...current, [key]: value }));
+  const shg = (key: string) => (value: string) => setHeroGlobe((current) => ({ ...current, [key]: value }));
+  const updateStat = (index: number, changes: Partial<HeroStat>) => setStats((current) =>
+    current.map((stat, itemIndex) => itemIndex === index ? { ...stat, ...changes } : stat));
   const sp = (key: string) => (v: string) => setPillars((c: any) => ({ ...c, [key]: v }));
   const she = (key: string) => (v: string) => setHeritage((c: any) => ({ ...c, [key]: v }));
   const spr = (key: string) => (v: string) => setProducts((c: any) => ({ ...c, [key]: v }));
@@ -129,57 +121,20 @@ export function HomepageEditor() {
       saving={saving} saved={saved} error={error} onSave={handleSave}
       loading={!isLoaded && !loadError}
       autoSaving={autoSaving} autoSaved={autoSaved} autoSaveError={autoSaveError} dirty={dirty}
-      tabs={[...TABS]} activeTab={activeTab} onTabChange={(t) => setActiveTab(t as Tab)}
+      tabs={[...HOMEPAGE_TABS]} activeTab={activeTab} onTabChange={(tab) => setActiveTab(tab as HomepageTab)}
     >
       {isLoaded && (
         <>
           {/* ── Section 1: Hero ─────────────────────────────────────────── */}
-          {activeTab === '1. Hero' && (
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-              <div className="space-y-6">
-                <Card>
-                  <div className="space-y-4">
-                    <SectionDivider label="Hero Badge & Copy" />
-                    <Field label="Badge Text" value={hero.badge_text ?? ''} onChange={sh('badge_text')} />
-                    <Field label="Headline" value={hero.headline ?? ''} onChange={sh('headline')} multiline rows={3} />
-                    <Field label="Subtitle" value={hero.subtitle ?? ''} onChange={sh('subtitle')} multiline rows={3} />
-                    <div className="grid grid-cols-2 gap-4">
-                      <Field label="Primary CTA" value={hero.cta_primary ?? ''} onChange={sh('cta_primary')} />
-                      <Field label="Secondary CTA" value={hero.cta_secondary ?? ''} onChange={sh('cta_secondary')} />
-                    </div>
-                  </div>
-                </Card>
-                <Card>
-                  <div className="space-y-4">
-                    <SectionDivider label="Globe Selector Label" />
-                    <Field label="Globe Instruction Text" value={heroGlobe.globe_label ?? 'Interactive 3D Trade Hub Focus: Select Origin to Rotate 3D Globe'} onChange={shg('globe_label')} />
-                    <Field label='"All" Button Label' value={heroGlobe.globe_all_label ?? 'Global ASEAN Network'} onChange={shg('globe_all_label')} />
-                  </div>
-                </Card>
-              </div>
-              <div className="space-y-6">
-                <Card>
-                  <div className="space-y-4">
-                    <SectionDivider label="Stats Cards (4 cards below hero)" />
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {stats.map((stat, i) => (
-                        <div key={stat.id} className="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-3">
-                          <p className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Stat {i + 1}</p>
-                          <Field label="Value" value={stat.value} onChange={(v) => setStats(stats.map((s, idx) => idx === i ? { ...s, value: v } : s))} />
-                          <Field label="Label" value={stat.label} onChange={(v) => setStats(stats.map((s, idx) => idx === i ? { ...s, label: v } : s))} />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </Card>
-                <Card>
-                  <div className="space-y-4">
-                    <SectionDivider label="Feature Image (Heritage section)" />
-                    <ImageField label="Image" value={hero.feature_image ?? ''} onChange={sh('feature_image')} />
-                  </div>
-                </Card>
-              </div>
-            </div>
+          {activeTab === '1. Hero' && heroGlobe && (
+            <HeroTab
+              hero={hero}
+              heroGlobe={heroGlobe}
+              stats={stats}
+              setHeroField={sh}
+              setGlobeField={shg}
+              updateStat={updateStat}
+            />
           )}
 
           {/* ── Section 2: Three Pillars ─────────────────────────────────── */}

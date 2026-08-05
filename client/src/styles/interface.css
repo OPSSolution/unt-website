@@ -1,0 +1,183 @@
+/* Floating pill - light */
+.nav-pill {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 12px 40px -12px rgba(15, 23, 42, 0.18);
+}
+
+/* Floating pill - dark */
+.dark .nav-pill {
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.8), inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+}
+
+/* Scrolled - light */
+.nav-pill-scrolled {
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  box-shadow: 0 20px 60px -16px rgba(15, 23, 42, 0.28);
+}
+
+/* Scrolled - dark */
+.dark .nav-pill-scrolled {
+  background: rgba(11, 15, 23, 0.94);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  box-shadow: 0 24px 70px -16px rgba(0, 0, 0, 0.95), inset 0 1px 0 0 rgba(52, 211, 153, 0.2);
+}
+
+/* Shine sweep for the primary CTA */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(105deg, transparent 0%, rgba(255, 255, 255, 0.45) 50%, transparent 100%);
+  transform: skewX(-20deg);
+  animation: shineSweep 3.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes shineSweep {
+  0% {
+    left: -75%;
+  }
+
+  55% {
+    left: 130%;
+  }
+
+  100% {
+    left: 130%;
+  }
+}
+
+/* Pulsing scan ring for AI search */
+@keyframes scanPulse {
+
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.ai-scan-icon {
+  animation: scanPulse 2.2s ease-in-out infinite;
+}
+
+/* Mega-menu caret connector (little glowing notch) */
+.mega-caret {
+  position: absolute;
+  top: -6px;
+  left: 28px;
+  width: 12px;
+  height: 12px;
+  transform: rotate(45deg);
+  background: #ffffff;
+  border-left: 1px solid rgba(226, 232, 240, 0.9);
+  border-top: 1px solid rgba(226, 232, 240, 0.9);
+}
+
+.dark .mega-caret {
+  background: #0F172A;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Circle Morphism UI System */
+@keyframes floatOrbSlow {
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+
+  50% {
+    transform: translateY(-18px) rotate(6deg) scale(1.04);
+  }
+}
+
+@keyframes floatOrbReverse {
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+
+  50% {
+    transform: translateY(16px) rotate(-6deg) scale(0.96);
+  }
+}
+
+.animate-float-orb {
+  animation: floatOrbSlow 8s ease-in-out infinite;
+}
+
+.animate-float-orb-reverse {
+  animation: floatOrbReverse 10s ease-in-out infinite;
+}
+
+.glass-circle-morphism {
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.08));
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 20px 50px -15px rgba(16, 185, 129, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+}
+
+.dark .glass-circle-morphism {
+  background: radial-gradient(circle at 30% 30%, rgba(16, 185, 129, 0.18), rgba(15, 23, 42, 0.35));
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 25px 60px -20px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+}
+
+/* Multi-Step Modal Animations */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slideInRight {
+  animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-slideInLeft {
+  animation: slideInLeft 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
