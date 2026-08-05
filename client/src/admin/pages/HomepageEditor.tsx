@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../api';
 import { useAdminAuth } from '../hooks/useAdminAuth';
+import { useAutoSave } from '../hooks/useAutoSave';
 import { ImageField } from '../components/ImageField';
 import { EditorShell, Field, Card, SectionDivider } from '../components/EditorShell';
 
@@ -32,9 +33,29 @@ export function HomepageEditor() {
 
   const [heroGlobe, setHeroGlobe] = useState<any>(null);
 
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [error, setError] = useState('');
+  const [loaded, setLoaded] = useState(false);
+  const [loadError, setLoadError] = useState('');
+
+  const { saving, saved, error, dirty, autoSaving, autoSaved, autoSaveError } = useAutoSave(
+    'homepage',
+    { hero, stats, pillars, heritage, products, oem, partners, insights, heroGlobe },
+    async (d) => {
+      if (!token) return;
+      const saves: Promise<any>[] = [];
+      if (d.hero) saves.push(api.updateHeroContent(d.hero, token));
+      if (d.stats?.length) saves.push(...d.stats.map((s: any) => api.updateHeroStat(s.id, s, token)));
+      if (d.pillars) saves.push(api.updateHomepageSection('pillars', d.pillars, token));
+      if (d.heritage) saves.push(api.updateHomepageSection('heritage', d.heritage, token));
+      if (d.products) saves.push(api.updateHomepageSection('products_section', d.products, token));
+      if (d.oem) saves.push(api.updateHomepageSection('oem_banner', d.oem, token));
+      if (d.partners) saves.push(api.updateHomepageSection('partners_section', d.partners, token));
+      if (d.insights) saves.push(api.updateHomepageSection('insights_section', d.insights, token));
+      if (d.heroGlobe) saves.push(api.updateHomepageSection('hero_globe', d.heroGlobe, token));
+      await Promise.all(saves);
+    },
+    1500,
+    loaded
+  );
 
   useEffect(() => {
     Promise.all([
@@ -69,12 +90,12 @@ export function HomepageEditor() {
         globe_label: 'Interactive 3D Trade Hub Focus: Select Origin to Rotate 3D Globe',
         globe_all_label: 'Global ASEAN Network',
       });
-    }).catch(() => setError('Failed to load. Make sure the server is running.'));
+    }).catch(() => setLoadError('Failed to load. Make sure the server is running.'))
+      .finally(() => setLoaded(true));
   }, []);
 
   const handleSave = async () => {
     if (!token) return;
-    setSaving(true); setError('');
     try {
       await Promise.all([
         api.updateHeroContent(hero, token),
@@ -87,9 +108,7 @@ export function HomepageEditor() {
         api.updateHomepageSection('insights_section', insights, token),
         api.updateHomepageSection('hero_globe', heroGlobe, token),
       ]);
-      setSaved(true); setTimeout(() => setSaved(false), 2500);
-    } catch (e: any) { setError(e.message); }
-    finally { setSaving(false); }
+    } catch (e: any) { /* auto-save will show errors */ }
   };
 
   const sh = (key: string) => (v: string) => setHero((c: any) => ({ ...c, [key]: v }));
@@ -106,9 +125,10 @@ export function HomepageEditor() {
   return (
     <EditorShell
       title="Homepage Editor"
-      description="Edit every section of the homepage — follows the exact page structure."
+      description="Edit every section of the homepage — follows the exact page structure. Changes are saved automatically."
       saving={saving} saved={saved} error={error} onSave={handleSave}
-      loading={!isLoaded && !error}
+      loading={!isLoaded && !loadError}
+      autoSaving={autoSaving} autoSaved={autoSaved} autoSaveError={autoSaveError} dirty={dirty}
       tabs={[...TABS]} activeTab={activeTab} onTabChange={(t) => setActiveTab(t as Tab)}
     >
       {isLoaded && (

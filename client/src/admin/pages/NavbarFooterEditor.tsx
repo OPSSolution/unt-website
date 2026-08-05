@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../api';
 import { useAdminAuth } from '../hooks/useAdminAuth';
+import { useAutoSave } from '../hooks/useAutoSave';
 import { EditorShell, Field, Card, SectionDivider } from '../components/EditorShell';
 
 const DEFAULTS = {
@@ -26,10 +27,18 @@ export function NavbarFooterEditor() {
   const { token } = useAdminAuth();
   const [data, setData] = useState<any>(DEFAULTS);
   const [activeTab, setActiveTab] = useState<Tab>('Navbar');
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+
+  const { saving, saved, error, dirty, autoSaving, autoSaved, autoSaveError } = useAutoSave(
+    'navbar_footer',
+    data,
+    async (d) => {
+      if (!token) return;
+      await api.updateHomepageSection('navbar_footer', d, token);
+    },
+    1500,
+    !loading
+  );
 
   useEffect(() => {
     api.getHomepageSection('navbar_footer')
@@ -42,20 +51,18 @@ export function NavbarFooterEditor() {
 
   const handleSave = async () => {
     if (!token) return;
-    setSaving(true); setError('');
     try {
       await api.updateHomepageSection('navbar_footer', data, token);
-      setSaved(true); setTimeout(() => setSaved(false), 2500);
-    } catch (e: any) { setError(e.message); }
-    finally { setSaving(false); }
+    } catch (e: any) { /* auto-save will show errors */ }
   };
 
   return (
     <EditorShell
       title="Navbar & Footer"
-      description="Control company branding, CTA button labels, footer callout content, and copyright text."
+      description="Control company branding, CTA button labels, footer callout content, and copyright text. Changes are saved automatically."
       saving={saving} saved={saved} error={error} onSave={handleSave}
       loading={loading}
+      autoSaving={autoSaving} autoSaved={autoSaved} autoSaveError={autoSaveError} dirty={dirty}
       tabs={[...TABS]} activeTab={activeTab} onTabChange={(t) => setActiveTab(t as Tab)}
     >
       {activeTab === 'Navbar' && (

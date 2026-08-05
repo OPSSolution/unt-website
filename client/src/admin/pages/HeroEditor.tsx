@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../api';
 import { useAdminAuth } from '../hooks/useAdminAuth';
+import { useAutoSave } from '../hooks/useAutoSave';
 import { ImageField } from '../components/ImageField';
 import { EditorShell, Field, Card, SectionDivider } from '../components/EditorShell';
 
@@ -8,26 +9,33 @@ export function HeroEditor() {
   const { token } = useAdminAuth();
   const [content, setContent] = useState<any>(null);
   const [stats, setStats] = useState<any[]>([]);
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [error, setError] = useState('');
+  const [loaded, setLoaded] = useState(false);
+  const [loadError, setLoadError] = useState('');
+
+  const { saving, saved, error, dirty, autoSaving, autoSaved, autoSaveError } = useAutoSave(
+    'hero',
+    content,
+    async (c) => {
+      if (!token) return;
+      await api.updateHeroContent(c, token);
+      await Promise.all(stats.map((s) => api.updateHeroStat(s.id, s, token)));
+    },
+    1500,
+    loaded
+  );
 
   useEffect(() => {
     Promise.all([api.getHeroContent(), api.getHeroStats()])
-      .then(([c, s]) => { setContent(c); setStats(s); })
-      .catch(() => setError('Failed to load hero data. Make sure the server is running.'));
+      .then(([c, s]) => { setContent(c); setStats(s); setLoaded(true); })
+      .catch(() => setLoadError('Failed to load hero data. Make sure the server is running.'));
   }, []);
 
   const handleSave = async () => {
     if (!token) return;
-    setSaving(true); setError('');
     try {
       await api.updateHeroContent(content, token);
       await Promise.all(stats.map((s) => api.updateHeroStat(s.id, s, token)));
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2500);
-    } catch (e: any) { setError(e.message); }
-    finally { setSaving(false); }
+    } catch (e: any) { /* auto-save will show errors */ }
   };
 
   const set = (key: string) => (v: string) => setContent((c: any) => ({ ...c, [key]: v }));
@@ -35,11 +43,12 @@ export function HeroEditor() {
   return (
     <EditorShell
       title="Hero Section"
-      description="Edit the homepage hero headline, badge, CTA buttons and stats."
+      description="Edit the homepage hero headline, badge, CTA buttons and stats. Changes are saved automatically."
       saving={saving} saved={saved} error={error} onSave={handleSave}
-      loading={!content && !error}
+      loading={!content && !loadError}
+      autoSaving={autoSaving} autoSaved={autoSaved} autoSaveError={autoSaveError} dirty={dirty}
     >
-      {error && !content ? null : content && (
+      {loadError && !content ? null : content && (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           {/* Left column */}
           <div className="space-y-6">

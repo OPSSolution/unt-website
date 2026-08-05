@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../api';
 import { useAdminAuth } from '../hooks/useAdminAuth';
+import { useAutoSave } from '../hooks/useAutoSave';
 import { EditorShell, Field, Card, SectionDivider } from '../components/EditorShell';
 
 const DEFAULTS = {
@@ -12,10 +13,18 @@ const DEFAULTS = {
 export function ProductsPageEditor() {
   const { token } = useAdminAuth();
   const [data, setData] = useState<any>(DEFAULTS);
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+
+  const { saving, saved, error, dirty, autoSaving, autoSaved, autoSaveError } = useAutoSave(
+    'products_page',
+    data,
+    async (d) => {
+      if (!token) return;
+      await api.updateHomepageSection('products_page', d, token);
+    },
+    1500,
+    !loading
+  );
 
   useEffect(() => {
     api.getHomepageSection('products_page')
@@ -28,20 +37,18 @@ export function ProductsPageEditor() {
 
   const handleSave = async () => {
     if (!token) return;
-    setSaving(true); setError('');
     try {
       await api.updateHomepageSection('products_page', data, token);
-      setSaved(true); setTimeout(() => setSaved(false), 2500);
-    } catch (e: any) { setError(e.message); }
-    finally { setSaving(false); }
+    } catch (e: any) { /* auto-save will show errors */ }
   };
 
   return (
     <EditorShell
       title="Products Catalog Page"
-      description="Edit the header content shown on the full Products Catalog page."
+      description="Edit the header content shown on the full Products Catalog page. Changes are saved automatically."
       saving={saving} saved={saved} error={error} onSave={handleSave}
       loading={loading}
+      autoSaving={autoSaving} autoSaved={autoSaved} autoSaveError={autoSaveError} dirty={dirty}
     >
       <Card className="max-w-2xl">
         <div className="space-y-4">

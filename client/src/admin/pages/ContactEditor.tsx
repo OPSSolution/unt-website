@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../api';
 import { useAdminAuth } from '../hooks/useAdminAuth';
+import { useAutoSave } from '../hooks/useAutoSave';
 import { EditorShell, Field, Card, SectionDivider } from '../components/EditorShell';
 
 const DEFAULTS = {
@@ -26,10 +27,18 @@ export function ContactEditor() {
   const { token } = useAdminAuth();
   const [data, setData] = useState<any>(DEFAULTS);
   const [activeTab, setActiveTab] = useState<Tab>('Header');
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+
+  const { saving, saved, error, dirty, autoSaving, autoSaved, autoSaveError } = useAutoSave(
+    'contact_page',
+    data,
+    async (d) => {
+      if (!token) return;
+      await api.updateHomepageSection('contact_page', d, token);
+    },
+    1500,
+    !loading
+  );
 
   useEffect(() => {
     api.getHomepageSection('contact_page')
@@ -42,20 +51,18 @@ export function ContactEditor() {
 
   const handleSave = async () => {
     if (!token) return;
-    setSaving(true); setError('');
     try {
       await api.updateHomepageSection('contact_page', data, token);
-      setSaved(true); setTimeout(() => setSaved(false), 2500);
-    } catch (e: any) { setError(e.message); }
-    finally { setSaving(false); }
+    } catch (e: any) { /* auto-save will show errors */ }
   };
 
   return (
     <EditorShell
       title="Contact Page"
-      description="Edit contact info, address, phone, and email shown on the Contact page."
+      description="Edit contact info, address, phone, and email shown on the Contact page. Changes are saved automatically."
       saving={saving} saved={saved} error={error} onSave={handleSave}
       loading={loading}
+      autoSaving={autoSaving} autoSaved={autoSaved} autoSaveError={autoSaveError} dirty={dirty}
       tabs={[...TABS]} activeTab={activeTab} onTabChange={(t) => setActiveTab(t as Tab)}
     >
       {activeTab === 'Header' && (
