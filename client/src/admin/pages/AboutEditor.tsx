@@ -5,6 +5,8 @@ import { useAutoSave } from '../hooks/useAutoSave';
 import { ImageField } from '../components/ImageField';
 import { EditorShell, Field, Card, SectionDivider } from '../components/EditorShell';
 import { Plus, Trash2 } from 'lucide-react';
+import { AboutPageData, Advantage, NetworkHub, normalizeAboutData } from './about-editor/data';
+import { HeaderTab } from './about-editor/HeaderTab';
 
 const DEFAULTS = {
   badge: 'About UNT Company',
@@ -38,7 +40,7 @@ type Tab = typeof TABS[number];
 
 export function AboutEditor() {
   const { token } = useAdminAuth();
-  const [data, setData] = useState<any>(DEFAULTS);
+  const [data, setData] = useState<AboutPageData>(() => normalizeAboutData(DEFAULTS));
   const [activeTab, setActiveTab] = useState<Tab>('Header');
   const [loading, setLoading] = useState(true);
 
@@ -74,20 +76,28 @@ export function AboutEditor() {
               desc: d[`hub${n}_desc`] || DEFAULTS[`hub${n}_desc` as keyof typeof DEFAULTS]
             }));
           }
-          setData(d); 
+          setData(normalizeAboutData(d));
         } 
       })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
-  const set = (key: string) => (v: string) => setData((d: any) => ({ ...d, [key]: v }));
+  const set = (key: string) => (value: string) => setData((current) => ({ ...current, [key]: value }));
+  const updateAdvantage = (index: number, changes: Partial<Advantage>) => setData((current) => ({
+    ...current,
+    advantages: current.advantages.map((advantage, itemIndex) => itemIndex === index ? { ...advantage, ...changes } : advantage),
+  }));
+  const updateHub = (index: number, changes: Partial<NetworkHub>) => setData((current) => ({
+    ...current,
+    network_hubs: current.network_hubs.map((hub, itemIndex) => itemIndex === index ? { ...hub, ...changes } : hub),
+  }));
 
   const handleSave = async () => {
     if (!token) return;
     try {
       await api.updateHomepageSection('about_page', data, token);
-    } catch (e: any) { /* auto-save will show errors */ }
+    } catch { /* Auto-save reports the error in the editor shell. */ }
   };
 
   return (
@@ -99,43 +109,7 @@ export function AboutEditor() {
       autoSaving={autoSaving} autoSaved={autoSaved} autoSaveError={autoSaveError} dirty={dirty}
       tabs={[...TABS]} activeTab={activeTab} onTabChange={(t) => setActiveTab(t as Tab)}
     >
-      {activeTab === 'Header' && (
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-          <Card>
-            <div className="space-y-4">
-              <SectionDivider label="Page Header Copy" />
-              <Field label="Badge Text (Top Label)" value={data.badge} onChange={set('badge')} />
-              <Field label="Main Headline" value={data.headline} onChange={set('headline')} multiline rows={2} />
-              <Field label="Subheadline Paragraph" value={data.subheadline} onChange={set('subheadline')} multiline rows={5} />
-            </div>
-          </Card>
-
-          <Card>
-            <div className="space-y-4 h-full flex flex-col">
-              <SectionDivider label="Live Preview" />
-              <div className="flex-1 bg-slate-900 rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-4 border border-slate-800 shadow-inner relative overflow-hidden">
-                {/* Decorative background effects for preview */}
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-900/40 via-transparent to-transparent pointer-events-none" />
-                
-                <div className="relative z-10 space-y-4">
-                  <span className="inline-block px-3 py-1 bg-emerald-950/80 border border-emerald-800 text-emerald-300 text-xs font-bold uppercase tracking-wider rounded-full shadow-sm">
-                    {data.badge || 'Badge Text'}
-                  </span>
-                  <h2 className="text-3xl font-display font-bold text-white tracking-tight leading-tight">
-                    {data.headline || 'Main Headline'}
-                  </h2>
-                  <p className="text-slate-300 text-sm max-w-md mx-auto leading-relaxed">
-                    {data.subheadline || 'Subheadline text will appear here...'}
-                  </p>
-                </div>
-              </div>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 text-center font-medium">
-                Preview of the hero header on the public About Us page
-              </p>
-            </div>
-          </Card>
-        </div>
-      )}
+      {activeTab === 'Header' && <HeaderTab data={data} setField={set} />}
 
       {activeTab === 'Mission' && (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
@@ -185,8 +159,7 @@ export function AboutEditor() {
                 <Field label="Section Heading" value={data.adv_heading} onChange={set('adv_heading')} />
                 <button
                   onClick={() => {
-                    const newAdvantages = [...(data.advantages || []), { title: 'New Advantage', desc: 'Description', icon: 'Star' }];
-                    setData({ ...data, advantages: newAdvantages });
+                    setData((current) => ({ ...current, advantages: [...current.advantages, { title: 'New Advantage', desc: 'Description', icon: 'Star' }] }));
                   }}
                   className="mt-4 flex items-center justify-center gap-2 w-full px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold text-sm transition-colors"
                 >
@@ -197,16 +170,14 @@ export function AboutEditor() {
           </div>
           <div className="xl:col-span-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {(data.advantages || []).map((adv: any, i: number) => (
+              {data.advantages.map((adv, i) => (
                 <Card key={i}>
                   <div className="space-y-3 relative">
                     <div className="flex items-center justify-between">
                       <SectionDivider label={`Advantage ${i + 1}`} />
                       <button
                         onClick={() => {
-                          const newAdv = [...data.advantages];
-                          newAdv.splice(i, 1);
-                          setData({ ...data, advantages: newAdv });
+                          setData((current) => ({ ...current, advantages: current.advantages.filter((_, index) => index !== i) }));
                         }}
                         className="text-red-400 hover:text-red-500 transition-colors p-1"
                         title="Remove Advantage"
@@ -220,9 +191,7 @@ export function AboutEditor() {
                       <select 
                         value={adv.icon || 'Star'} 
                         onChange={(e) => {
-                          const newAdv = [...data.advantages];
-                          newAdv[i].icon = e.target.value;
-                          setData({ ...data, advantages: newAdv });
+                          updateAdvantage(i, { icon: e.target.value });
                         }}
                         className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white"
                       >
@@ -236,18 +205,14 @@ export function AboutEditor() {
                       label="Title" 
                       value={adv.title} 
                       onChange={(val) => {
-                        const newAdv = [...data.advantages];
-                        newAdv[i].title = val;
-                        setData({ ...data, advantages: newAdv });
+                        updateAdvantage(i, { title: val });
                       }} 
                     />
                     <Field 
                       label="Description" 
                       value={adv.desc} 
                       onChange={(val) => {
-                        const newAdv = [...data.advantages];
-                        newAdv[i].desc = val;
-                        setData({ ...data, advantages: newAdv });
+                        updateAdvantage(i, { desc: val });
                       }} 
                       multiline 
                     />
@@ -283,16 +248,14 @@ export function AboutEditor() {
           </div>
           <div className="xl:col-span-8">
             <div className="space-y-4">
-              {(data.network_hubs || []).map((hub: any, i: number) => (
+              {data.network_hubs.map((hub, i) => (
                 <Card key={i}>
                   <div className="space-y-3 relative">
                     <div className="flex items-center justify-between">
                       <SectionDivider label={`Hub ${i + 1}`} />
                       <button
                         onClick={() => {
-                          const newHubs = [...data.network_hubs];
-                          newHubs.splice(i, 1);
-                          setData({ ...data, network_hubs: newHubs });
+                          setData((current) => ({ ...current, network_hubs: current.network_hubs.filter((_, index) => index !== i) }));
                         }}
                         className="text-red-400 hover:text-red-500 transition-colors p-1"
                         title="Remove Hub"
@@ -304,27 +267,21 @@ export function AboutEditor() {
                       label="Flag Emojis" 
                       value={hub.flags} 
                       onChange={(val) => {
-                        const newHubs = [...data.network_hubs];
-                        newHubs[i].flags = val;
-                        setData({ ...data, network_hubs: newHubs });
+                        updateHub(i, { flags: val });
                       }} 
                     />
                     <Field 
                       label="Title" 
                       value={hub.title} 
                       onChange={(val) => {
-                        const newHubs = [...data.network_hubs];
-                        newHubs[i].title = val;
-                        setData({ ...data, network_hubs: newHubs });
+                        updateHub(i, { title: val });
                       }} 
                     />
                     <Field 
                       label="Description" 
                       value={hub.desc} 
                       onChange={(val) => {
-                        const newHubs = [...data.network_hubs];
-                        newHubs[i].desc = val;
-                        setData({ ...data, network_hubs: newHubs });
+                        updateHub(i, { desc: val });
                       }} 
                       multiline 
                     />

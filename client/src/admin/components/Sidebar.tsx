@@ -1,17 +1,8 @@
-import React from 'react';
-import { LayoutDashboard, Package, FileText, Users, Sparkles, LogOut, Globe, Home, Info, Wrench, GraduationCap, Newspaper, Phone, X, Layout } from 'lucide-react';
+import { LogOut, X } from 'lucide-react';
 import { supabase } from '../../supabaseClient';
+import { AdminPage, NAV_GROUPS } from './sidebar/navigation';
 
-export type AdminPage =
-  | 'dashboard'
-  | 'homepage' | 'trade_hubs'
-  | 'about'
-  | 'services'
-  | 'products' | 'products_page' | 'partners'
-  | 'training'
-  | 'articles' | 'blog'
-  | 'contact'
-  | 'navbar_footer';
+export type { AdminPage } from './sidebar/navigation';
 
 interface Props {
   active: AdminPage;
@@ -19,56 +10,6 @@ interface Props {
   adminEmail: string;
 }
 
-type NavGroup = { label: string; items: { id: AdminPage; label: string; icon: React.ReactNode }[] };
-
-const NAV_GROUPS: NavGroup[] = [
-  {
-    label: 'General',
-    items: [{ id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-4 h-4" /> }],
-  },
-  {
-    label: 'Home',
-    items: [
-      { id: 'homepage',   label: 'Homepage Editor', icon: <Home className="w-4 h-4" /> },
-      { id: 'trade_hubs', label: 'World Map Hubs',  icon: <Globe className="w-4 h-4" /> },
-    ],
-  },
-  {
-    label: 'About Us',
-    items: [{ id: 'about', label: 'About Page', icon: <Info className="w-4 h-4" /> }],
-  },
-  {
-    label: 'Services & Sourcing',
-    items: [{ id: 'services', label: 'Services Page', icon: <Wrench className="w-4 h-4" /> }],
-  },
-  {
-    label: 'Wholesale Catalog',
-    items: [
-      { id: 'products_page', label: 'Catalog Page Header', icon: <Package className="w-4 h-4" /> },
-      { id: 'products',      label: 'Products',            icon: <Package className="w-4 h-4" /> },
-      { id: 'partners',      label: 'Partners',            icon: <Users className="w-4 h-4" /> },
-    ],
-  },
-  {
-    label: 'Sales Training',
-    items: [{ id: 'training', label: 'Training Page', icon: <GraduationCap className="w-4 h-4" /> }],
-  },
-  {
-    label: 'Market Insights',
-    items: [
-      { id: 'blog',     label: 'Blog Page Header', icon: <Newspaper className="w-4 h-4" /> },
-      { id: 'articles', label: 'Articles',          icon: <Newspaper className="w-4 h-4" /> },
-    ],
-  },
-  {
-    label: 'Contact',
-    items: [{ id: 'contact', label: 'Contact Page', icon: <Phone className="w-4 h-4" /> }],
-  },
-  {
-    label: 'Global Branding',
-    items: [{ id: 'navbar_footer', label: 'Navbar & Footer', icon: <Layout className="w-4 h-4" /> }],
-  },
-];
 
 interface SidebarProps extends Props {
   open: boolean;
@@ -95,7 +36,7 @@ function SidebarContent({ active, onChange, adminEmail, onClose }: SidebarProps)
             <div className="text-slate-400 dark:text-slate-500 text-[10px] mt-0.5">Content Panel</div>
           </div>
         </div>
-        <button onClick={onClose} className="lg:hidden text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-white">
+        <button aria-label="Close navigation" onClick={onClose} className="lg:hidden text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-white">
           <X className="w-5 h-5" />
         </button>
       </div>
@@ -107,23 +48,25 @@ function SidebarContent({ active, onChange, adminEmail, onClose }: SidebarProps)
             <div className="px-3 mb-1 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
               {group.label}
             </div>
-            {group.items.map((item) => (
-              <button
+            {group.items.map((item) => {
+              const Icon = item.icon;
+              return <button
                 key={item.id}
                 onClick={() => handleNav(item.id)}
+                aria-current={active === item.id ? 'page' : undefined}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                   active === item.id
                     ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/25'
                     : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10'
                 }`}
               >
-                {item.icon}
+                <Icon className="w-4 h-4" />
                 <span className="flex-1 text-left">{item.label}</span>
                 {active === item.id && (
                   <span className="w-1.5 h-1.5 rounded-full bg-white/80 animate-pulse" />
                 )}
-              </button>
-            ))}
+              </button>;
+            })}
           </div>
         ))}
       </nav>
@@ -154,8 +97,8 @@ export function Sidebar(props: SidebarProps) {
       </aside>
 
       {props.open && (
-        <div className="lg:hidden fixed inset-0 z-40 flex">
-          <div className="fixed inset-0 bg-black/60" onClick={props.onClose} />
+        <div className="lg:hidden fixed inset-0 z-40 flex" role="dialog" aria-modal="true" aria-label="Admin navigation">
+          <button aria-label="Close navigation" className="fixed inset-0 bg-black/60" onClick={props.onClose} />
           <aside className="relative z-50 w-64 flex flex-col">
             <SidebarContent {...props} />
           </aside>

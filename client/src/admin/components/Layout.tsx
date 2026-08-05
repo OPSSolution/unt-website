@@ -71,6 +71,7 @@ export function Layout() {
         <header className="flex items-center justify-between px-4 py-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-white/10 shrink-0">
           <div className="flex items-center gap-3">
             <button
+              aria-label="Open navigation"
               onClick={() => setSidebarOpen(true)}
               className="lg:hidden text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             >
@@ -84,6 +85,7 @@ export function Layout() {
           </div>
           <button
             onClick={toggle}
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
             className="btn-shine flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors shadow-sm"
             title="Toggle theme"
           >
