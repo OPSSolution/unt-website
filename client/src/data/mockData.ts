@@ -129,6 +129,46 @@ export const PRODUCTS: Product[] = [
     ],
     certifications: ['Green Label', 'ISO 14001', 'Child Safe'],
     shelfLife: '36 Months'
+  },
+  {
+    id: 'prod-9',
+    name: 'Kampot Black Pepper GI Certified Organic Whole Peppercorns',
+    category: 'Food & Beverage',
+    origin: 'Cambodia',
+    originFlag: '🇰🇭',
+    moq: '100 KG (Bulk / Retail Pouches)',
+    leadTime: '1 - 3 Days',
+    image: 'https://images.unsplash.com/photo-1599940824399-b87987ceb72a?q=80&w=1000&auto=format&fit=crop',
+    description: 'World-renowned Geographical Indication (GI) certified organic Kampot black pepper. Intense aromatic floral notes with distinctive spicy warmth.',
+    oemAvailable: true,
+    specifications: [
+      'Origin: Kampot Province, Cambodia (Protected GI Status)',
+      'Processing: Hand-picked, Sun Dried & Double Sorted',
+      'Packaging: 100g / 500g Glass Jars or 10kg Vacuum Bags',
+      'Certifications: ECOCERT Organic, Kampot Pepper Association (KPA)'
+    ],
+    certifications: ['GI Kampot Pepper', 'ECOCERT Organic', 'ISO 22000', 'Halal'],
+    shelfLife: '36 Months'
+  },
+  {
+    id: 'prod-10',
+    name: 'Premium Cambodian Organic Dried Keo Romeiet Mango Slices',
+    category: 'Food & Beverage',
+    origin: 'Cambodia',
+    originFlag: '🇰🇭',
+    moq: '200 KG',
+    leadTime: '2 - 4 Days',
+    image: 'https://images.unsplash.com/photo-1601039641847-7857b994d704?q=80&w=1000&auto=format&fit=crop',
+    description: '100% natural dried mango slices made from ripe Cambodian Keo Romeiet mangoes. No added sugar, no sulfur, rich in natural vitamins.',
+    oemAvailable: true,
+    specifications: [
+      'Variety: Premium Cambodian Keo Romeiet',
+      'Ingredients: 100% Organic Fresh Mango',
+      'Moisture Level: 14% - 16%',
+      'Certifications: HACCP, GMP, Halal Certified'
+    ],
+    certifications: ['HACCP Certified', 'GMP Approved', 'Halal Certified'],
+    shelfLife: '18 Months'
   }
 ];
 

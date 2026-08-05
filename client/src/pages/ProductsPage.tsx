@@ -2,9 +2,40 @@ import React, { useState, useMemo } from 'react';
 import { Product } from '../types';
 import { useProducts } from '../hooks/useProducts';
 import { useHomepageSections } from '../hooks/useHomepageSections';
-import { Search, ArrowRight, Layers } from 'lucide-react';
+import { Search, ArrowRight, Layers, Globe } from 'lucide-react';
 import { ScrollReveal } from '../components/ScrollReveal';
 import { Card3D } from '../components/Card3D';
+
+const COUNTRY_FLAGS: Record<string, { flagUrl: string; emoji: string }> = {
+  'Cambodia': {
+    flagUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Flag_of_Cambodia.svg/250px-Flag_of_Cambodia.svg.png',
+    emoji: '🇰🇭',
+  },
+  'South Korea': {
+    flagUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Flag_of_South_Korea.svg/250px-Flag_of_South_Korea.svg.png',
+    emoji: '🇰🇷',
+  },
+  'Japan': {
+    flagUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Flag_of_Japan.svg/250px-Flag_of_Japan.svg.png',
+    emoji: '🇯🇵',
+  },
+  'China': {
+    flagUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/250px-Flag_of_the_People%27s_Republic_of_China.svg.png',
+    emoji: '🇨🇳',
+  },
+  'Vietnam': {
+    flagUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Vietnam.svg/250px-Flag_of_Vietnam.svg.png',
+    emoji: '🇻🇳',
+  },
+  'Laos': {
+    flagUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Flag_of_Laos.svg/250px-Flag_of_Laos.svg.png',
+    emoji: '🇱🇦',
+  },
+  'Malaysia': {
+    flagUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Flag_of_Malaysia.svg/250px-Flag_of_Malaysia.svg.png',
+    emoji: '🇲🇾',
+  },
+};
 
 interface ProductsPageProps {
   onOpenProductModal: (product: Product) => void;
@@ -23,7 +54,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const categories = ['All', 'Food & Beverage', 'Skincare & Beauty', 'Personal Care', 'Health Supplements', 'Household Goods'];
-  const origins = ['All', 'South Korea', 'Japan', 'Vietnam', 'China'];
+  const origins = ['All', 'Cambodia', 'South Korea', 'Japan', 'China', 'Vietnam', 'Laos', 'Malaysia'];
 
   const filteredProducts = useMemo(() => {
     return PRODUCTS.filter((p) => {
@@ -106,19 +137,35 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({
           <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Filter Country of Origin</span>
             <div className="flex flex-wrap gap-2">
-              {origins.map((orig) => (
-                <button
-                  key={orig}
-                  onClick={() => setSelectedOrigin(orig)}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all ${
-                    selectedOrigin === orig
-                      ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-900 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700 font-bold'
-                      : 'bg-slate-50 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'
-                  }`}
-                >
-                  {orig === 'All' ? '🌐 All Countries' : orig}
-                </button>
-              ))}
+              {origins.map((orig) => {
+                const info = COUNTRY_FLAGS[orig];
+                const isSelected = selectedOrigin === orig;
+                return (
+                  <button
+                    key={orig}
+                    onClick={() => setSelectedOrigin(orig)}
+                    className={`h-9 px-3.5 rounded-full text-xs font-bold transition-all duration-300 flex items-center space-x-2 shrink-0 ${
+                      isSelected
+                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/25 scale-105 border border-emerald-400'
+                        : 'bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'
+                    }`}
+                  >
+                    {orig === 'All' ? (
+                      <Globe className={`w-4 h-4 shrink-0 ${isSelected ? 'text-white animate-spin' : 'text-emerald-500'}`} />
+                    ) : info ? (
+                      <img
+                        src={info.flagUrl}
+                        alt={orig}
+                        className="w-4.5 h-3 object-cover rounded-sm border border-slate-200/80 dark:border-slate-700 shrink-0"
+                      />
+                    ) : null}
+                    <span>{orig === 'All' ? 'All Countries' : orig}</span>
+                    {isSelected && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
