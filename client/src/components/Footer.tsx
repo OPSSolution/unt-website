@@ -110,15 +110,15 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }
             <div className="pt-2 text-xs space-y-1.5 text-slate-600">
               <div className="flex items-center space-x-2">
                 <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                <span>Phnom Penh Tower, Monivong Blvd, Phnom Penh</span>
+                <span>196B & 196A, St 122, Teuk Laak I, Toul Kork, Phnom Penh 12157</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Phone className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                <span>+855 23 999 888 / +855 12 345 678</span>
+                <span>012 771 774 (+855 12 771 774)</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Mail className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                <span>info@untcompany.com</span>
+                <span>untcambodia@gmail.com</span>
               </div>
             </div>
           </div>
