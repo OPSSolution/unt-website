@@ -19,7 +19,11 @@ async function request<T>(
     throw new Error(err.error ?? 'Request failed');
   }
   if (res.status === 204) return undefined as T;
-  return res.json();
+  const result = await res.json();
+  if (options.method && options.method !== 'GET') {
+    localStorage.setItem('unt-content-updated', String(Date.now()));
+  }
+  return result;
 }
 
 export const api = {

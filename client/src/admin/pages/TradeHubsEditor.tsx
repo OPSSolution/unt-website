@@ -5,7 +5,7 @@ import { useAdminAuth } from '../hooks/useAdminAuth';
 import { useAutoSave } from '../hooks/useAutoSave';
 import { EditorShell, Field, Card, SectionDivider } from '../components/EditorShell';
 import { TRADE_HUBS, TradeHub } from '../../components/ThreeBackground';
-import { supabase } from '../../supabaseClient';
+import { uploadToImageKit } from '../imageKitUpload';
 
 function FlagUpload({ value, onChange }: { value: string; onChange: (url: string) => void }) {
   const [uploading, setUploading] = useState(false);
@@ -13,15 +13,10 @@ function FlagUpload({ value, onChange }: { value: string; onChange: (url: string
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = async (file: File) => {
-    if (!supabase) return;
     setUploading(true); setError('');
     try {
-      const ext = file.name.split('.').pop();
-      const path = `flags/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const { error: upErr } = await supabase.storage.from('uploads').upload(path, file, { upsert: true });
-      if (upErr) throw upErr;
-      const { data } = supabase.storage.from('uploads').getPublicUrl(path);
-      onChange(data.publicUrl);
+      const uploaded = await uploadToImageKit(file, 'trade-hub-flags');
+      onChange(uploaded.url);
     } catch (e: any) { setError(e.message ?? 'Upload failed'); }
     finally { setUploading(false); }
   };
@@ -54,7 +49,7 @@ function FlagUpload({ value, onChange }: { value: string; onChange: (url: string
         type="file"
         accept="image/*"
         className="hidden"
-        onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
+        onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleFile(f); e.currentTarget.value = ''; }}
       />
     </div>
   );

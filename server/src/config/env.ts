@@ -7,7 +7,18 @@ const envSchema = z.object({
   PORT: z.coerce.number().int().min(1).max(65535).default(5000),
   SUPABASE_URL: z.string().url(),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
+  IMAGEKIT_PUBLIC_KEY: z.string().min(1).optional(),
+  IMAGEKIT_PRIVATE_KEY: z.string().min(1).optional(),
   CORS_ORIGIN: z.string().min(1).default("*"),
+}).superRefine((value, context) => {
+  const configured = [value.IMAGEKIT_PUBLIC_KEY, value.IMAGEKIT_PRIVATE_KEY].filter(Boolean).length;
+  if (configured !== 0 && configured !== 2) {
+    context.addIssue({
+      code: "custom",
+      path: ["IMAGEKIT_PUBLIC_KEY"],
+      message: "IMAGEKIT_PUBLIC_KEY and IMAGEKIT_PRIVATE_KEY must be configured together",
+    });
+  }
 });
 
 const result = envSchema.safeParse(process.env);

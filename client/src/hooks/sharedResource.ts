@@ -48,11 +48,16 @@ export function useSharedResource<T>(key: string, load: () => Promise<T | null>,
       const refreshWhenVisible = () => {
         if (document.visibilityState === 'visible') void refresh(resource);
       };
+      const refreshAfterAdminUpdate = (event: StorageEvent) => {
+        if (event.key === 'unt-content-updated') void refresh(resource);
+      };
       window.addEventListener('focus', refreshWhenVisible);
+      window.addEventListener('storage', refreshAfterAdminUpdate);
       document.addEventListener('visibilitychange', refreshWhenVisible);
       return () => {
         resource.subscribers.delete(notify);
         window.removeEventListener('focus', refreshWhenVisible);
+        window.removeEventListener('storage', refreshAfterAdminUpdate);
         document.removeEventListener('visibilitychange', refreshWhenVisible);
       };
     }, [resource]);

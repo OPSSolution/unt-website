@@ -6,6 +6,7 @@ import articlesRouter from "./articles.js";
 import partnersRouter from "./partners.js";
 import heroRouter from "./hero.js";
 import homepageRouter from "./homepage.js";
+import mediaRouter from "./media.js";
 import { protectLanguageIntegrity, requireContentLanguage } from "../../i18n.js";
 
 const router = Router();
@@ -16,4 +17,5 @@ router.use("/articles", articlesRouter);
 router.use("/partners", partnersRouter);
 router.use("/hero", heroRouter);
 router.use("/homepage", homepageRouter);
+router.use("/media", mediaRouter);
 export default router;

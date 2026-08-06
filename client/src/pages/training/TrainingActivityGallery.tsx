@@ -26,7 +26,7 @@ export interface ActivityItem {
   badge?: string;
 }
 
-export const ACTIVITIES: ActivityItem[] = [
+const REMOVED_STATIC_ACTIVITIES: ActivityItem[] = [
   {
     id: 'act-1',
     title: 'Executive B2B Commercial Sales Masterclass',
@@ -229,6 +229,11 @@ export const ACTIVITIES: ActivityItem[] = [
   }
 ];
 
+// Gallery media is managed from Supabase/ImageKit. Do not provide hardcoded
+// client images or videos as a public fallback.
+export const ACTIVITIES: ActivityItem[] = [];
+export const REMOVED_STATIC_ACTIVITY_IDS = new Set(REMOVED_STATIC_ACTIVITIES.map((activity) => activity.id));
+
 interface Props {
   content: Record<string, any>;
   onOpenQuoteModal: () => void;
@@ -238,8 +243,8 @@ export const TrainingActivityGallery: React.FC<Props> = ({ content, onOpenQuoteM
   const { language } = useLanguage();
   const text = (key: string, english: string) => content[key] ?? (language === 'en' ? english : '');
   const activities: ActivityItem[] = Array.isArray(content.activities)
-    ? content.activities
-    : language === 'en' ? ACTIVITIES : [];
+    ? content.activities.filter((activity: ActivityItem) => !REMOVED_STATIC_ACTIVITY_IDS.has(activity.id))
+    : [];
   const [activeTab, setActiveTab] = useState<'all' | 'workshop' | 'video' | 'negotiation' | 'graduation'>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 4;

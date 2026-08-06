@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../api';
 import { useAdminAuth } from '../hooks/useAdminAuth';
-import { useAutoSave } from '../hooks/useAutoSave';
 import { EditorShell, Field, Card, SectionDivider } from '../components/EditorShell';
+import { ImageField } from '../components/ImageField';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { TRAINING_TRACKS } from '../../data/mockData';
 import type { TrainingTrack } from '../../types';
-import { ACTIVITIES, type ActivityItem } from '../../pages/training/TrainingActivityGallery';
+import { ACTIVITIES, REMOVED_STATIC_ACTIVITY_IDS, type ActivityItem } from '../../pages/training/TrainingActivityGallery';
 import { RECENT_ACTIVITIES, UPCOMING_SESSIONS } from '../../pages/training/TrainingPromosSchedule';
 import { AlertCircle, Braces, CheckCircle2, Database, Pencil, Plus, Save, Trash2, X } from 'lucide-react';
 
@@ -54,6 +54,33 @@ const DEFAULTS = {
 
 const TABS = ['Hero', 'Stats', 'Schedule', 'Gallery', 'Bootcamp'] as const;
 type Tab = typeof TABS[number];
+
+function restoreClientActivities(saved: unknown): ActivityItem[] {
+  const savedActivities = Array.isArray(saved) ? saved : [];
+  const customActivities = savedActivities.flatMap((value): ActivityItem[] => {
+    if (!value || typeof value !== 'object') return [];
+    const activity = value as Partial<ActivityItem>;
+    const id = typeof activity.id === 'string' ? activity.id.trim() : '';
+    const title = typeof activity.title === 'string' ? activity.title.trim() : '';
+    const mediaUrl = typeof activity.mediaUrl === 'string' ? activity.mediaUrl.trim() : '';
+    if (!id || !title || !mediaUrl) return [];
+    if (REMOVED_STATIC_ACTIVITY_IDS.has(id)) return [];
+
+    return [{
+      ...EMPTY_ACTIVITY,
+      ...activity,
+      id,
+      title,
+      mediaUrl,
+      galleryImages: Array.isArray(activity.galleryImages) ? activity.galleryImages.filter((item): item is string => typeof item === 'string') : [],
+      highlights: Array.isArray(activity.highlights) ? activity.highlights.filter((item): item is string => typeof item === 'string') : [],
+    }];
+  });
+
+  return [
+    ...customActivities,
+  ];
+}
 
 function StructuredJsonField({ label, value, onChange, rows = 14 }: {
   label: string;
@@ -124,13 +151,26 @@ const EMPTY_ACTIVITY: ActivityItem = {
   location: '', date: '', participants: '', description: '', highlights: [], badge: '',
 };
 
-function ActivityManager({ value, onChange }: { value: ActivityItem[]; onChange: (value: ActivityItem[]) => void }) {
+function ActivityManager({ value, onChange }: {
+  value: ActivityItem[];
+  onChange: (value: ActivityItem[]) => void;
+}) {
   const activities = Array.isArray(value) ? value : [];
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [adding, setAdding] = useState(false);
   const [draft, setDraft] = useState<ActivityItem>(EMPTY_ACTIVITY);
   const setDraftField = <Key extends keyof ActivityItem>(key: Key, fieldValue: ActivityItem[Key]) =>
     setDraft((current) => ({ ...current, [key]: fieldValue }));
+  const setMediaField = (key: 'mediaUrl' | 'videoUrl', url: string) => {
+    const updated = { ...draft, [key]: url };
+    setDraft(updated);
+    // Existing activities are immediately placed in the Supabase-bound page
+    // state after an ImageKit upload. New activities still require a title and
+    // the explicit Upsert button before they become public.
+    if (editingIndex !== null) {
+      onChange(activities.map((activity, index) => index === editingIndex ? updated : activity));
+    }
+  };
 
   const beginAdd = () => {
     setDraft({ ...EMPTY_ACTIVITY, id: `activity-${Date.now()}` });
@@ -191,8 +231,8 @@ function ActivityManager({ value, onChange }: { value: ActivityItem[]; onChange:
                 <option value="image">Image Gallery</option><option value="video">Video</option>
               </select>
             </div>
-            <Field label="Main Image / Thumbnail URL" value={draft.mediaUrl} onChange={(v) => setDraftField('mediaUrl', v)} />
-            <Field label="Video URL (optional)" value={draft.videoUrl ?? ''} onChange={(v) => setDraftField('videoUrl', v)} />
+            <ImageField label="Main Image / Thumbnail" value={draft.mediaUrl} onChange={(v) => setMediaField('mediaUrl', v)} folder="training/thumbnails" />
+            <ImageField label="Video (optional)" value={draft.videoUrl ?? ''} onChange={(v) => setMediaField('videoUrl', v)} accept="video/*" folder="training/videos" previewType="video" />
             <Field label="Location" value={draft.location} onChange={(v) => setDraftField('location', v)} />
             <Field label="Date" value={draft.date} onChange={(v) => setDraftField('date', v)} />
             <Field label="Participants" value={draft.participants} onChange={(v) => setDraftField('participants', v)} />
@@ -324,23 +364,23 @@ export function TrainingEditor() {
   const [data, setData] = useState<any>(DEFAULTS);
   const [activeTab, setActiveTab] = useState<Tab>('Hero');
   const [loading, setLoading] = useState(true);
-
-  const { saving, saved, error, dirty, autoSaving, autoSaved, autoSaveError } = useAutoSave(
-    'training_page',
-    data,
-    async (d) => {
-      if (!token) return;
-      await api.updateHomepageSection('training_page', d, token);
-    },
-    1500,
-    !loading
-  );
+  const [galleryRestoreMessage, setGalleryRestoreMessage] = useState('');
 
   useEffect(() => {
     setLoading(true);
     api.getHomepageSection('training_page')
       .then((r) => {
-        if (r.data) setData(language === 'en' ? { ...DEFAULTS, ...r.data } : r.data);
+        if (r.data) {
+          if (language === 'en') {
+            setData({
+              ...DEFAULTS,
+              ...r.data,
+              activities: restoreClientActivities(r.data.activities),
+            });
+          } else {
+            setData({ ...r.data, activities: restoreClientActivities(r.data.activities) });
+          }
+        }
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -350,18 +390,46 @@ export function TrainingEditor() {
 
   const handleSave = async () => {
     if (!token) return;
-    try {
-      await api.updateHomepageSection('training_page', data, token);
-    } catch (e: any) { /* auto-save will show errors */ }
+    await api.updateHomepageSection('training_page', data, token);
+  };
+
+  const restoreOriginalGallery = () => {
+    const shouldRestore = window.confirm(
+      'Restore the original English Gallery text and remove the old hardcoded client images/videos? Activities you added yourself will be kept.'
+    );
+    if (!shouldRestore) return;
+    setData((current: any) => ({
+      ...current,
+      gallery_badge: DEFAULTS.gallery_badge,
+      gallery_heading: DEFAULTS.gallery_heading,
+      gallery_sub: DEFAULTS.gallery_sub,
+      gallery_tab_all: DEFAULTS.gallery_tab_all,
+      gallery_tab_workshops: DEFAULTS.gallery_tab_workshops,
+      gallery_tab_videos: DEFAULTS.gallery_tab_videos,
+      gallery_tab_negotiation: DEFAULTS.gallery_tab_negotiation,
+      gallery_tab_graduation: DEFAULTS.gallery_tab_graduation,
+      gallery_view_gallery: DEFAULTS.gallery_view_gallery,
+      gallery_watch_video: DEFAULTS.gallery_watch_video,
+      gallery_browse_album: DEFAULTS.gallery_browse_album,
+      gallery_video_enroll_cta: DEFAULTS.gallery_video_enroll_cta,
+      gallery_album_book_cta: DEFAULTS.gallery_album_book_cta,
+      gallery_cta_badge: DEFAULTS.gallery_cta_badge,
+      gallery_cta_heading: DEFAULTS.gallery_cta_heading,
+      gallery_cta_desc: DEFAULTS.gallery_cta_desc,
+      gallery_cta_button: DEFAULTS.gallery_cta_button,
+      activities: restoreClientActivities(current.activities),
+    }));
+    setGalleryRestoreMessage(
+      'Original Gallery form text restored and old static client media removed locally. Click Save Changes to store this in Supabase.'
+    );
   };
 
   return (
     <EditorShell
       title="Sales Training Page"
-      description="Edit content shown on the Sales Training page. Changes are saved automatically."
-      saving={saving} saved={saved} error={error} onSave={handleSave}
+      description="Edit content shown on the Sales Training page, then click Save Changes when you are ready."
+      saving={false} saved={false} error="" onSave={handleSave}
       loading={loading}
-      autoSaving={autoSaving} autoSaved={autoSaved} autoSaveError={autoSaveError} dirty={dirty}
       tabs={[...TABS]} activeTab={activeTab} onTabChange={(t) => setActiveTab(t as Tab)}
     >
       {activeTab === 'Hero' && (
@@ -434,7 +502,18 @@ export function TrainingEditor() {
         <div className="space-y-6">
           <Card>
             <div className="space-y-4">
-              <SectionDivider label="Activity Gallery" />
+              <div className="flex items-center justify-between gap-3">
+                <SectionDivider label="Activity Gallery" />
+                {language === 'en' && (
+                  <button
+                    type="button"
+                    onClick={restoreOriginalGallery}
+                    className="shrink-0 inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-500/10 text-slate-700 dark:text-slate-200 hover:text-emerald-700 dark:hover:text-emerald-400 text-xs font-bold border border-slate-200 dark:border-slate-700"
+                  >
+                    <Database className="w-4 h-4" /> Restore Text & Remove Static Media
+                  </button>
+                )}
+              </div>
               <Field label="Badge" value={data.gallery_badge ?? ''} onChange={set('gallery_badge')} />
               <Field label="Heading" value={data.gallery_heading ?? ''} onChange={set('gallery_heading')} multiline />
               <Field label="Subtext" value={data.gallery_sub ?? ''} onChange={set('gallery_sub')} multiline />
@@ -462,8 +541,14 @@ export function TrainingEditor() {
             </div>
           </Card>
           <Card>
+            {galleryRestoreMessage && (
+              <div className="mb-4 flex items-start gap-2 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 px-4 py-3 text-xs font-medium text-emerald-700 dark:text-emerald-300">
+                <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
+                <span>{galleryRestoreMessage}</span>
+              </div>
+            )}
             <div className="mb-4 rounded-xl bg-sky-50 dark:bg-sky-500/10 border border-sky-200 dark:border-sky-500/20 px-4 py-3 text-xs text-sky-700 dark:text-sky-300">
-              Existing activities from the client UI are loaded here. Upserting changes this language only; use Add Activity for new workshops, videos, negotiation labs, or graduations.
+              Gallery images and videos now come only from activities saved in Supabase with ImageKit URLs. Use <strong>Restore Text &amp; Remove Static Media</strong> to restore the English labels and remove the old hardcoded client media while keeping activities you added yourself.
             </div>
             <ActivityManager value={data.activities ?? []} onChange={(activities) => setData((current: any) => ({ ...current, activities }))} />
           </Card>

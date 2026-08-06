@@ -1,31 +1,29 @@
 import React, { useId, useRef, useState } from 'react';
 import { Upload, X, Loader } from 'lucide-react';
-import { supabase } from '../../supabaseClient';
+import { uploadToImageKit } from '../imageKitUpload';
 
 interface Props {
   label: string;
   value: string;
   onChange: (url: string) => void;
+  accept?: string;
+  folder?: string;
+  previewType?: 'image' | 'video';
   bucket?: string;
 }
 
-export function ImageField({ label, value, onChange, bucket = 'uploads' }: Props) {
+export function ImageField({ label, value, onChange, accept = 'image/*', folder = 'images', previewType = 'image' }: Props) {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const fieldId = useId();
 
   const handleFile = async (file: File) => {
-    if (!supabase) return;
     setUploading(true);
     setUploadError('');
     try {
-      const ext = file.name.split('.').pop();
-      const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const { error } = await supabase.storage.from(bucket).upload(path, file, { upsert: true });
-      if (error) throw error;
-      const { data } = supabase.storage.from(bucket).getPublicUrl(path);
-      onChange(data.publicUrl);
+      const uploaded = await uploadToImageKit(file, folder);
+      onChange(uploaded.url);
     } catch (error: unknown) {
       setUploadError(error instanceof Error ? error.message : 'Upload failed');
     } finally {
@@ -58,9 +56,9 @@ export function ImageField({ label, value, onChange, bucket = 'uploads' }: Props
         <input
           ref={inputRef}
           type="file"
-          accept="image/*"
+          accept={accept}
           className="hidden"
-          onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
+          onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleFile(f); e.currentTarget.value = ''; }}
         />
       </div>
 
@@ -68,14 +66,9 @@ export function ImageField({ label, value, onChange, bucket = 'uploads' }: Props
 
       {value && (
         <div className="relative w-full h-36 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 group">
-          <img
-            key={value}
-            src={value}
-            alt="preview"
-            className="w-full h-full object-cover"
-            onError={(e) => { e.currentTarget.classList.add('hidden'); }}
-            onLoad={(e) => { e.currentTarget.classList.remove('hidden'); }}
-          />
+          {previewType === 'video'
+            ? <video key={value} src={value} controls preload="metadata" className="w-full h-full object-contain bg-black" />
+            : <img key={value} src={value} alt="preview" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.classList.add('hidden'); }} onLoad={(e) => { e.currentTarget.classList.remove('hidden'); }} />}
           <button
             type="button"
             aria-label={`Remove ${label}`}
