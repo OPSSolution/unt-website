@@ -2,6 +2,7 @@ import { BarChart3 } from 'lucide-react';
 import { Card3D } from '../../components/Card3D';
 import { ScrollReveal } from '../../components/ScrollReveal';
 import { ADVANTAGES, CORE_VALUES } from './data';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 function SectionHeading({ badge, title, description }: { badge: string; title: string; description?: string }) {
   return (
@@ -44,14 +45,18 @@ export function CoreValuesSection() {
   );
 }
 
-export function AdvantagesSection() {
+export function AdvantagesSection({ content }: { content: Record<string, any> }) {
+  const advantages = Array.isArray(content.advantages) ? content.advantages : [];
+  const { language } = useLanguage();
   return (
     <section className="py-20">
       <div className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
-        <SectionHeading badge="Why Business Leaders Choose UNT" title="The UNT Advantage" />
+        <SectionHeading badge={content.adv_badge ?? ''} title={content.adv_heading ?? ''} />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
-          {ADVANTAGES.map((advantage, index) => {
-            const Icon = advantage.icon;
+          {advantages.map((localized: any, index: number) => {
+            const fallback = language === 'en' ? ADVANTAGES[index] : undefined;
+            const Icon = fallback?.icon ?? BarChart3;
+            const advantage = { ...fallback, ...localized };
             return (
               <ScrollReveal key={advantage.title} animation="up" delay={index * 100}>
                 <Card3D intensity={12}>

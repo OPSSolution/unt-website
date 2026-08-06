@@ -22,7 +22,15 @@ export function ProductForm({ initial, onSave, onCancel, saving }: ProductFormPr
   const selectClass = 'w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 transition-colors';
 
   return (
-    <form onSubmit={(event) => { event.preventDefault(); onSave(form); }} className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 space-y-5">
+    <form onSubmit={(event) => { event.preventDefault(); onSave(form); }} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 sm:p-6 space-y-5 shadow-sm">
+      <div>
+        <h2 className="text-base font-bold text-slate-900 dark:text-white">
+          {'id' in initial ? 'Edit Product' : 'Add Product'}
+        </h2>
+        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          Complete the catalog information below, then save your changes.
+        </p>
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
         <div className="sm:col-span-2 xl:col-span-1"><Field label="Product Name" value={form.name} onChange={(value) => set('name', value)} /></div>
         <div className="space-y-1.5">

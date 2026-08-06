@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import express from "express";
 import request from "supertest";
-import { validateBody } from "../src/middleware/validate.js";
-import { productSchema } from "../src/schemas/content.js";
+import { validateBody, validateLocalizedBody } from "../src/middleware/validate.js";
+import { partnerSchema, productSchema } from "../src/schemas/content.js";
 import adminRouter from "../src/routes/admin/index.js";
 import productsRouter from "../src/routes/products.js";
 
@@ -26,6 +26,34 @@ test("product validation accepts a complete request body", async () => {
     oem_available: true, specifications: [], certifications: [],
   });
   assert.equal(response.status, 201);
+});
+
+test("Khmer product updates ignore untranslated blank fields", async () => {
+  const app = express();
+  app.use(express.json());
+  app.put("/products", validateLocalizedBody(productSchema.partial()), (req, res) => res.json(req.body));
+  const response = await request(app).put("/products")
+    .set("X-Content-Language", "km")
+    .send({ name: "ផលិតផល", category: "", description: "", specifications: [] });
+  assert.equal(response.status, 200);
+  assert.deepEqual(response.body, { name: "ផលិតផល" });
+});
+
+test("partner validation accepts blank optional fields", () => {
+  const result = partnerSchema.safeParse({
+    name: "Example Partner",
+    category: "Distributor",
+    country: "Cambodia",
+    logo_text: "EX",
+    image: "",
+    description: "",
+  });
+
+  assert.equal(result.success, true);
+  if (result.success) {
+    assert.equal(result.data.image, undefined);
+    assert.equal(result.data.description, undefined);
+  }
 });
 
 test("the public product namespace has no write endpoint", async () => {

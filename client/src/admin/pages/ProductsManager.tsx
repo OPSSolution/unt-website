@@ -15,6 +15,7 @@ export function ProductsManager() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const [saving, setSaving] = useState(false);
+  const editingProduct = products.find((product) => product.id === editingId);
 
   const load = () => {
     setLoading(true);
@@ -51,7 +52,7 @@ export function ProductsManager() {
           <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-1">{products.length} products in catalog</p>
         </div>
         <button
-          onClick={() => { setAdding(true); setEditingId(null); }}
+          onClick={() => { setError(''); setAdding(true); setEditingId(null); }}
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold transition-colors shrink-0"
         >
           <Plus className="w-4 h-4" /><span className="hidden sm:inline">Add Product</span><span className="sm:hidden">Add</span>
@@ -62,6 +63,16 @@ export function ProductsManager() {
 
       {adding && <ProductForm initial={EMPTY_PRODUCT} onSave={handleCreate} onCancel={() => setAdding(false)} saving={saving} />}
 
+      {editingProduct && (
+        <ProductForm
+          key={editingProduct.id}
+          initial={editingProduct}
+          onSave={(data) => handleUpdate(editingProduct.id, data)}
+          onCancel={() => setEditingId(null)}
+          saving={saving}
+        />
+      )}
+
       {loading ? (
         <div className="flex justify-center py-16"><Loader className="w-6 h-6 text-emerald-500 animate-spin" /></div>
       ) : products.length === 0 ? (
@@ -70,12 +81,7 @@ export function ProductsManager() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {products.map((p) => (
             <div key={p.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
-              {editingId === p.id ? (
-                <div className="p-4">
-                  <ProductForm initial={p} onSave={(data) => handleUpdate(p.id, data)} onCancel={() => setEditingId(null)} saving={saving} />
-                </div>
-              ) : (
-                <div className="flex items-center gap-4 p-4">
+                <div className={`flex items-center gap-4 p-4 ${editingId === p.id ? 'ring-2 ring-inset ring-emerald-500/70' : ''}`}>
                   <img src={p.image} alt={p.name} className="w-14 h-14 rounded-xl object-cover bg-slate-800 shrink-0" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                   <div className="flex-1 min-w-0">
                     <div className="text-slate-900 dark:text-white font-semibold text-sm truncate">{p.name}</div>
@@ -83,7 +89,7 @@ export function ProductsManager() {
                     <div className="text-slate-400 dark:text-slate-600 text-xs mt-0.5">MOQ: {p.moq} · Lead: {p.lead_time}</div>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
-                    <button aria-label={`Edit ${p.name}`} onClick={() => { setEditingId(p.id); setAdding(false); }} className="p-2 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <button aria-label={`Edit ${p.name}`} onClick={() => { setError(''); setEditingId(p.id); setAdding(false); }} className="p-2 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                       <Pencil className="w-4 h-4" />
                     </button>
                     <button aria-label={`Delete ${p.name}`} onClick={() => handleDelete(p.id)} className="p-2 rounded-lg text-slate-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
@@ -91,7 +97,6 @@ export function ProductsManager() {
                     </button>
                   </div>
                 </div>
-              )}
             </div>
           ))}
         </div>

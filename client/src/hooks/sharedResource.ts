@@ -45,8 +45,15 @@ export function useSharedResource<T>(key: string, load: () => Promise<T | null>,
       if (isFirstSubscriber) {
         void refresh(resource);
       }
+      const refreshWhenVisible = () => {
+        if (document.visibilityState === 'visible') void refresh(resource);
+      };
+      window.addEventListener('focus', refreshWhenVisible);
+      document.addEventListener('visibilitychange', refreshWhenVisible);
       return () => {
         resource.subscribers.delete(notify);
+        window.removeEventListener('focus', refreshWhenVisible);
+        document.removeEventListener('visibilitychange', refreshWhenVisible);
       };
     }, [resource]);
   return useSyncExternalStore(

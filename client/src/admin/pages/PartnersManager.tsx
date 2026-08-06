@@ -2,30 +2,38 @@ import React, { useEffect, useState } from 'react';
 import { api } from '../api';
 import { useAdminAuth } from '../hooks/useAdminAuth';
 import { Plus, Pencil, Trash2, X, Save, Loader } from 'lucide-react';
-import { ImageField } from '../components/ImageField';
 import { Field } from '../components/EditorShell';
 
-const EMPTY = { name: '', category: '', country: '', logo_text: '', image: '', description: '' };
+const EMPTY = { name: '', category: '', country: '', logo_text: '' };
+
+const partnerDraft = (partner: any) => ({
+  name: partner.name ?? '',
+  category: partner.category ?? '',
+  country: partner.country ?? '',
+  logo_text: partner.logo_text ?? '',
+});
 
 function PartnerForm({ initial, onSave, onCancel, saving }: {
   initial: any; onSave: (data: any) => void; onCancel: () => void; saving: boolean;
 }) {
-  const [form, setForm] = useState(initial);
+  const [form, setForm] = useState(() => partnerDraft(initial));
   const set = (key: string, val: string) => setForm((f: any) => ({ ...f, [key]: val }));
 
   return (
-    <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 space-y-5">
+    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 sm:p-6 space-y-5 shadow-sm">
+      <div>
+        <h2 className="text-base font-bold text-slate-900 dark:text-white">
+          {initial.id ? 'Edit Partner' : 'Add Partner'}
+        </h2>
+        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          Complete the partner details below, then save your changes.
+        </p>
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <Field label="Partner Name" value={form.name} onChange={(v) => set('name', v)} />
         <Field label="Logo Display Text" value={form.logo_text} onChange={(v) => set('logo_text', v)} />
         <Field label="Category" value={form.category} onChange={(v) => set('category', v)} />
         <Field label="Country" value={form.country} onChange={(v) => set('country', v)} />
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="max-w-sm">
-          <ImageField label="Partner Logo Image (optional)" value={form.image ?? ''} onChange={(v) => set('image', v)} />
-        </div>
-        <Field label="Description (optional)" value={form.description ?? ''} onChange={(v) => set('description', v)} multiline rows={3} />
       </div>
       <div className="flex items-center gap-3 pt-1">
         <button onClick={() => onSave(form)} disabled={saving} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-sm font-bold transition-colors">
@@ -47,6 +55,7 @@ export function PartnersManager() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const [saving, setSaving] = useState(false);
+  const editingPartner = partners.find((partner) => partner.id === editingId);
 
   const load = () => {
     setLoading(true);
@@ -82,7 +91,7 @@ export function PartnersManager() {
           <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-1">{partners.length} partners listed</p>
         </div>
         <button
-          onClick={() => { setAdding(true); setEditingId(null); }}
+          onClick={() => { setError(''); setAdding(true); setEditingId(null); }}
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold transition-colors shrink-0"
         >
           <Plus className="w-4 h-4" /><span className="hidden sm:inline">Add Partner</span><span className="sm:hidden">Add</span>
@@ -93,6 +102,16 @@ export function PartnersManager() {
 
       {adding && <PartnerForm initial={EMPTY} onSave={handleCreate} onCancel={() => setAdding(false)} saving={saving} />}
 
+      {editingPartner && (
+        <PartnerForm
+          key={editingPartner.id}
+          initial={editingPartner}
+          onSave={(data) => handleUpdate(editingPartner.id, data)}
+          onCancel={() => setEditingId(null)}
+          saving={saving}
+        />
+      )}
+
       {loading ? (
         <div className="flex justify-center py-16"><Loader className="w-6 h-6 text-emerald-500 animate-spin" /></div>
       ) : partners.length === 0 ? (
@@ -101,12 +120,7 @@ export function PartnersManager() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
           {partners.map((p) => (
             <div key={p.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
-              {editingId === p.id ? (
-                <div className="p-4">
-                  <PartnerForm initial={p} onSave={(data) => handleUpdate(p.id, data)} onCancel={() => setEditingId(null)} saving={saving} />
-                </div>
-              ) : (
-                <div className="flex items-center gap-3 p-4">
+                <div className={`flex items-center gap-3 p-4 ${editingId === p.id ? 'ring-2 ring-inset ring-emerald-500/70' : ''}`}>
                   <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0 overflow-hidden">
                     {p.image
                       ? <img src={p.image} alt={p.name} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
@@ -118,7 +132,7 @@ export function PartnersManager() {
                     <div className="text-slate-500 dark:text-slate-500 text-xs mt-0.5 truncate">{p.category} · {p.country}</div>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
-                    <button onClick={() => { setEditingId(p.id); setAdding(false); }} className="p-2 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <button onClick={() => { setError(''); setEditingId(p.id); setAdding(false); }} className="p-2 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                       <Pencil className="w-4 h-4" />
                     </button>
                     <button onClick={() => handleDelete(p.id)} className="p-2 rounded-lg text-slate-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
@@ -126,7 +140,6 @@ export function PartnersManager() {
                     </button>
                   </div>
                 </div>
-              )}
             </div>
           ))}
         </div>

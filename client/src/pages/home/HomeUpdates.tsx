@@ -5,7 +5,35 @@ import type { Article, PageTab, PartnerLogo } from '../../types';
 export function HomePartners({ partners }: { partners: PartnerLogo[] }) {
   return (
     <section className="bg-white dark:bg-[#0c1322] border-y border-slate-200 dark:border-slate-800 py-12 overflow-hidden">
-      <ScrollReveal animation="up"><div className="space-y-6"><div className="text-center flex items-center justify-center space-x-2"><span className="live-pulse-dot" /><span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Trusted Global Manufacturing Partners & Supplier Alliances</span></div><div className="marquee-mask overflow-hidden py-2"><div className="marquee-track flex space-x-5 w-max">{[...partners, ...partners, ...partners].map((partner, index) => <div key={`${partner.id}-${index}`} className="w-56 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center shadow-md shrink-0"><div className="font-display font-black text-slate-900 dark:text-white">{partner.logoText}</div><div className="text-xs text-emerald-600 dark:text-emerald-400 font-bold">{partner.category}</div><div className="text-[11px] text-slate-500">✦ {partner.country}</div></div>)}</div></div></div></ScrollReveal>
+      <ScrollReveal animation="up">
+        <div className="space-y-6">
+          <div className="text-center flex items-center justify-center space-x-2">
+            <span className="live-pulse-dot" />
+            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+              Trusted Global Manufacturing Partners & Supplier Alliances
+            </span>
+          </div>
+          <div className="marquee-mask overflow-hidden py-2">
+            <div className="marquee-track flex space-x-5 w-max">
+              {[...partners, ...partners, ...partners].map((partner, index) => (
+                <article
+                  key={`${partner.id}-${index}`}
+                  className="w-64 min-h-32 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center shadow-md shrink-0"
+                >
+                  <div className="h-14 mb-3 flex items-center justify-center">
+                    <div className="font-display text-xl font-black text-slate-900 dark:text-white">
+                      {partner.logoText || partner.name}
+                    </div>
+                  </div>
+                  <h3 className="font-bold text-sm text-slate-900 dark:text-white truncate">{partner.name}</h3>
+                  <div className="text-xs text-emerald-600 dark:text-emerald-400 font-bold">{partner.category}</div>
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400">✦ {partner.country}</div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </ScrollReveal>
     </section>
   );
 }

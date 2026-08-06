@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { supabase } from "../../supabase.js";
-import { validateBody, validateParams } from "../../middleware/validate.js";
+import { validateBody, validateLocalizedBody, validateParams } from "../../middleware/validate.js";
 import { idParamsSchema } from "../../schemas/common.js";
 import { productSchema } from "../../schemas/content.js";
 import { requestLanguage } from "../../i18n.js";
@@ -12,7 +12,7 @@ router.post("/", validateBody(productSchema), async (req, res) => {
   if (error) return res.status(400).json({ error: error.message });
   return res.status(201).json(data);
 });
-router.put("/:id", validateParams(idParamsSchema), validateBody(productSchema.partial()), async (req, res) => {
+router.put("/:id", validateParams(idParamsSchema), validateLocalizedBody(productSchema.partial()), async (req, res) => {
   const { data, error } = await localizedUpdate("products", String(req.params.id), req.body, requestLanguage(req), { updated_at: new Date().toISOString() });
   if (error) return res.status(400).json({ error: error.message });
   return res.json(data);

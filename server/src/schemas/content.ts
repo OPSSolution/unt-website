@@ -1,6 +1,11 @@
 import { z } from "zod";
 import { nonEmptyString } from "./common.js";
 
+const optionalNonEmptyString = z.preprocess(
+  (value) => value === "" ? undefined : value,
+  nonEmptyString.optional(),
+);
+
 export const productSchema = z.object({
   name: nonEmptyString,
   category: z.enum(["Food & Beverage", "Skincare & Beauty", "Personal Care", "Health Supplements", "Household Goods"]),
@@ -13,7 +18,7 @@ export const productSchema = z.object({
   oem_available: z.boolean(),
   specifications: z.array(nonEmptyString),
   certifications: z.array(nonEmptyString),
-  shelf_life: nonEmptyString.optional(),
+  shelf_life: optionalNonEmptyString,
 });
 
 export const articleSchema = z.object({
@@ -36,8 +41,8 @@ export const partnerSchema = z.object({
   category: nonEmptyString,
   country: nonEmptyString,
   logo_text: nonEmptyString,
-  image: nonEmptyString.optional(),
-  description: nonEmptyString.optional(),
+  image: optionalNonEmptyString,
+  description: optionalNonEmptyString,
 });
 
 export const heroContentSchema = z.object({
@@ -47,7 +52,7 @@ export const heroContentSchema = z.object({
   subtitle: nonEmptyString,
   cta_primary: nonEmptyString,
   cta_secondary: nonEmptyString,
-  feature_image: nonEmptyString.optional(),
+  feature_image: optionalNonEmptyString,
 });
 
 export const heroStatSchema = z.object({
