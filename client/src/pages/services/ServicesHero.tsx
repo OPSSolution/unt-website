@@ -1,24 +1,75 @@
+import React from 'react';
+import { Sparkles, Layers, ShoppingBag, Globe2, GraduationCap } from 'lucide-react';
 import { ScrollReveal } from '../../components/ScrollReveal';
+import { Interactive3DBg } from '../../components/Interactive3DBg';
 
-interface Props {
-  badge?: string;
-  headline?: string;
-  subheadline?: string;
+export type ServiceTab = 'all' | 'product-sales' | 'sourcing' | 'training';
+
+interface ServicesHeroProps {
+  activeTab: ServiceTab;
+  setActiveTab: (tab: ServiceTab) => void;
 }
 
-export function ServicesHero({ badge, headline, subheadline }: Props) {
+export const ServicesHero: React.FC<ServicesHeroProps> = ({ activeTab, setActiveTab }) => {
   return (
-    <section className="relative py-20 bg-white dark:bg-slate-900 text-slate-900 dark:text-white overflow-hidden border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
+    <section className="relative py-20 lg:py-24 overflow-hidden transition-colors duration-300">
+      
+      {/* 3D Global Inventory & Freight Canvas Background */}
+      <Interactive3DBg variant="cubes" />
+
+      {/* Tech Grid Line Overlay */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#05966910_1px,transparent_1px),linear-gradient(to_bottom,#05966910_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#10b98115_1px,transparent_1px),linear-gradient(to_bottom,#10b98115_1px,transparent_1px)] bg-[size:3rem_3rem] pointer-events-none opacity-40 dark:opacity-50" />
+
+      <div className="absolute inset-0 opacity-30 pointer-events-none overflow-hidden">
+        <div className="absolute -top-32 left-1/4 w-[600px] h-[600px] bg-emerald-500/15 dark:bg-emerald-500/25 blur-[140px] rounded-full animate-pulse" />
+        <div className="absolute top-1/2 -right-32 w-[500px] h-[500px] bg-emerald-600/10 dark:bg-teal-600/20 blur-[130px] rounded-full" />
+      </div>
+
       <ScrollReveal animation="up">
-        <div className="relative z-10 max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 text-center space-y-4">
-          <span className="px-3.5 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-widest rounded-full inline-block">{badge ?? 'End-to-End Procurement Infrastructure'}</span>
-          <h1 className="text-4xl sm:text-6xl font-display font-black tracking-tight text-slate-900 dark:text-white">
-            {headline ?? <>Integrated Global <span className="emerald-gradient-text">Trading Solutions</span></>}
+        <div className="relative z-10 max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 text-center space-y-6">
+          
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-400/40 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm font-bold shadow-sm backdrop-blur-md animate-gentle-float">
+            <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400 animate-spin" />
+            <span>UNT Integrated Business Ecosystem</span>
+          </div>
+
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-black tracking-tight text-slate-900 dark:text-white max-w-5xl mx-auto leading-[1.1]">
+            3 Distinct Solutions to Scale <span className="text-emerald-600 dark:text-emerald-400">Your Enterprise</span>
           </h1>
-          <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg max-w-3xl mx-auto leading-relaxed">{subheadline ?? 'From factory-direct auditing and private label OEM formulation to Ministry permits, GDCE customs clearance, and door-to-door logistics in Cambodia.'}</p>
+
+          <p className="text-slate-600 dark:text-emerald-100/90 text-base sm:text-xl max-w-3xl mx-auto leading-relaxed font-normal">
+            Each service is tailored with a dedicated workflow, operational structure, and support model for maximum business efficiency.
+          </p>
+
+          {/* Filter Pills with improved hover & active states */}
+          <div className="pt-4 flex flex-wrap items-center justify-center gap-3">
+            {[
+              { id: 'all', label: 'All Services', icon: Layers },
+              { id: 'product-sales', label: '01. Product Sales', icon: ShoppingBag },
+              { id: 'sourcing', label: '02. Sourcing-as-a-Service', icon: Globe2 },
+              { id: 'training', label: '03. Sales Training', icon: GraduationCap },
+            ].map((tab) => {
+              const TabIcon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as ServiceTab)}
+                  className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all duration-300 flex items-center gap-2 shadow-sm ${
+                    isActive
+                      ? 'bg-emerald-600 text-white dark:bg-emerald-500 dark:text-slate-950 shadow-md shadow-emerald-500/20 scale-105'
+                      : 'bg-white dark:bg-white/5 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 hover:border-emerald-500/50 hover:bg-emerald-50/50 dark:hover:bg-white/10 active:scale-95'
+                  }`}
+                >
+                  <TabIcon className={`w-4 h-4 ${isActive ? 'text-white dark:text-slate-950' : 'text-emerald-600 dark:text-emerald-400'}`} />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
         </div>
       </ScrollReveal>
     </section>
   );
-}
-
+};

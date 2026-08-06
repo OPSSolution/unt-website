@@ -5,6 +5,7 @@ import { useProducts } from '../hooks/useProducts';
 import { CatalogFilters } from './products/CatalogFilters';
 import { ProductGrid } from './products/ProductGrid';
 import { ProductsHero } from './products/ProductsHero';
+import { Interactive3DBg } from '../components/Interactive3DBg';
 
 interface ProductsPageProps {
   onOpenProductModal: (product: Product) => void;
@@ -36,9 +37,14 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ onOpenProductModal, 
   };
 
   return (
-    <div className="space-y-12 pb-16 animate-fade-in bg-slate-50 dark:bg-[#090D16] text-slate-900 dark:text-slate-100 transition-colors duration-300 bg-ambient-mesh">
+    <div className="relative space-y-12 pb-16 animate-fade-in bg-slate-50 dark:bg-[#080B11] text-slate-900 dark:text-slate-100 transition-colors duration-300 bg-ambient-mesh overflow-hidden min-h-screen">
+      
+      {/* 3D Hex-Grid Canvas Background for Wholesale Products Catalog */}
+      <Interactive3DBg variant="hex-grid" />
+
       <ProductsHero badge={content.badge} headline={content.headline} subheadline={content.subheadline} />
-      <section className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 space-y-6">
+
+      <section className="relative z-10 max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 space-y-6">
         <CatalogFilters
           category={selectedCategory}
           origin={selectedOrigin}

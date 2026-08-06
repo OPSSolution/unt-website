@@ -7,8 +7,6 @@ import {
 import { QuickSearchModal } from './QuickSearchModal';
 import { QuickCalcModal } from './QuickCalcModal';
 import { useHomepageSections } from '../hooks/useHomepageSections';
-import { QuickCalcModal } from './QuickCalcModal';
-import { QuickSearchModal } from './QuickSearchModal';
 import { DesktopNav } from './navbar/DesktopNav';
 import { MobileNav } from './navbar/MobileNav';
 import { NavbarActions } from './navbar/NavbarActions';
@@ -97,9 +95,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <>
       <header className="sticky top-0 z-50 w-full pointer-events-none px-3 sm:px-6 pt-3 sm:pt-4">
-        <div className={`pointer-events-auto relative mx-auto max-w-[1700px] w-full nav-pill transition-all duration-300 ${
-          isScrolled ? 'nav-pill-scrolled py-1.5' : 'py-2'
-        } ${mobileMenuOpen ? 'rounded-[2rem]' : 'rounded-full'}`}>
+        <div className={`pointer-events-auto relative mx-auto max-w-[1700px] w-full nav-pill transition-all duration-300 ${isScrolled ? 'nav-pill-scrolled py-1.5' : 'py-2'
+          } ${mobileMenuOpen ? 'rounded-[2rem]' : 'rounded-full'}`}>
           <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-emerald-400/50 to-transparent pointer-events-none rounded-full" />
           <div className={`flex items-center justify-between gap-2 pl-3 sm:pl-4 pr-2 sm:pr-3 transition-all duration-300 ${isScrolled ? 'h-12 xl:h-14' : 'h-14 xl:h-16'}`}>
             <button onClick={() => handleNavigate('home')} className="flex items-center space-x-2.5 text-left group focus:outline-none shrink-0" aria-label="UNT Company home">
@@ -120,12 +117,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 return (
                   <button
                     key={link.id}
-                    onClick={() => handleNavClick(link.id)}
-                    className={`relative px-2.5 xl:px-3.5 py-2 rounded-full text-xs 2xl:text-[13px] font-semibold transition-all flex items-center gap-1 group ${
-                      isActive
+                    onClick={() => handleNavigate(link.id)}
+                    className={`relative px-2.5 xl:px-3.5 py-2 rounded-full text-xs 2xl:text-[13px] font-semibold transition-all flex items-center gap-1 group ${isActive
                         ? 'text-emerald-700 font-bold bg-emerald-50 dark:text-emerald-300 dark:bg-white/10'
                         : 'text-slate-700 hover:text-slate-950 hover:bg-slate-100 dark:text-white/75 dark:hover:text-white dark:hover:bg-white/10'
-                    }`}
+                      }`}
                   >
                     <span className="whitespace-nowrap">{link.label}</span>
                   </button>
@@ -176,7 +172,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={onOpenQuoteModal}
                 className="btn-shine inline-flex items-center gap-1.5 px-4 sm:px-5 py-2.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold transition-all hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap shrink-0 group shadow-lg shadow-slate-900/20 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 dark:shadow-black/30"
               >
-                <span>{nb.navbar_cta ?? 'Get a Quote'}</span>
+                <span>{navbarContent.navbar_cta ?? 'Get a Quote'}</span>
                 <ArrowRight className="w-4 h-4 shrink-0 group-hover:translate-x-1 transition-transform" />
               </button>
 
