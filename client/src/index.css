@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 @import "./styles/base.css";
 @import "./styles/cards.css";
@@ -6,4 +7,8 @@
 
 @variant dark (&:where(.dark, .dark *));
 @custom-variant dark (&:where(.dark, .dark *));
+
+.font-khmer, .font-khmer * {
+  font-family: 'Kantumruy Pro', 'Noto Sans Khmer', sans-serif;
+}
 

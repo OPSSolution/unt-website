@@ -2,6 +2,7 @@ import { PartnerLogo } from '../types';
 import { PARTNERS as MOCK_PARTNERS } from '../data/mockData';
 import { useSharedResource } from './sharedResource';
 import { API_BASE } from '../lib/apiBase';
+import { useLanguage, type ContentLanguage } from '../i18n/LanguageContext';
 
 
 function mapRow(row: any): PartnerLogo {
@@ -12,9 +13,9 @@ function mapRow(row: any): PartnerLogo {
   };
 }
 
-async function loadPartners(): Promise<PartnerLogo[] | null> {
+async function loadPartners(language: ContentLanguage): Promise<PartnerLogo[] | null> {
   try {
-    const res = await fetch(`${API_BASE}/api/partners`);
+    const res = await fetch(`${API_BASE}/api/partners?lang=${language}`);
     if (!res.ok) return null;
     const rows = await res.json();
     return Array.isArray(rows) && rows.length > 0 ? rows.map(mapRow) : MOCK_PARTNERS;
@@ -22,5 +23,6 @@ async function loadPartners(): Promise<PartnerLogo[] | null> {
 }
 
 export function usePartners(): PartnerLogo[] {
-  return useSharedResource('partners', loadPartners, MOCK_PARTNERS);
+  const { language } = useLanguage();
+  return useSharedResource(`partners-${language}`, () => loadPartners(language), MOCK_PARTNERS);
 }

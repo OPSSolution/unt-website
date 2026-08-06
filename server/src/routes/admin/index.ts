@@ -6,10 +6,11 @@ import articlesRouter from "./articles.js";
 import partnersRouter from "./partners.js";
 import heroRouter from "./hero.js";
 import homepageRouter from "./homepage.js";
+import { protectLanguageIntegrity, requireContentLanguage } from "../../i18n.js";
 
 const router = Router();
 // Anything mounted below this guard is admin-only by construction.
-router.use(requireAdmin, auditAdminMutation);
+router.use(requireAdmin, requireContentLanguage, protectLanguageIntegrity, auditAdminMutation);
 router.use("/products", productsRouter);
 router.use("/articles", articlesRouter);
 router.use("/partners", partnersRouter);

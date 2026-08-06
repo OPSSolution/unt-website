@@ -22,6 +22,7 @@ create table if not exists products (
   updated_at timestamptz default now()
 );
 
+
 -- ARTICLES
 create table if not exists articles (
   id uuid primary key default gen_random_uuid(),
@@ -221,3 +222,11 @@ insert into hero_stats (label, value, sort_order) values
   ('Global Trade Origins', '15+', 3),
   ('On-Time Customs Clearance', '99.4%', 4)
 on conflict do nothing;
+
+-- Bilingual content. English remains in the existing columns for backwards
+-- compatibility; Khmer values are stored in translations->'km'.
+alter table products add column if not exists translations jsonb not null default '{}'::jsonb;
+alter table articles add column if not exists translations jsonb not null default '{}'::jsonb;
+alter table partners add column if not exists translations jsonb not null default '{}'::jsonb;
+alter table hero_content add column if not exists translations jsonb not null default '{}'::jsonb;
+alter table hero_stats add column if not exists translations jsonb not null default '{}'::jsonb;

@@ -1,4 +1,5 @@
 import { API_BASE } from '../lib/apiBase';
+import { storedLanguage } from '../i18n/LanguageContext';
 
 async function request<T>(
   path: string,
@@ -7,6 +8,7 @@ async function request<T>(
 ): Promise<T> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    'X-Content-Language': storedLanguage(),
     ...(options.headers as Record<string, string>),
   };
   if (token) headers['Authorization'] = `Bearer ${token}`;

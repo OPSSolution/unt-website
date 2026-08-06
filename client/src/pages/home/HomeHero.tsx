@@ -3,6 +3,7 @@ import { ThreeBackground, type TradeHub } from '../../components/ThreeBackground
 import type { HeroContent } from '../../hooks/useHeroContent';
 import type { HeroStat } from '../../hooks/useHeroStats';
 import type { PageTab } from '../../types';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface Props {
   hero: HeroContent | null;
@@ -10,6 +11,7 @@ interface Props {
   hubs: TradeHub[];
   selectedOrigin: string;
   globeLabel?: string;
+  globeAllLabel?: string;
   onSelectOrigin: (origin: string) => void;
   onNavigate: (tab: PageTab) => void;
   onQuote: () => void;
@@ -22,7 +24,8 @@ const FALLBACK_STATS = [
   { id: 'clearance', value: '99.4%', label: 'On-Time Customs Clearance' },
 ];
 
-export function HomeHero({ hero, stats, hubs, selectedOrigin, globeLabel, onSelectOrigin, onNavigate, onQuote }: Props) {
+export function HomeHero({ hero, stats, hubs, selectedOrigin, globeLabel, globeAllLabel, onSelectOrigin, onNavigate, onQuote }: Props) {
+  const { language } = useLanguage();
   const selectedHub = hubs.find((hub) => hub.id === selectedOrigin);
   const visibleStats = stats.length > 0 ? stats : FALLBACK_STATS;
   return (
@@ -36,12 +39,12 @@ export function HomeHero({ hero, stats, hubs, selectedOrigin, globeLabel, onSele
         <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-black text-slate-900 dark:text-white tracking-tight max-w-5xl mx-auto leading-[1.1]">{hero?.headline ?? 'Your Trusted Sourcing Partner'}</h1>
         <p className="text-slate-600 dark:text-slate-300 text-base sm:text-xl max-w-3xl mx-auto leading-relaxed">{hero?.subtitle ?? 'UNT connects Cambodian buyers with quality products from abroad, helps businesses source what they need, and trains sales teams to sell better.'}</p>
         <div className="pt-2 max-w-4xl mx-auto space-y-4">
-          <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center justify-center space-x-2"><Globe className="w-4 h-4 text-emerald-600 animate-spin" /><span>{globeLabel ?? 'Interactive 3D Trade Hub Focus: Select Origin to Rotate 3D Globe'}</span></div>
+          <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center justify-center space-x-2"><Globe className="w-4 h-4 text-emerald-600 animate-spin" /><span>{globeLabel ?? (language === 'en' ? 'Interactive 3D Trade Hub Focus: Select Origin to Rotate 3D Globe' : '')}</span></div>
           <div className="inline-flex flex-wrap items-center justify-center gap-2 p-2 rounded-full bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-lg">
-            <OriginButton active={selectedOrigin === 'all'} onClick={() => onSelectOrigin('all')}><Globe className="w-4 h-4" />Global ASEAN Network</OriginButton>
+            <OriginButton active={selectedOrigin === 'all'} onClick={() => onSelectOrigin('all')}><Globe className="w-4 h-4" />{globeAllLabel ?? (language === 'en' ? 'Global ASEAN Network' : '')}</OriginButton>
             {hubs.map((hub) => <OriginButton key={hub.id} active={selectedOrigin === hub.id} onClick={() => onSelectOrigin(hub.id)}><img src={hub.flagUrl} alt="" className="w-4 h-3 object-cover rounded-sm" />{hub.name}</OriginButton>)}
           </div>
-          {selectedHub && <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-900 to-slate-900 text-white text-left shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-emerald-500/30"><div><div className="text-emerald-400 font-bold text-xs">{selectedHub.name} ➜ Phnom Penh, Cambodia</div><div className="text-sm font-semibold">Primary Trade: <span className="text-emerald-200">{selectedHub.categories}</span></div></div><div className="flex items-center gap-3 text-xs"><Metric label="Logistics Speed" value={selectedHub.leadTime} /><Metric label="Min. Wholesale Order" value={selectedHub.moq} /><button onClick={onQuote} className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-lg">Get Quote</button></div></div>}
+          {selectedHub && <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-900 to-slate-900 text-white text-left shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-emerald-500/30"><div><div className="text-emerald-400 font-bold text-xs">{selectedHub.name} ➜ {language === 'km' ? 'ភ្នំពេញ កម្ពុជា' : 'Phnom Penh, Cambodia'}</div><div className="text-sm font-semibold">{language === 'km' ? 'ពាណិជ្ជកម្មចម្បង' : 'Primary Trade'}: <span className="text-emerald-200">{selectedHub.categories}</span></div></div><div className="flex items-center gap-3 text-xs"><Metric label={language === 'km' ? 'ល្បឿនដឹកជញ្ជូន' : 'Logistics Speed'} value={selectedHub.leadTime} /><Metric label={language === 'km' ? 'ការបញ្ជាទិញអប្បបរមា' : 'Min. Wholesale Order'} value={selectedHub.moq} /><button onClick={onQuote} className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-lg">{language === 'km' ? 'ស្នើសុំតម្លៃ' : 'Get Quote'}</button></div></div>}
         </div>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4"><button onClick={() => onNavigate('services')} className="btn-shine group px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-600 text-white font-bold shadow-xl flex items-center space-x-2"><span>{hero?.cta_primary ?? 'Explore Sourcing Solutions'}</span><ArrowRight className="w-5 h-5" /></button><button onClick={onQuote} className="px-8 py-4 rounded-xl bg-slate-900 text-white font-bold border border-slate-700">{hero?.cta_secondary ?? 'Request B2B Quote'}</button></div>
         <div className="pt-10 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">{visibleStats.map((stat, index) => <div key={stat.id} className={`p-5 rounded-2xl ${index === 0 ? 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm' : 'stripe-glass-card stripe-card-tilt'}`}><div className="text-2xl sm:text-3xl font-display font-bold text-emerald-700 dark:text-emerald-400">{stat.value}</div><div className="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1">{stat.label}</div></div>)}</div>

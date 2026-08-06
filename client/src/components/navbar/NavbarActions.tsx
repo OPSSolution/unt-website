@@ -1,4 +1,5 @@
 import { ArrowRight, Calculator, Menu, Moon, ScanLine, Search, Sun, X } from 'lucide-react';
+import { LanguageToggle } from '../../i18n/LanguageContext';
 
 interface Props {
   darkMode: boolean;
@@ -16,6 +17,7 @@ const ICON_BUTTON = 'hidden items-center justify-center w-9 h-9 rounded-full bg-
 export function NavbarActions({ darkMode, mobileMenuOpen, ctaLabel, setDarkMode, onSearch, onCalculate, onQuote, onToggleMobile }: Props) {
   return (
     <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+      <LanguageToggle compact />
       {setDarkMode && (
         <button onClick={() => setDarkMode((previous) => !previous)} className={`${ICON_BUTTON} sm:flex`} title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'} aria-label="Toggle theme">
           {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}

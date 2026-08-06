@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Save, Loader, CheckCircle, CloudUpload, Cloud } from 'lucide-react';
 
 export function Field({
@@ -41,7 +41,7 @@ interface EditorShellProps {
   saving: boolean;
   saved: boolean;
   error: string;
-  onSave: () => void;
+  onSave: () => void | Promise<void>;
   loading?: boolean;
   tabs?: string[];
   activeTab?: string;
@@ -58,6 +58,25 @@ export function EditorShell({
   loading, tabs, activeTab, onTabChange, children,
   autoSaving, autoSaved, autoSaveError, dirty,
 }: EditorShellProps) {
+  const [manualSaving, setManualSaving] = useState(false);
+  const [manualSaved, setManualSaved] = useState(false);
+  const [manualError, setManualError] = useState('');
+
+  const saveNow = async () => {
+    setManualSaving(true);
+    setManualSaved(false);
+    setManualError('');
+    try {
+      await onSave();
+      setManualSaved(true);
+      window.setTimeout(() => setManualSaved(false), 2000);
+    } catch (saveError) {
+      setManualError(saveError instanceof Error ? saveError.message : 'Save failed');
+    } finally {
+      setManualSaving(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -97,24 +116,24 @@ export function EditorShell({
             </div>
           )}
           <button
-            onClick={onSave}
-            disabled={saving}
+            onClick={saveNow}
+            disabled={saving || manualSaving}
             className={`btn-shine flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-full font-bold text-sm transition-all shrink-0 shadow-lg disabled:opacity-60 ${
-              saved
+              saved || manualSaved
                 ? 'bg-emerald-500 text-white shadow-emerald-500/30'
                 : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/30'
             }`}
           >
-            {saved ? <CheckCircle className="w-4 h-4" /> : <Save className="w-4 h-4" />}
+            {saved || manualSaved ? <CheckCircle className="w-4 h-4" /> : <Save className="w-4 h-4" />}
             <span className="hidden sm:inline">{saving ? 'Saving...' : saved ? 'Saved ✓' : 'Save Changes'}</span>
             <span className="sm:hidden">{saving ? '...' : saved ? '✓' : 'Save'}</span>
           </button>
         </div>
       </div>
 
-      {(error || autoSaveError) && (
+      {(error || autoSaveError || manualError) && (
         <div className="px-4 py-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 rounded-xl text-red-600 dark:text-red-400 text-sm mt-4">
-          {error || autoSaveError}
+          {error || autoSaveError || manualError}
         </div>
       )}
 

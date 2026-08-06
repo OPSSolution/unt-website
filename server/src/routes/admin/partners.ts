@@ -3,14 +3,17 @@ import { supabase } from "../../supabase.js";
 import { validateBody, validateParams } from "../../middleware/validate.js";
 import { idParamsSchema } from "../../schemas/common.js";
 import { partnerSchema } from "../../schemas/content.js";
+import { requestLanguage } from "../../i18n.js";
+import { localizedUpdate } from "./localizedUpdate.js";
 const router = Router();
 router.post("/", validateBody(partnerSchema), async (req, res) => {
+  if (requestLanguage(req) === "km") return res.status(400).json({ error: "Create the English partner first, then add Khmer." });
   const { data, error } = await supabase.from("partners").insert(req.body).select().single();
   if (error) return res.status(400).json({ error: error.message });
   return res.status(201).json(data);
 });
 router.put("/:id", validateParams(idParamsSchema), validateBody(partnerSchema.partial()), async (req, res) => {
-  const { data, error } = await supabase.from("partners").update(req.body).eq("id", req.params.id).select().single();
+  const { data, error } = await localizedUpdate("partners", String(req.params.id), req.body, requestLanguage(req));
   if (error) return res.status(400).json({ error: error.message });
   return res.json(data);
 });

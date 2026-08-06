@@ -1,5 +1,6 @@
 import { useSharedResource } from './sharedResource';
 import { API_BASE } from '../lib/apiBase';
+import { useLanguage, type ContentLanguage } from '../i18n/LanguageContext';
 
 export type HomepageSections = Record<string, any>;
 const EMPTY_SECTIONS: HomepageSections = {};
@@ -10,9 +11,9 @@ const SECTION_KEYS = [
   'contact_page', 'trade_hubs', 'blog_page', 'products_page', 'navbar_footer', 'hero_globe',
 ];
 
-async function loadSections(): Promise<HomepageSections | null> {
+async function loadSections(language: ContentLanguage): Promise<HomepageSections | null> {
   try {
-    const res = await fetch(`${API_BASE}/api/homepage`);
+    const res = await fetch(`${API_BASE}/api/homepage?lang=${language}`);
     if (!res.ok) return null;
     const rows = await res.json();
     if (!Array.isArray(rows)) return null;
@@ -28,5 +29,6 @@ async function loadSections(): Promise<HomepageSections | null> {
 }
 
 export function useHomepageSections(): HomepageSections {
-  return useSharedResource('homepage-sections', loadSections, EMPTY_SECTIONS);
+  const { language } = useLanguage();
+  return useSharedResource(`homepage-sections-${language}`, () => loadSections(language), EMPTY_SECTIONS);
 }

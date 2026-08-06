@@ -14,11 +14,11 @@ export function HeroEditor() {
 
   const { saving, saved, error, dirty, autoSaving, autoSaved, autoSaveError } = useAutoSave(
     'hero',
-    content,
-    async (c) => {
+    content ? { content, stats } : null,
+    async (data) => {
       if (!token) return;
-      await api.updateHeroContent(c, token);
-      await Promise.all(stats.map((s) => api.updateHeroStat(s.id, s, token)));
+      await api.updateHeroContent(data.content, token);
+      await Promise.all(data.stats.map((stat: any) => api.updateHeroStat(stat.id, stat, token)));
     },
     1500,
     loaded
@@ -32,10 +32,8 @@ export function HeroEditor() {
 
   const handleSave = async () => {
     if (!token) return;
-    try {
-      await api.updateHeroContent(content, token);
-      await Promise.all(stats.map((s) => api.updateHeroStat(s.id, s, token)));
-    } catch (e: any) { /* auto-save will show errors */ }
+    await api.updateHeroContent(content, token);
+    await Promise.all(stats.map((s) => api.updateHeroStat(s.id, s, token)));
   };
 
   const set = (key: string) => (v: string) => setContent((c: any) => ({ ...c, [key]: v }));

@@ -2,6 +2,7 @@ import { Article } from '../types';
 import { ARTICLES as MOCK_ARTICLES } from '../data/mockData';
 import { useSharedResource } from './sharedResource';
 import { API_BASE } from '../lib/apiBase';
+import { useLanguage, type ContentLanguage } from '../i18n/LanguageContext';
 
 
 function mapRow(row: any): Article {
@@ -14,9 +15,9 @@ function mapRow(row: any): Article {
   };
 }
 
-async function loadArticles(): Promise<Article[] | null> {
+async function loadArticles(language: ContentLanguage): Promise<Article[] | null> {
   try {
-    const res = await fetch(`${API_BASE}/api/articles`);
+    const res = await fetch(`${API_BASE}/api/articles?lang=${language}`);
     if (!res.ok) return null;
     const rows = await res.json();
     return Array.isArray(rows) && rows.length > 0 ? rows.map(mapRow) : MOCK_ARTICLES;
@@ -24,5 +25,6 @@ async function loadArticles(): Promise<Article[] | null> {
 }
 
 export function useArticles(): Article[] {
-  return useSharedResource('articles', loadArticles, MOCK_ARTICLES);
+  const { language } = useLanguage();
+  return useSharedResource(`articles-${language}`, () => loadArticles(language), MOCK_ARTICLES);
 }

@@ -16,6 +16,7 @@ import { TradeHubsEditor } from '../pages/TradeHubsEditor';
 import { ContactEditor } from '../pages/ContactEditor';
 import { NavbarFooterEditor } from '../pages/NavbarFooterEditor';
 import { Menu, Sun, Moon } from 'lucide-react';
+import { LanguageToggle, useLanguage } from '../../i18n/LanguageContext';
 
 const PAGE_LABELS: Record<AdminPage, string> = {
   dashboard: 'Dashboard',
@@ -38,6 +39,7 @@ export function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user } = useAdminAuth();
   const { theme, toggle } = useTheme();
+  const { language } = useLanguage();
 
   const renderPage = () => {
     switch (page) {
@@ -83,6 +85,8 @@ export function Layout() {
               UNT Admin &rsaquo; <span className="text-slate-900 dark:text-white">{PAGE_LABELS[page]}</span>
             </span>
           </div>
+          <div className="flex items-center gap-2">
+          <LanguageToggle />
           <button
             onClick={toggle}
             aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
@@ -92,12 +96,13 @@ export function Layout() {
             {theme === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
             <span className="hidden sm:inline">{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
           </button>
+          </div>
         </header>
 
         <div className="flex-1 flex flex-col min-h-0">
           <div className="flex-1 overflow-y-auto bg-slate-50 dark:bg-[#090D16] bg-ambient-mesh" id="admin-scroll">
             <div className="p-4 sm:p-6 lg:p-8">
-              {renderPage()}
+              <div key={`${page}-${language}`} className={language === 'km' ? 'font-khmer' : ''}>{renderPage()}</div>
             </div>
           </div>
         </div>

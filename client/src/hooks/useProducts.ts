@@ -2,6 +2,7 @@ import { Product } from '../types';
 import { PRODUCTS as MOCK_PRODUCTS } from '../data/mockData';
 import { useSharedResource } from './sharedResource';
 import { API_BASE } from '../lib/apiBase';
+import { useLanguage, type ContentLanguage } from '../i18n/LanguageContext';
 
 
 function mapRow(row: any): Product {
@@ -14,9 +15,9 @@ function mapRow(row: any): Product {
   };
 }
 
-async function loadProducts(): Promise<Product[] | null> {
+async function loadProducts(language: ContentLanguage): Promise<Product[] | null> {
   try {
-    const res = await fetch(`${API_BASE}/api/products`);
+    const res = await fetch(`${API_BASE}/api/products?lang=${language}`);
     if (!res.ok) return null;
     const rows = await res.json();
     return Array.isArray(rows) && rows.length > 0 ? rows.map(mapRow) : MOCK_PRODUCTS;
@@ -24,5 +25,6 @@ async function loadProducts(): Promise<Product[] | null> {
 }
 
 export function useProducts(): Product[] {
-  return useSharedResource('products', loadProducts, MOCK_PRODUCTS);
+  const { language } = useLanguage();
+  return useSharedResource(`products-${language}`, () => loadProducts(language), MOCK_PRODUCTS);
 }

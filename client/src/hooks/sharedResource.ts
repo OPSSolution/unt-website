@@ -38,8 +38,11 @@ function getResource<T>(key: string, load: () => Promise<T | null>, initialValue
 export function useSharedResource<T>(key: string, load: () => Promise<T | null>, initialValue: T): T {
   const resource = getResource(key, load, initialValue);
   const subscribe = useCallback((notify: () => void) => {
+      const isFirstSubscriber = resource.subscribers.size === 0;
       resource.subscribers.add(notify);
-      if (resource.lastLoadedAt === 0) {
+      // Refresh when this language becomes active again, while retaining zero
+      // idle polling and deduplicating concurrent subscribers.
+      if (isFirstSubscriber) {
         void refresh(resource);
       }
       return () => {

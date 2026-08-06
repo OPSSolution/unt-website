@@ -90,6 +90,12 @@ export function useAutoSave<T>(
     if (!enabled || !hasLoadedRef.current || data === null || data === undefined) return;
 
     const dataStr = JSON.stringify(data);
+    // Establish the loaded server value as the baseline. Loading or changing
+    // language is not an edit and must never write data back automatically.
+    if (prevSaveDataStrRef.current === '') {
+      prevSaveDataStrRef.current = dataStr;
+      return;
+    }
     if (dataStr === prevSaveDataStrRef.current) return; // No actual change
     prevSaveDataStrRef.current = dataStr;
 
@@ -104,14 +110,12 @@ export function useAutoSave<T>(
     };
   }, [data, enabled, delay, doSave, sectionKey, markDirty]);
 
-  // Flush pending save on unmount
+  // Cancel pending work on unmount. Do not save here: a language switch
+  // updates the global language before the old editor unmounts, which could
+  // otherwise write the old language's values into the newly selected slot.
   useEffect(() => {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
-      if (hasLoadedRef.current && dataRef.current !== null && dataRef.current !== undefined) {
-        // Best-effort final save on unmount
-        saveFnRef.current(dataRef.current).catch(() => {});
-      }
     };
   }, []);
 
