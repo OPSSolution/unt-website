@@ -1,82 +1,328 @@
 import { useState, type FormEvent } from 'react';
-import { CheckCircle2, Send } from 'lucide-react';
+import { 
+  CheckCircle2, Send, Clock, MessageSquare, Zap, RefreshCw, User, Building2, Mail, Phone, MessageCircle, Package, Tag, Truck, GraduationCap 
+} from 'lucide-react';
 import { INITIAL_FORM, type ContactFormData } from './types';
 
-const INTERESTS = ['Product Sourcing', 'OEM / Private Label', 'Wholesale Distribution', 'Sales Training Programs', 'Customs & Ministry Permits', 'Cold Chain Freight'];
-const INPUT_CLASS = 'w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500';
+const TELEGRAM_BOT_TOKEN = '8687782746:AAGGOIhorkQnBT7gaD2xJkxOwF4hB39hVQs';
+const TELEGRAM_CHAT_ID = '-1004424588112';
+
+const QUICK_TOPICS = [
+  { id: 'Product Sourcing', label: 'Product Sourcing', icon: Package },
+  { id: 'OEM / Private Label', label: 'OEM / Private Label', icon: Tag },
+  { id: 'Wholesale Distribution', label: 'Wholesale', icon: Truck },
+  { id: 'Sales Training', label: 'Sales Training', icon: GraduationCap },
+];
+
+const INPUT_CLASS = 'w-full bg-slate-50/90 dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/80 rounded-2xl px-4.5 py-3.5 sm:px-5 sm:py-3.5 text-sm sm:text-base text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15 hover:border-slate-300 dark:hover:border-slate-600 transition-all shadow-sm font-medium';
+
+const sendTelegramNotification = async (data: {
+  contactName: string;
+  company: string;
+  email: string;
+  phone: string;
+  topic: string;
+  preferredChannel: string;
+  message: string;
+  ticketId: string;
+}) => {
+  const telegramUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+
+  const escapeHtml = (str: string) =>
+    (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+  const htmlText = `🚨 <b>NEW UNT B2B CONTACT INQUIRY</b> 🚨
+
+<b>🎫 Ticket Ref:</b> #${escapeHtml(data.ticketId)}
+<b>👤 Full Name:</b> ${escapeHtml(data.contactName)}
+<b>🏢 Company:</b> ${escapeHtml(data.company)}
+<b>📧 Email:</b> ${escapeHtml(data.email)}
+<b>📞 Phone / Telegram:</b> ${escapeHtml(data.phone)}
+<b>📌 Subject:</b> ${escapeHtml(data.topic)}
+<b>💬 Preferred Channel:</b> ${escapeHtml(data.preferredChannel)}
+
+<b>📝 Project Scope Details:</b>
+${escapeHtml(data.message)}
+
+⏱️ <b>Submitted At:</b> ${new Date().toLocaleString('en-US', { timeZone: 'Asia/Phnom_Penh' })} (Phnom Penh Time)`;
+
+  try {
+    await fetch(telegramUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: TELEGRAM_CHAT_ID,
+        text: htmlText,
+        parse_mode: 'HTML',
+      }),
+    });
+  } catch (error) {
+    console.error('Telegram notification error:', error);
+  }
+};
 
 export function ContactForm() {
   const [form, setForm] = useState<ContactFormData>(INITIAL_FORM);
-  const [selectedInterests, setSelectedInterests] = useState(['Product Sourcing']);
+  const [activeTopic, setActiveTopic] = useState('Product Sourcing');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [ticketId, setTicketId] = useState('');
 
-  const updateField = (field: keyof ContactFormData, value: string) => setForm((current) => ({ ...current, [field]: value }));
-  const toggleInterest = (interest: string) => setSelectedInterests((current) => {
-    if (current.includes(interest)) return current.length > 1 ? current.filter((item) => item !== interest) : current;
-    return [...current, interest];
-  });
-  const handleSubmit = (event: FormEvent) => {
+  const updateField = (field: keyof ContactFormData, value: string) => 
+    setForm((current) => ({ ...current, [field]: value }));
+
+  const handleTopicClick = (topicId: string) => {
+    setActiveTopic(topicId);
+    if (!form.message) {
+      updateField('message', `Inquiry regarding ${topicId}: `);
+    }
+  };
+
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     setIsSubmitting(true);
-    window.setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmitted(true);
-    }, 1200);
+    const randomTicket = `UNT-${Math.floor(1000 + Math.random() * 9000)}`;
+    setTicketId(randomTicket);
+
+    await sendTelegramNotification({
+      contactName: form.contactName,
+      company: form.company,
+      email: form.email,
+      phone: form.phone,
+      topic: activeTopic,
+      preferredChannel: form.preferredChannel,
+      message: form.message,
+      ticketId: randomTicket,
+    });
+
+    setIsSubmitting(false);
+    setSubmitted(true);
   };
 
   return (
-    <div className="lg:col-span-7">
-      <div className="p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg space-y-6">
-        <div>
-          <h3 className="text-xl font-display font-bold text-slate-900 dark:text-white">Send Us a Direct Message</h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Select your areas of interest below and our commercial directors will tailor their response.</p>
+    <div id="contact-form-section" className="lg:col-span-7 flex flex-col h-full scroll-mt-28">
+      <div className="p-7 sm:p-9 rounded-3xl bg-white dark:bg-slate-900/95 border border-slate-200/80 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none relative overflow-hidden h-full flex flex-col justify-between space-y-6">
+        
+        {/* Decorative Ambient Background Glow */}
+        <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/5 blur-[90px] rounded-full pointer-events-none" />
+
+        {/* Header */}
+        <div className="space-y-2 border-b border-slate-100 dark:border-slate-800/80 pb-4">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-700/50 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider rounded-full">
+            <Zap className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <span>Direct B2B Communication Desk</span>
+          </div>
+          <h3 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-slate-900 dark:text-white">
+            Send Us a Direct Message
+          </h3>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+            Submit your commercial inquiry below. Our Phnom Penh directors respond within 4 business hours.
+          </p>
         </div>
+
         {submitted ? (
-          <SuccessState name={form.contactName} interests={selectedInterests} onReset={() => setSubmitted(false)} />
+          <SuccessState 
+            name={form.contactName} 
+            company={form.company}
+            topic={activeTopic}
+            ticketId={ticketId}
+            onReset={() => {
+              setSubmitted(false);
+              setForm(INITIAL_FORM);
+            }} 
+          />
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Select Topic(s) of Interest</label>
-              <div className="flex flex-wrap gap-2">
-                {INTERESTS.map((interest) => {
-                  const selected = selectedInterests.includes(interest);
-                  return <button type="button" key={interest} onClick={() => toggleInterest(interest)} className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${selected ? 'bg-emerald-600 text-white font-bold shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700'}`}>{interest} {selected ? '✓' : ''}</button>;
-                })}
+          <form onSubmit={handleSubmit} className="flex-1 flex flex-col justify-between space-y-5">
+            
+            <div className="space-y-5">
+              {/* Quick Inquiry Subject Pills */}
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                  Select Inquiry Subject
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {QUICK_TOPICS.map((topic) => {
+                    const Icon = topic.icon;
+                    const isSelected = activeTopic === topic.id;
+                    return (
+                      <button
+                        type="button"
+                        key={topic.id}
+                        onClick={() => handleTopicClick(topic.id)}
+                        className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all border ${
+                          isSelected
+                            ? 'bg-emerald-600 text-white border-emerald-500 font-bold shadow-md shadow-emerald-600/20 scale-[1.02]'
+                            : 'bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-emerald-400'
+                        }`}
+                      >
+                        <Icon className={`w-4 h-4 ${isSelected ? 'text-white' : 'text-emerald-500'}`} />
+                        <span>{topic.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 1. Contact Information Inputs (Spacious & Prominent) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4.5 sm:gap-5">
+                <div>
+                  <label className="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-2">
+                    <User className="w-4 h-4 text-emerald-500" />
+                    <span>Full Name *</span>
+                  </label>
+                  <input 
+                    type="text" 
+                    required 
+                    placeholder="e.g. Sokha Heng" 
+                    value={form.contactName} 
+                    onChange={(e) => updateField('contactName', e.target.value)} 
+                    className={INPUT_CLASS} 
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-2">
+                    <Building2 className="w-4 h-4 text-emerald-500" />
+                    <span>Company / Organization *</span>
+                  </label>
+                  <input 
+                    type="text" 
+                    required 
+                    placeholder="e.g. Cambodia FMCG Wholesale Ltd" 
+                    value={form.company} 
+                    onChange={(e) => updateField('company', e.target.value)} 
+                    className={INPUT_CLASS} 
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-emerald-500" />
+                    <span>Business Email *</span>
+                  </label>
+                  <input 
+                    type="email" 
+                    required 
+                    placeholder="name@company.com" 
+                    value={form.email} 
+                    onChange={(e) => updateField('email', e.target.value)} 
+                    className={INPUT_CLASS} 
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-2">
+                    <Phone className="w-4 h-4 text-emerald-500" />
+                    <span>Phone / Telegram Number *</span>
+                  </label>
+                  <input 
+                    type="text" 
+                    required 
+                    placeholder="e.g. 012 345 678 or @username" 
+                    value={form.phone} 
+                    onChange={(e) => updateField('phone', e.target.value)} 
+                    className={INPUT_CLASS} 
+                  />
+                </div>
+              </div>
+
+              {/* 2. Response Channel Preference */}
+              <div>
+                <label className="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-2">
+                  <MessageCircle className="w-4 h-4 text-emerald-500" />
+                  <span>Preferred Channel for Response</span>
+                </label>
+                <select 
+                  value={form.preferredChannel} 
+                  onChange={(event) => updateField('preferredChannel', event.target.value)} 
+                  className={INPUT_CLASS}
+                >
+                  <option value="Telegram / WhatsApp">Telegram / WhatsApp Message (Fastest)</option>
+                  <option value="Email">Official Business Email</option>
+                  <option value="Direct Phone Call">Direct Phone Call from Trade Director</option>
+                </select>
+              </div>
+
+              {/* 3. Project Scope Textarea */}
+              <div>
+                <label className="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-2">
+                  <MessageSquare className="w-4 h-4 text-emerald-500" />
+                  <span>Project Scope / Sourcing Details *</span>
+                </label>
+                <textarea 
+                  rows={4} 
+                  required 
+                  placeholder="Describe target products, target volumes, factory origins, or compliance questions..." 
+                  value={form.message} 
+                  onChange={(event) => updateField('message', event.target.value)} 
+                  className={`${INPUT_CLASS} leading-relaxed`} 
+                />
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <FormInput label="Full Name *" placeholder="e.g. Sokha Heng" value={form.contactName} onChange={(value) => updateField('contactName', value)} />
-              <FormInput label="Company / Organization *" placeholder="e.g. Cambodia FMCG Wholesale Ltd" value={form.company} onChange={(value) => updateField('company', value)} />
-              <FormInput type="email" label="Business Email *" placeholder="name@company.com" value={form.email} onChange={(value) => updateField('email', value)} />
-              <FormInput label="Phone / Telegram Number *" placeholder="+855 12 345 678" value={form.phone} onChange={(value) => updateField('phone', value)} />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Preferred Channel for Response</label>
-              <select value={form.preferredChannel} onChange={(event) => updateField('preferredChannel', event.target.value)} className={INPUT_CLASS}>
-                <option value="Telegram / WhatsApp">Telegram / WhatsApp Message (Fastest)</option>
-                <option value="Email">Official Business Email</option>
-                <option value="Direct Phone Call">Direct Phone Call</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Project Scope / Sourcing Details</label>
-              <textarea rows={4} required placeholder="Describe target products, target volumes, factory origins, or compliance questions..." value={form.message} onChange={(event) => updateField('message', event.target.value)} className={`${INPUT_CLASS} p-3`} />
-            </div>
-            <button type="submit" disabled={isSubmitting} className="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 via-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center space-x-2 disabled:opacity-60">
-              <span>{isSubmitting ? 'Transmitting Message...' : 'Transmit Message to UNT Headquarters'}</span>{!isSubmitting && <Send className="w-4 h-4" />}
+
+            {/* Submit Button */}
+            <button 
+              type="submit" 
+              disabled={isSubmitting} 
+              className="w-full py-4.5 sm:py-5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-display font-bold text-sm sm:text-base shadow-xl shadow-emerald-600/25 hover:scale-[1.01] transition-all flex items-center justify-center space-x-2 disabled:opacity-60 mt-auto"
+            >
+              {isSubmitting ? (
+                <>
+                  <RefreshCw className="w-5 h-5 animate-spin" />
+                  <span>Transmitting to Telegram & UNT HQ...</span>
+                </>
+              ) : (
+                <>
+                  <span>Transmit Message to UNT Headquarters</span>
+                  <Send className="w-5 h-5 ml-1" />
+                </>
+              )}
             </button>
           </form>
         )}
+
       </div>
     </div>
   );
 }
 
-function FormInput({ label, type = 'text', placeholder, value, onChange }: { label: string; type?: string; placeholder: string; value: string; onChange: (value: string) => void }) {
-  return <div><label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">{label}</label><input type={type} required placeholder={placeholder} value={value} onChange={(event) => onChange(event.target.value)} className={INPUT_CLASS} /></div>;
-}
+function SuccessState({ name, company, topic, ticketId, onReset }: { name: string; company: string; topic: string; ticketId: string; onReset: () => void }) {
+  return (
+    <div className="py-8 text-center space-y-4 animate-fade-in my-auto">
+      <div className="w-16 h-16 mx-auto rounded-3xl bg-emerald-500/20 border border-emerald-400 flex items-center justify-center text-emerald-400 shadow-xl shadow-emerald-500/20">
+        <CheckCircle2 className="w-8 h-8" />
+      </div>
 
-function SuccessState({ name, interests, onReset }: { name: string; interests: string[]; onReset: () => void }) {
-  return <div className="py-12 text-center space-y-4"><div className="w-16 h-16 mx-auto rounded-full bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 flex items-center justify-center"><CheckCircle2 className="w-8 h-8" /></div><h4 className="text-2xl font-display font-bold text-slate-900 dark:text-white">Message Transmitted!</h4><p className="text-slate-600 dark:text-slate-300 text-sm max-w-md mx-auto leading-relaxed">Thank you, <span className="font-semibold text-slate-900 dark:text-white">{name}</span>. Your inquiry regarding <span className="font-semibold text-emerald-700 dark:text-emerald-400">{interests.join(', ')}</span> has been routed to our Phnom Penh office.</p><button onClick={onReset} className="mt-4 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-sm">Send Another Inquiry</button></div>;
+      <div className="space-y-1.5">
+        <span className="px-3 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-mono text-xs font-bold border border-emerald-500/30 inline-block">
+          Ticket Ref: #{ticketId}
+        </span>
+        <h4 className="text-2xl sm:text-3xl font-display font-bold text-slate-900 dark:text-white">
+          Message Transmitted to Telegram Bot!
+        </h4>
+        <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm max-w-md mx-auto leading-relaxed">
+          Thank you, <strong className="text-slate-900 dark:text-white">{name}</strong> ({company}). Your inquiry regarding <strong className="text-emerald-600 dark:text-emerald-400">{topic}</strong> has been transmitted to our Telegram Bot & commercial director desk.
+        </p>
+      </div>
+
+      <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 max-w-md mx-auto text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-1 text-left">
+        <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold">
+          <Clock className="w-4 h-4 shrink-0" />
+          <span>Expected Response Time: &lt; 4 Business Hours</span>
+        </div>
+        <p className="text-xs text-slate-500 pt-0.5">
+          Need emergency support? Contact Telegram <a href="https://t.me/untsourcing" target="_blank" rel="noreferrer" className="text-emerald-500 font-bold hover:underline">@untsourcing</a> or call <a href="tel:012771774" className="text-emerald-500 font-bold hover:underline">012 771 774</a>.
+        </p>
+      </div>
+
+      <div className="pt-1 flex items-center justify-center gap-3">
+        <button 
+          onClick={onReset} 
+          className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow-md transition-colors"
+        >
+          Send Another Message
+        </button>
+      </div>
+    </div>
+  );
 }

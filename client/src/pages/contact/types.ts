@@ -20,6 +20,8 @@ export interface ContactFormData {
   email: string;
   phone: string;
   preferredChannel: string;
+  urgency: string;
+  budget: string;
   message: string;
 }
 
@@ -29,6 +31,7 @@ export const INITIAL_FORM: ContactFormData = {
   email: '',
   phone: '',
   preferredChannel: 'Telegram / WhatsApp',
+  urgency: 'Standard (1-2 Weeks)',
+  budget: '$10,000 - $50,000',
   message: '',
 };
-
