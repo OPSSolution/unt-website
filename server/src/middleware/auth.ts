@@ -24,5 +24,6 @@ export async function requireAdmin(req: Request, res: Response, next: NextFuncti
     return res.status(403).json({ error: "Forbidden: admin access required" });
   }
 
+  req.admin = { id: user.id, ...(user.email ? { email: user.email } : {}) };
   next();
 }
