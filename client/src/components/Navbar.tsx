@@ -7,12 +7,18 @@ import {
 import { QuickSearchModal } from './QuickSearchModal';
 import { QuickCalcModal } from './QuickCalcModal';
 import { useHomepageSections } from '../hooks/useHomepageSections';
+import { QuickCalcModal } from './QuickCalcModal';
+import { QuickSearchModal } from './QuickSearchModal';
+import { DesktopNav } from './navbar/DesktopNav';
+import { MobileNav } from './navbar/MobileNav';
+import { NavbarActions } from './navbar/NavbarActions';
+import type { MegaMenuName } from './navbar/data';
 
 interface NavbarProps {
   activeTab: PageTab;
   setActiveTab: (tab: PageTab) => void;
   darkMode?: boolean;
-  setDarkMode?: (dark: boolean | ((prev: boolean) => boolean)) => void;
+  setDarkMode?: (dark: boolean | ((previous: boolean) => boolean)) => void;
   onOpenQuoteModal: () => void;
   onSelectProduct?: (product: Product) => void;
   onSelectArticle?: (article: Article) => void;
@@ -47,69 +53,62 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [calcModalOpen, setCalcModalOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const sections = useHomepageSections();
-  const nb = sections.navbar_footer ?? {};
+  const [activeMegaMenu, setActiveMegaMenu] = useState<MegaMenuName>(null);
+  const navbarContent = useHomepageSections().navbar_footer ?? {};
 
   // Compress on scroll
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 24);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 24);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Ctrl+K / Cmd+K global search shortcut
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        setSearchModalOpen((prev) => !prev);
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+        event.preventDefault();
+        setSearchModalOpen((open) => !open);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const handleNavClick = (id: PageTab) => {
-    setActiveTab(id);
+  const handleNavigate = (tab: PageTab) => {
+    setActiveTab(tab);
     setMobileMenuOpen(false);
     setActiveMegaMenu(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+  const openSearch = () => {
+    setMobileMenuOpen(false);
+    setSearchModalOpen(true);
+  };
+  const openCalculator = () => {
+    setMobileMenuOpen(false);
+    setCalcModalOpen(true);
+  };
+  const openQuote = () => {
+    setMobileMenuOpen(false);
+    setActiveMegaMenu(null);
+    onOpenQuoteModal();
+  };
 
   return (
     <>
-      {/* ─── Floating Super-Prime Pill Header (Light & Dark) ─── */}
       <header className="sticky top-0 z-50 w-full pointer-events-none px-3 sm:px-6 pt-3 sm:pt-4">
-        <div
-          className={`pointer-events-auto relative mx-auto max-w-[1700px] w-full nav-pill transition-all duration-300 ${
-            isScrolled ? 'nav-pill-scrolled py-1.5' : 'py-2'
-          } ${mobileMenuOpen ? 'rounded-[2rem]' : 'rounded-full'}`}
-        >
-          {/* Ambient top glow hairline */}
+        <div className={`pointer-events-auto relative mx-auto max-w-[1700px] w-full nav-pill transition-all duration-300 ${
+          isScrolled ? 'nav-pill-scrolled py-1.5' : 'py-2'
+        } ${mobileMenuOpen ? 'rounded-[2rem]' : 'rounded-full'}`}>
           <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-emerald-400/50 to-transparent pointer-events-none rounded-full" />
-
-          {/* ── Pill row ── */}
-          <div className={`flex items-center justify-between gap-2 pl-3 sm:pl-4 pr-2 sm:pr-3 transition-all duration-300 ${
-            isScrolled ? 'h-12 xl:h-14' : 'h-14 xl:h-16'
-          }`}>
-            {/* Logo (circular mark + brand on wide screens) */}
-            <button
-              onClick={() => handleNavClick('home')}
-              className="flex items-center space-x-2.5 text-left group focus:outline-none shrink-0"
-              aria-label="UNT Company home"
-            >
+          <div className={`flex items-center justify-between gap-2 pl-3 sm:pl-4 pr-2 sm:pr-3 transition-all duration-300 ${isScrolled ? 'h-12 xl:h-14' : 'h-14 xl:h-16'}`}>
+            <button onClick={() => handleNavigate('home')} className="flex items-center space-x-2.5 text-left group focus:outline-none shrink-0" aria-label="UNT Company home">
               <div className="relative w-10 h-10 rounded-xl bg-white border border-emerald-200 shadow-sm p-1 group-hover:scale-105 transition-all duration-300 shrink-0">
                 <img src="/images/logos/image.png" alt="UNT Logo" className="w-full h-full object-contain" />
               </div>
               <div className="hidden xl:block shrink-0">
-                <div className="font-display font-bold text-sm tracking-tight text-slate-900 dark:text-white leading-none">
-                  {nb.company_name ?? 'UNT COMPANY'}
-                </div>
-                <div className="text-[9px] text-emerald-600 dark:text-emerald-400 font-semibold tracking-wide mt-1 leading-none">
-                  {nb.company_tagline ?? 'Trusted Global Trading Partner'}
-                </div>
+                <div className="font-display font-bold text-sm tracking-tight text-slate-900 dark:text-white leading-none">{navbarContent.company_name ?? 'UNT COMPANY'}</div>
+                <div className="text-[9px] text-emerald-600 dark:text-emerald-400 font-semibold tracking-wide mt-1 leading-none">{navbarContent.company_tagline ?? 'Trusted Global Trading Partner'}</div>
               </div>
             </button>
 
@@ -192,78 +191,21 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           </div>
 
-          {/* Mobile Drawer (rounded sheet below pill row) */}
           {mobileMenuOpen && (
-            <div className="lg:hidden px-4 pt-2 pb-5 space-y-3 animate-in slide-in-from-top duration-200 text-left">
-              <div className="border-t border-slate-200 dark:border-white/10 pt-3 space-y-1">
-                {NAV_LINKS.map((link) => {
-                  const isActive = activeTab === link.id;
-                  return (
-                    <button
-                      key={link.id}
-                      onClick={() => handleNavClick(link.id)}
-                      className={`w-full flex items-center justify-between px-4 py-2.5 rounded-full text-sm font-medium transition-all ${
-                        isActive
-                          ? 'text-emerald-700 bg-emerald-50 font-bold dark:text-emerald-300 dark:bg-white/10'
-                          : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100 dark:text-white/80 dark:hover:text-white dark:hover:bg-white/10'
-                      }`}
-                    >
-                      <span>{link.label}</span>
-                      <span className="text-xs text-slate-400 dark:text-slate-500">{link.labelKhmer}</span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="grid grid-cols-2 gap-2 pt-1">
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    setSearchModalOpen(true);
-                  }}
-                  className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-slate-100 text-slate-700 text-xs font-bold transition-colors dark:bg-white/10 dark:text-white/80"
-                >
-                  <Search className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                  <span>Search</span>
-                </button>
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    setCalcModalOpen(true);
-                  }}
-                  className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-slate-100 text-slate-700 text-xs font-bold transition-colors dark:bg-white/10 dark:text-white/80"
-                >
-                  <Calculator className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                  <span>Estimator</span>
-                </button>
-              </div>
-
-              {setDarkMode && (
-                <button
-                  onClick={() => setDarkMode((prev) => !prev)}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-slate-100 text-slate-700 text-xs font-bold transition-colors dark:bg-white/10 dark:text-white/80"
-                >
-                  {darkMode ? <Sun className="w-4 h-4 text-amber-500 dark:text-amber-400" /> : <Moon className="w-4 h-4 text-slate-600 dark:text-slate-300" />}
-                  <span>{darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}</span>
-                </button>
-              )}
-
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onOpenQuoteModal();
-                }}
-                className="btn-shine w-full flex items-center justify-center space-x-2 py-3 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm"
-              >
-                <span>{nb.mobile_cta ?? 'Request B2B Sourcing Quote'}</span>
-                <ArrowRight className="w-4 h-4 shrink-0" />
-              </button>
-            </div>
+            <MobileNav
+              activeTab={activeTab}
+              darkMode={darkMode}
+              ctaLabel={navbarContent.mobile_cta ?? 'Request B2B Sourcing Quote'}
+              setDarkMode={setDarkMode}
+              onNavigate={handleNavigate}
+              onSearch={openSearch}
+              onCalculate={openCalculator}
+              onQuote={openQuote}
+            />
           )}
         </div>
       </header>
 
-      {/* Command Search Palette Modal */}
       <QuickSearchModal
         isOpen={searchModalOpen}
         onClose={() => setSearchModalOpen(false)}
@@ -271,10 +213,8 @@ export const Navbar: React.FC<NavbarProps> = ({
         onSelectArticle={onSelectArticle}
         onOpenQuoteModal={onOpenQuoteModal}
         onOpenCalcModal={() => setCalcModalOpen(true)}
-        onSelectTab={handleNavClick}
+        onSelectTab={handleNavigate}
       />
-
-      {/* Sourcing Estimator Modal */}
       <QuickCalcModal
         isOpen={calcModalOpen}
         onClose={() => setCalcModalOpen(false)}

@@ -1,0 +1,271 @@
+/* 3D perspective helper */
+.perspective-1200 {
+  perspective: 1200px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+/* Depth layers for parallax inside 3D tilt cards */
+.tz-10 {
+  transform: translateZ(10px) !important;
+}
+
+.tz-16 {
+  transform: translateZ(16px) !important;
+}
+
+.tz-20 {
+  transform: translateZ(20px) !important;
+}
+
+.tz-28 {
+  transform: translateZ(28px) !important;
+}
+
+.tz-36 {
+  transform: translateZ(36px) !important;
+}
+
+.tz-48 {
+  transform: translateZ(48px) !important;
+}
+
+.tz-64 {
+  transform: translateZ(64px) !important;
+}
+
+/* Springy card pop-in entrance (used on scroll into view + live decks) */
+@keyframes popCard {
+  0% {
+    opacity: 0;
+    transform: scale(0.86) translateY(34px);
+  }
+
+  55% {
+    opacity: 1;
+    transform: scale(1.035) translateY(-6px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-pop-in {
+  animation: popCard 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* 3D flip-in animation for modals & swappable panels */
+@keyframes flipIn {
+  0% {
+    opacity: 0;
+    transform: perspective(1200px) rotateX(18deg) scale(0.92) translateY(28px);
+  }
+
+  60% {
+    opacity: 1;
+    transform: perspective(1200px) rotateX(-3deg) scale(1.015) translateY(-4px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: perspective(1200px) rotateX(0deg) scale(1) translateY(0);
+  }
+}
+
+.animate-flip-in {
+  animation: flipIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Full 3D flip-card (backface swap) */
+.flip-card-perspective {
+  perspective: 1400px;
+}
+
+.flip-card-inner {
+  transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.flip-card-inner.flip-card-flipped {
+  transform: rotateY(180deg);
+}
+
+.flip-face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.flip-face-back {
+  transform: rotateY(180deg);
+}
+
+/* Live progress bar for auto-cycling showcase */
+@keyframes liveProgress {
+  from {
+    width: 0%;
+  }
+
+  to {
+    width: 100%;
+  }
+}
+
+.live-progress {
+  animation-name: liveProgress;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+.live-progress.paused {
+  animation-play-state: paused;
+}
+
+/* Live pulse dot */
+@keyframes livePing {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+
+  70% {
+    box-shadow: 0 0 0 9px rgba(239, 68, 68, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.live-ping {
+  animation: livePing 1.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Endless marquee for partner / brand live ticker */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee 36s linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+.marquee-mask {
+  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+}
+
+/* Hide scrollbars inside SwiperDeck track */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Card entrance rise for grids */
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(26px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-rise-in {
+  animation: riseIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ScrollReveal Animation System */
+.reveal-on-scroll {
+  opacity: 0;
+  will-change: opacity, transform;
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-up {
+  transform: translateY(36px);
+}
+
+.reveal-down {
+  transform: translateY(-36px);
+}
+
+.reveal-left {
+  transform: translateX(-40px);
+}
+
+.reveal-right {
+  transform: translateX(40px);
+}
+
+.reveal-scale {
+  transform: scale(0.92);
+}
+
+.reveal-fade {
+  transform: none;
+}
+
+.reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: translate(0, 0) scale(1);
+}
+
+/* Stagger Delay Classes */
+.delay-75 {
+  transition-delay: 75ms;
+}
+
+.delay-100 {
+  transition-delay: 100ms;
+}
+
+.delay-150 {
+  transition-delay: 150ms;
+}
+
+.delay-200 {
+  transition-delay: 200ms;
+}
+
+.delay-300 {
+  transition-delay: 300ms;
+}
+
+.delay-400 {
+  transition-delay: 400ms;
+}
+
+.delay-500 {
+  transition-delay: 500ms;
+}
+
+.delay-600 {
+  transition-delay: 600ms;
+}
+
+/* Floating Super-Prime Pill Navigation (Dual Theme) */

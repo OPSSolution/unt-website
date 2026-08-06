@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { PageTab, Product, Article } from './types';
+import { useTheme } from './hooks/useTheme';
+import { AppPageContent } from './components/AppPageContent';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { QuoteModal } from './components/QuoteModal';
 import { ProductDetailModal } from './components/ProductDetailModal';
 import { ArticleReaderModal } from './components/ArticleReaderModal';
-
-import { HomePage } from './pages/HomePage';
-import { AboutPage } from './pages/AboutPage';
-import { ServicesPage } from './pages/ServicesPage';
-import { ProductsPage } from './pages/ProductsPage';
-import { TrainingPage } from './pages/TrainingPage';
-import { BlogPage } from './pages/BlogPage';
-import { ContactPage } from './pages/ContactPage';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<PageTab>('home');
@@ -22,26 +16,7 @@ export default function App() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
 
-  // Dark Mode State with LocalStorage Persistence
-  const [darkMode, setDarkMode] = useState<boolean>(() => {
-    const savedTheme = localStorage.getItem('unt_theme');
-    if (savedTheme) {
-      return savedTheme === 'dark';
-    }
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
-  });
-
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-      document.body.classList.add('dark');
-      localStorage.setItem('unt_theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      document.body.classList.remove('dark');
-      localStorage.setItem('unt_theme', 'light');
-    }
-  }, [darkMode]);
+  const { darkMode, setDarkMode } = useTheme();
 
   // Scroll to top & trigger ScrollReveal when tab changes
   useEffect(() => {
@@ -72,50 +47,13 @@ export default function App() {
 
       {/* Main View Container */}
       <main className="flex-1">
-        {activeTab === 'home' && (
-          <HomePage
-            setActiveTab={setActiveTab}
-            onOpenQuoteModal={() => handleOpenQuoteModal()}
-            onOpenProductModal={(product) => setSelectedProduct(product)}
-            onOpenArticleModal={(article) => setSelectedArticle(article)}
-          />
-        )}
-
-        {activeTab === 'about' && (
-          <AboutPage
-            setActiveTab={setActiveTab}
-            onOpenQuoteModal={() => handleOpenQuoteModal()}
-          />
-        )}
-
-        {activeTab === 'services' && (
-          <ServicesPage
-            setActiveTab={setActiveTab}
-            onOpenQuoteModal={() => handleOpenQuoteModal()}
-          />
-        )}
-
-        {activeTab === 'products' && (
-          <ProductsPage
-            onOpenProductModal={(product) => setSelectedProduct(product)}
-            onOpenQuoteWithProduct={(prodName) => handleOpenQuoteModal(prodName)}
-          />
-        )}
-
-        {activeTab === 'training' && (
-          <TrainingPage
-            onOpenQuoteModal={() => handleOpenQuoteModal()}
-          />
-        )}
-
-        {activeTab === 'blog' && (
-          <BlogPage
-            onOpenArticleModal={(article) => setSelectedArticle(article)}
-            onOpenQuoteModal={() => handleOpenQuoteModal()}
-          />
-        )}
-
-        {activeTab === 'contact' && <ContactPage />}
+        <AppPageContent
+          activeTab={activeTab}
+          onNavigate={setActiveTab}
+          onOpenQuote={handleOpenQuoteModal}
+          onOpenProduct={setSelectedProduct}
+          onOpenArticle={setSelectedArticle}
+        />
       </main>
 
       {/* Footer */}
