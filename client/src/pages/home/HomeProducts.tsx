@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Card3D } from '../../components/Card3D';
 import { ScrollReveal } from '../../components/ScrollReveal';
-import { PRODUCTS } from '../../data/mockData';
 import type { TradeHub } from '../../components/ThreeBackground';
 import type { PageTab, Product } from '../../types';
 
@@ -55,7 +54,7 @@ export function HomeProducts({ hubs, products, content, onSelectOrigin, onNaviga
   };
   const activeHub = hubs.find((hub) => hub.id === countryId);
   const displayedProducts = productsByCountry[countryId] ?? products.slice(0, 4);
-  const visibleProducts = displayedProducts.length > 0 ? displayedProducts : PRODUCTS.slice(0, 4);
+  const visibleProducts = displayedProducts;
 
   return (
     <section className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 space-y-8">

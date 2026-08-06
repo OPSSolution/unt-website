@@ -5,6 +5,7 @@ import {
   Filter, Grid, LayoutGrid, Maximize2, Download, Eye, Layers, Clock, Share2
 } from 'lucide-react';
 import { ScrollReveal } from '../../components/ScrollReveal';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 export interface ActivityItem {
   id: string;
@@ -25,7 +26,7 @@ export interface ActivityItem {
   badge?: string;
 }
 
-const ACTIVITIES: ActivityItem[] = [
+export const ACTIVITIES: ActivityItem[] = [
   {
     id: 'act-1',
     title: 'Executive B2B Commercial Sales Masterclass',
@@ -229,10 +230,16 @@ const ACTIVITIES: ActivityItem[] = [
 ];
 
 interface Props {
+  content: Record<string, any>;
   onOpenQuoteModal: () => void;
 }
 
-export const TrainingActivityGallery: React.FC<Props> = ({ onOpenQuoteModal }) => {
+export const TrainingActivityGallery: React.FC<Props> = ({ content, onOpenQuoteModal }) => {
+  const { language } = useLanguage();
+  const text = (key: string, english: string) => content[key] ?? (language === 'en' ? english : '');
+  const activities: ActivityItem[] = Array.isArray(content.activities)
+    ? content.activities
+    : language === 'en' ? ACTIVITIES : [];
   const [activeTab, setActiveTab] = useState<'all' | 'workshop' | 'video' | 'negotiation' | 'graduation'>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 4;
@@ -279,8 +286,8 @@ export const TrainingActivityGallery: React.FC<Props> = ({ onOpenQuoteModal }) =
 
   // Filtered dataset
   const filteredActivities = useMemo(() => {
-    return ACTIVITIES.filter((item) => activeTab === 'all' ? true : item.category === activeTab);
-  }, [activeTab]);
+    return activities.filter((item) => activeTab === 'all' ? true : item.category === activeTab);
+  }, [activeTab, activities]);
 
   // Paginated dataset
   const totalPages = Math.max(1, Math.ceil(filteredActivities.length / ITEMS_PER_PAGE));
@@ -321,24 +328,24 @@ export const TrainingActivityGallery: React.FC<Props> = ({ onOpenQuoteModal }) =
             <div className="space-y-3 max-w-2xl">
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-700/50 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider rounded-full shadow-sm">
                 <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                <span>Live Activity & Media Showcase</span>
+                <span>{content.gallery_badge ?? (language === 'en' ? 'Live Activity & Media Showcase' : '')}</span>
               </div>
               <h2 className="text-3xl sm:text-4xl font-display font-black text-slate-900 dark:text-white tracking-tight">
-                See Our Sales Academy <span className="text-emerald-600 dark:text-emerald-400">In Action</span>
+                {content.gallery_heading ?? (language === 'en' ? 'See Our Sales Academy In Action' : '')}
               </h2>
               <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
-                Explore real workshop sessions, live negotiation video previews, hands-on roleplay labs, and corporate graduation ceremonies.
+                {content.gallery_sub ?? (language === 'en' ? 'Explore real workshop sessions, live negotiation video previews, hands-on roleplay labs, and corporate graduation ceremonies.' : '')}
               </p>
             </div>
 
             {/* Filter Tabs matching reference image */}
             <div className="flex flex-wrap items-center gap-2 bg-slate-100 dark:bg-slate-900/90 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 shrink-0">
               {[
-                { id: 'all', label: 'All Activities', icon: Sparkles },
-                { id: 'workshop', label: 'Workshops', icon: ImageIcon },
-                { id: 'video', label: 'Video Previews', icon: Video },
-                { id: 'negotiation', label: 'Negotiation Labs', icon: Users },
-                { id: 'graduation', label: 'Graduations', icon: Award },
+                { id: 'all', label: text('gallery_tab_all', 'All Activities'), icon: Sparkles },
+                { id: 'workshop', label: text('gallery_tab_workshops', 'Workshops'), icon: ImageIcon },
+                { id: 'video', label: text('gallery_tab_videos', 'Video Previews'), icon: Video },
+                { id: 'negotiation', label: text('gallery_tab_negotiation', 'Negotiation Labs'), icon: Users },
+                { id: 'graduation', label: text('gallery_tab_graduation', 'Graduations'), icon: Award },
               ].map(tab => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.id;
@@ -420,7 +427,7 @@ export const TrainingActivityGallery: React.FC<Props> = ({ onOpenQuoteModal }) =
                         className="absolute bottom-4 right-4 px-3.5 py-2 rounded-xl bg-slate-900/80 hover:bg-emerald-600 text-white text-xs font-bold flex items-center gap-2 backdrop-blur-md border border-white/10 transition-colors shadow-lg z-10"
                       >
                         <Eye className="w-4 h-4" />
-                        <span>View Gallery ({activity.galleryImages.length})</span>
+                        <span>{text('gallery_view_gallery', 'View Gallery')} ({activity.galleryImages.length})</span>
                       </button>
                     )}
 
@@ -495,7 +502,7 @@ export const TrainingActivityGallery: React.FC<Props> = ({ onOpenQuoteModal }) =
                         onClick={() => activity.type === 'video' ? (setSelectedVideo(activity), setIsVideoPlaying(true)) : openImageGallery(activity, 0)}
                         className="ml-auto px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-emerald-600 hover:text-white text-slate-800 dark:text-slate-200 font-bold text-xs flex items-center gap-1.5 transition-colors shrink-0"
                       >
-                        <span>{activity.type === 'video' ? 'Watch Full Video' : 'Browse Album'}</span>
+                        <span>{activity.type === 'video' ? text('gallery_watch_video', 'Watch Full Video') : text('gallery_browse_album', 'Browse Album')}</span>
                         <ChevronRight className="w-4 h-4" />
                       </button>
                     </div>
@@ -556,20 +563,20 @@ export const TrainingActivityGallery: React.FC<Props> = ({ onOpenQuoteModal }) =
             <div className="absolute right-0 top-0 w-96 h-96 bg-emerald-500/10 blur-[100px] rounded-full pointer-events-none" />
             <div className="space-y-2 relative z-10 max-w-2xl">
               <span className="px-3 py-1 bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-bold uppercase rounded-full tracking-wider">
-                Live Enterprise Enrollment
+                {text('gallery_cta_badge', 'Live Enterprise Enrollment')}
               </span>
               <h3 className="text-2xl sm:text-3xl font-display font-bold text-white">
-                Want to Host This Interactive Workshop for Your Sales Team?
+                {text('gallery_cta_heading', 'Want to Host This Interactive Workshop for Your Sales Team?')}
               </h3>
               <p className="text-emerald-100/80 text-xs sm:text-sm leading-relaxed">
-                We deliver custom on-site activity bootcamps with simulated negotiation roleplay tailored to your company catalog.
+                {text('gallery_cta_desc', 'We deliver custom on-site activity bootcamps with simulated negotiation roleplay tailored to your company catalog.')}
               </p>
             </div>
             <button
               onClick={onOpenQuoteModal}
               className="relative z-10 px-6 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-display font-bold text-xs shadow-xl shadow-emerald-500/20 shrink-0 flex items-center gap-2 hover:scale-105 transition-all"
             >
-              <span>Schedule On-Site Workshop</span>
+              <span>{text('gallery_cta_button', 'Schedule On-Site Workshop')}</span>
               <ExternalLink className="w-4 h-4" />
             </button>
           </div>
@@ -711,7 +718,7 @@ export const TrainingActivityGallery: React.FC<Props> = ({ onOpenQuoteModal }) =
                   onClick={() => { setSelectedVideo(null); setIsVideoPlaying(false); onOpenQuoteModal(); }}
                   className="px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 hover:scale-105 transition-all shrink-0"
                 >
-                  <span>Enroll Team in This Masterclass</span>
+                  <span>{text('gallery_video_enroll_cta', 'Enroll Team in This Masterclass')}</span>
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
@@ -819,7 +826,7 @@ export const TrainingActivityGallery: React.FC<Props> = ({ onOpenQuoteModal }) =
                   onClick={() => { setActiveLightboxItem(null); onOpenQuoteModal(); }}
                   className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shrink-0 shadow-lg"
                 >
-                  Book Workshop
+                  {text('gallery_album_book_cta', 'Book Workshop')}
                 </button>
               </div>
             </div>

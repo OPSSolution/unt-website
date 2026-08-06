@@ -3,6 +3,7 @@ import { PARTNERS as MOCK_PARTNERS } from '../data/mockData';
 import { useSharedResource } from './sharedResource';
 import { API_BASE } from '../lib/apiBase';
 import { useLanguage, type ContentLanguage } from '../i18n/LanguageContext';
+import { mergeStaticData } from './mergeStaticData';
 
 
 function mapRow(row: any): PartnerLogo {
@@ -18,11 +19,14 @@ async function loadPartners(language: ContentLanguage): Promise<PartnerLogo[] | 
     const res = await fetch(`${API_BASE}/api/partners?lang=${language}`);
     if (!res.ok) return null;
     const rows = await res.json();
-    return Array.isArray(rows) && rows.length > 0 ? rows.map(mapRow) : MOCK_PARTNERS;
-  } catch { return MOCK_PARTNERS; }
+    const databasePartners = Array.isArray(rows) ? rows.map(mapRow) : [];
+    return language === 'en'
+      ? mergeStaticData(databasePartners, MOCK_PARTNERS, (partner) => partner.name)
+      : databasePartners;
+  } catch { return language === 'en' ? MOCK_PARTNERS : []; }
 }
 
 export function usePartners(): PartnerLogo[] {
   const { language } = useLanguage();
-  return useSharedResource(`partners-${language}`, () => loadPartners(language), MOCK_PARTNERS);
+  return useSharedResource(`partners-${language}`, () => loadPartners(language), language === 'en' ? MOCK_PARTNERS : []);
 }

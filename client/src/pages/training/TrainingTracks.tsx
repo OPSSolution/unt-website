@@ -3,6 +3,7 @@ import { ArrowRight, CheckCircle2, Clock, GraduationCap, BookOpen, Award, Sparkl
 import { Card3D } from '../../components/Card3D';
 import { TRAINING_TRACKS } from '../../data/mockData';
 import type { TrainingTrack } from '../../types';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface Props {
   content: Record<string, string>;
@@ -10,6 +11,10 @@ interface Props {
 }
 
 export function TrainingTracks({ content, onSelect }: Props) {
+  const { language } = useLanguage();
+  const tracks: TrainingTrack[] = Array.isArray((content as Record<string, any>).tracks)
+    ? (content as Record<string, any>).tracks
+    : language === 'en' ? TRAINING_TRACKS : [];
   return (
     <section className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 space-y-10">
       
@@ -28,7 +33,7 @@ export function TrainingTracks({ content, onSelect }: Props) {
 
       {/* Tracks Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
-        {TRAINING_TRACKS.map((track) => (
+        {tracks.map((track) => (
           <Card3D key={track.id} intensity={10}>
             <article className="group relative rounded-3xl bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-800/90 p-8 shadow-xl hover:shadow-2xl hover:border-emerald-500/50 transition-all duration-300 flex flex-col justify-between h-full space-y-6 overflow-hidden">
               

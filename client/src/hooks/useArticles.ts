@@ -3,6 +3,7 @@ import { ARTICLES as MOCK_ARTICLES } from '../data/mockData';
 import { useSharedResource } from './sharedResource';
 import { API_BASE } from '../lib/apiBase';
 import { useLanguage, type ContentLanguage } from '../i18n/LanguageContext';
+import { mergeStaticData } from './mergeStaticData';
 
 
 function mapRow(row: any): Article {
@@ -20,11 +21,14 @@ async function loadArticles(language: ContentLanguage): Promise<Article[] | null
     const res = await fetch(`${API_BASE}/api/articles?lang=${language}`);
     if (!res.ok) return null;
     const rows = await res.json();
-    return Array.isArray(rows) && rows.length > 0 ? rows.map(mapRow) : MOCK_ARTICLES;
-  } catch { return MOCK_ARTICLES; }
+    const databaseArticles = Array.isArray(rows) ? rows.map(mapRow) : [];
+    return language === 'en'
+      ? mergeStaticData(databaseArticles, MOCK_ARTICLES, (article) => article.title)
+      : databaseArticles;
+  } catch { return language === 'en' ? MOCK_ARTICLES : []; }
 }
 
 export function useArticles(): Article[] {
   const { language } = useLanguage();
-  return useSharedResource(`articles-${language}`, () => loadArticles(language), MOCK_ARTICLES);
+  return useSharedResource(`articles-${language}`, () => loadArticles(language), language === 'en' ? MOCK_ARTICLES : []);
 }

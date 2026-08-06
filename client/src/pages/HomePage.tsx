@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { ARTICLES, PARTNERS, PRODUCTS } from '../data/mockData';
 import { useArticles } from '../hooks/useArticles';
 import { useHeroContent } from '../hooks/useHeroContent';
 import { useHeroStats } from '../hooks/useHeroStats';
@@ -27,13 +26,10 @@ export const HomePage: React.FC<HomePageProps> = ({ setActiveTab, onOpenQuoteMod
   const hero = useHeroContent();
   const heroStats = useHeroStats();
   const sections = useHomepageSections();
-  const databaseProducts = useProducts();
-  const databaseArticles = useArticles();
-  const databasePartners = usePartners();
+  const products = useProducts();
+  const articles = useArticles();
+  const partners = usePartners();
   const [selectedOrigin, setSelectedOrigin] = useState('all');
-  const products = databaseProducts.length > 0 ? databaseProducts : PRODUCTS;
-  const articles = databaseArticles.length > 0 ? databaseArticles : ARTICLES;
-  const partners = databasePartners.length > 0 ? databasePartners : PARTNERS;
 
   return (
     <div className="space-y-20 pb-16 bg-slate-50 dark:bg-[#090D16] text-slate-900 dark:text-slate-100 transition-colors duration-300 bg-ambient-mesh stripe-mesh-glow">

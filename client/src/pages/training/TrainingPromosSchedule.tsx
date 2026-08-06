@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Calendar, Clock, MapPin, ArrowRight, Zap, Flame, Tag, Sparkles, LayoutList, LayoutGrid } from 'lucide-react';
 import { ScrollReveal } from '../../components/ScrollReveal';
+import { useLanguage } from '../../i18n/LanguageContext';
 
-interface UpcomingSession {
+export interface UpcomingSession {
   id: string;
   title: string;
   badge: string;
@@ -21,7 +22,7 @@ interface UpcomingSession {
   pricePerParticipant: string;
 }
 
-const UPCOMING_SESSIONS: UpcomingSession[] = [
+export const UPCOMING_SESSIONS: UpcomingSession[] = [
   {
     id: 'session-1',
     title: 'B2B Commercial Negotiation & Buyer Psychology Bootcamp',
@@ -60,7 +61,7 @@ const UPCOMING_SESSIONS: UpcomingSession[] = [
   }
 ];
 
-const RECENT_ACTIVITIES = [
+export const RECENT_ACTIVITIES = [
   'Cohort 14 completed 3-day negotiation simulation in Phnom Penh (48 Certified)',
   'Meng Rithy Group enrolled 12 key account managers for Cohort 15',
   '1,200+ Commercial Professionals certified across ASEAN trade corridors',
@@ -68,14 +69,22 @@ const RECENT_ACTIVITIES = [
 ];
 
 interface Props {
+  content: Record<string, any>;
   onOpenQuoteModal: () => void;
 }
 
-export const TrainingPromosSchedule: React.FC<Props> = ({ onOpenQuoteModal }) => {
+export const TrainingPromosSchedule: React.FC<Props> = ({ content, onOpenQuoteModal }) => {
+  const { language } = useLanguage();
+  const sessions: UpcomingSession[] = Array.isArray(content.upcoming_sessions)
+    ? content.upcoming_sessions
+    : language === 'en' ? UPCOMING_SESSIONS : [];
+  const recentActivities: string[] = Array.isArray(content.recent_activities)
+    ? content.recent_activities
+    : language === 'en' ? RECENT_ACTIVITIES : [];
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
   const [formatFilter, setFormatFilter] = useState<'all' | 'In-Person' | 'Hybrid'>('all');
 
-  const filteredSessions = UPCOMING_SESSIONS.filter(s => 
+  const filteredSessions = sessions.filter(s => 
     formatFilter === 'all' ? true : s.format === formatFilter
   );
 
@@ -88,12 +97,12 @@ export const TrainingPromosSchedule: React.FC<Props> = ({ onOpenQuoteModal }) =>
           <div className="relative rounded-2xl bg-slate-900 border border-slate-800 p-2.5 sm:p-3 text-slate-200 shadow-md flex items-center gap-3 overflow-hidden">
             <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500 text-slate-950 rounded-xl text-xs font-black shrink-0 uppercase tracking-wider">
               <Zap className="w-3.5 h-3.5 fill-slate-950" />
-              <span>Live Updates</span>
+              <span>{content.schedule_live_label ?? (language === 'en' ? 'Live Updates' : '')}</span>
             </div>
             
             <div className="overflow-hidden relative w-full text-xs font-medium text-emerald-300">
               <div className="inline-flex gap-8 animate-marquee whitespace-nowrap">
-                {RECENT_ACTIVITIES.concat(RECENT_ACTIVITIES).map((act, i) => (
+                {recentActivities.concat(recentActivities).map((act, i) => (
                   <span key={i} className="inline-flex items-center gap-2">
                     <Sparkles className="w-3 h-3 text-emerald-400 shrink-0" />
                     <span>{act}</span>
@@ -108,13 +117,13 @@ export const TrainingPromosSchedule: React.FC<Props> = ({ onOpenQuoteModal }) =>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-6">
             <div className="space-y-2 max-w-2xl">
               <span className="px-3.5 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-700/60 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider rounded-full">
-                Interactive Schedule & Enrollment
+                {content.schedule_badge ?? (language === 'en' ? 'Interactive Schedule & Enrollment' : '')}
               </span>
               <h2 className="text-2xl sm:text-4xl font-display font-black text-slate-900 dark:text-white tracking-tight">
-                Upcoming Corporate <span className="text-emerald-600 dark:text-emerald-400">Training Sessions</span>
+                {content.schedule_heading ?? (language === 'en' ? 'Upcoming Corporate Training Sessions' : '')}
               </h2>
               <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm">
-                Review available cohorts, seat capacity, schedules, and group corporate pricing.
+                {content.schedule_sub ?? (language === 'en' ? 'Review available cohorts, seat capacity, schedules, and group corporate pricing.' : '')}
               </p>
             </div>
 

@@ -3,6 +3,7 @@ import { PRODUCTS as MOCK_PRODUCTS } from '../data/mockData';
 import { useSharedResource } from './sharedResource';
 import { API_BASE } from '../lib/apiBase';
 import { useLanguage, type ContentLanguage } from '../i18n/LanguageContext';
+import { mergeStaticData } from './mergeStaticData';
 
 
 function mapRow(row: any): Product {
@@ -20,11 +21,14 @@ async function loadProducts(language: ContentLanguage): Promise<Product[] | null
     const res = await fetch(`${API_BASE}/api/products?lang=${language}`);
     if (!res.ok) return null;
     const rows = await res.json();
-    return Array.isArray(rows) && rows.length > 0 ? rows.map(mapRow) : MOCK_PRODUCTS;
-  } catch { return MOCK_PRODUCTS; }
+    const databaseProducts = Array.isArray(rows) ? rows.map(mapRow) : [];
+    return language === 'en'
+      ? mergeStaticData(databaseProducts, MOCK_PRODUCTS, (product) => product.name)
+      : databaseProducts;
+  } catch { return language === 'en' ? MOCK_PRODUCTS : []; }
 }
 
 export function useProducts(): Product[] {
   const { language } = useLanguage();
-  return useSharedResource(`products-${language}`, () => loadProducts(language), MOCK_PRODUCTS);
+  return useSharedResource(`products-${language}`, () => loadProducts(language), language === 'en' ? MOCK_PRODUCTS : []);
 }

@@ -44,11 +44,11 @@ export const TrainingPage: React.FC<TrainingPageProps> = ({ onOpenQuoteModal }) 
         />
 
         {/* 2. Upcoming Activity Schedule & Live Promos */}
-        <TrainingPromosSchedule onOpenQuoteModal={onOpenQuoteModal} />
+        <TrainingPromosSchedule content={content} onOpenQuoteModal={onOpenQuoteModal} />
 
         {/* 3. Live Activity & Media Gallery Showcase (Photos, Video Previews, Roleplay, Graduations) */}
         <div id="activity-gallery">
-          <TrainingActivityGallery onOpenQuoteModal={onOpenQuoteModal} />
+          <TrainingActivityGallery content={content} onOpenQuoteModal={onOpenQuoteModal} />
         </div>
 
         {/* 4. Specialized B2B Commercial Tracks / Syllabus */}
