@@ -5,6 +5,7 @@ import { AboutHero, AboutMission } from './about/AboutIntroSections';
 import { AboutTimeline } from './about/AboutTimeline';
 import { AdvantagesSection, CoreValuesSection } from './about/AboutValueSections';
 import { useLanguage } from '../i18n/LanguageContext';
+import { Interactive3DBg } from '../components/Interactive3DBg';
 
 interface AboutPageProps {
   onOpenQuoteModal: () => void;
@@ -15,13 +16,16 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onOpenQuoteModal }) => {
   const { language } = useLanguage();
 
   return (
-    <div className="space-y-0 pb-16 animate-fade-in bg-slate-50 dark:bg-[#090D16] text-slate-900 dark:text-slate-100 transition-colors duration-300 bg-ambient-mesh">
+    <div className="relative space-y-10 sm:space-y-12 pb-12 bg-slate-50 dark:bg-[#080B11] text-slate-900 dark:text-slate-100 transition-colors duration-300 bg-ambient-mesh min-h-screen overflow-hidden">
+      <Interactive3DBg variant="globe" />
       <AboutHero content={content} />
-      <AboutMission content={content} />
-      {language === 'en' && <CoreValuesSection />}
-      <AdvantagesSection content={content} />
-      {language === 'en' && <AboutTimeline />}
-      <AboutHubs content={content} onOpenQuoteModal={onOpenQuoteModal} />
+      <div className="relative z-10 space-y-12">
+        <AboutMission content={content} />
+        {language === 'en' && <CoreValuesSection />}
+        <AdvantagesSection content={content} />
+        {language === 'en' && <AboutTimeline />}
+        <AboutHubs content={content} onOpenQuoteModal={onOpenQuoteModal} />
+      </div>
     </div>
   );
 };

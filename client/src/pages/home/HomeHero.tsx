@@ -40,7 +40,7 @@ export function HomeHero({ hero, stats, hubs, selectedOrigin, globeLabel, globeA
         <p className="text-slate-600 dark:text-slate-300 text-base sm:text-xl max-w-3xl mx-auto leading-relaxed">{hero?.subtitle ?? 'UNT connects Cambodian buyers with quality products from abroad, helps businesses source what they need, and trains sales teams to sell better.'}</p>
         <div className="pt-2 max-w-4xl mx-auto space-y-4">
           <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center justify-center space-x-2"><Globe className="w-4 h-4 text-emerald-600 animate-spin" /><span>{globeLabel ?? (language === 'en' ? 'Interactive 3D Trade Hub Focus: Select Origin to Rotate 3D Globe' : '')}</span></div>
-          <div className="inline-flex flex-wrap items-center justify-center gap-2 p-2 rounded-full bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-lg">
+          <div className="inline-flex items-center justify-center gap-2 p-2 rounded-full bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-lg overflow-x-auto max-w-full">
             <OriginButton active={selectedOrigin === 'all'} onClick={() => onSelectOrigin('all')}><Globe className="w-4 h-4" />{globeAllLabel ?? (language === 'en' ? 'Global ASEAN Network' : '')}</OriginButton>
             {hubs.map((hub) => <OriginButton key={hub.id} active={selectedOrigin === hub.id} onClick={() => onSelectOrigin(hub.id)}><img src={hub.flagUrl} alt="" className="w-4 h-3 object-cover rounded-sm" />{hub.name}</OriginButton>)}
           </div>

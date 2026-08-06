@@ -1,4 +1,6 @@
+import { Sparkles } from 'lucide-react';
 import { ScrollReveal } from '../../components/ScrollReveal';
+import { Interactive3DBg } from '../../components/Interactive3DBg';
 
 interface Props {
   badge?: string;
@@ -8,18 +10,35 @@ interface Props {
 
 export function ProductsHero({ badge, headline, subheadline }: Props) {
   return (
-    <section className="relative py-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
+    <section className="relative py-20 lg:py-24 overflow-hidden transition-colors duration-300">
+      
+      {/* 3D Hex-Grid Canvas Background */}
+      <Interactive3DBg variant="hex-grid" />
+
+      {/* Tech Grid Overlay */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#05966910_1px,transparent_1px),linear-gradient(to_bottom,#05966910_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#10b98115_1px,transparent_1px),linear-gradient(to_bottom,#10b98115_1px,transparent_1px)] bg-[size:3rem_3rem] pointer-events-none opacity-40 dark:opacity-50" />
+
+      <div className="absolute inset-0 opacity-30 pointer-events-none overflow-hidden">
+        <div className="absolute -top-32 left-1/4 w-[600px] h-[600px] bg-emerald-500/15 dark:bg-emerald-500/25 blur-[140px] rounded-full animate-pulse" />
+        <div className="absolute top-1/2 -right-32 w-[500px] h-[500px] bg-emerald-600/10 dark:bg-teal-600/20 blur-[130px] rounded-full" />
+      </div>
+
       <ScrollReveal animation="up">
-        <div className="relative z-10 max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 text-center space-y-3">
-          <span className="px-3.5 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-widest rounded-full inline-block">
-            {badge ?? 'Verified B2B Wholesale & OEM Products'}
-          </span>
-          <h1 className="text-4xl sm:text-6xl font-display font-black tracking-tight text-slate-900 dark:text-white">
-            {headline ?? <>Verified Global <span className="emerald-gradient-text">Wholesale Catalog</span></>}
+        <div className="relative z-10 max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 text-center space-y-5">
+          
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-400/40 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm font-bold shadow-sm backdrop-blur-md animate-gentle-float">
+            <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400 animate-spin" />
+            <span>{badge ?? 'Verified B2B Wholesale & OEM Products'}</span>
+          </div>
+
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-black tracking-tight text-slate-900 dark:text-white leading-[1.1]">
+            {headline ?? <>Verified Global <span className="text-emerald-600 dark:text-emerald-400">Wholesale Catalog</span></>}
           </h1>
-          <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base max-w-2xl mx-auto">
+
+          <p className="text-slate-600 dark:text-emerald-100/90 text-base sm:text-xl max-w-3xl mx-auto leading-relaxed font-normal">
             {subheadline ?? 'Direct-from-factory imported goods pre-audited for Cambodian Ministry compliance, Khmer labeling standards, and volume trade distribution.'}
           </p>
+
         </div>
       </ScrollReveal>
     </section>

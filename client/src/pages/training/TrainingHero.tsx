@@ -1,23 +1,97 @@
+import React from 'react';
+import { Sparkles, Video, Play, ArrowDown, Calendar, Award } from 'lucide-react';
 import { ScrollReveal } from '../../components/ScrollReveal';
+import { Interactive3DBg } from '../../components/Interactive3DBg';
 
 type Content = Record<string, string>;
 const FALLBACK_VALUES = ['1,200+', '4.9 / 5.0', '15+', '34%'];
 const FALLBACK_LABELS = ['Professionals Certified', 'Average Course Rating', 'Senior Trade Instructors', 'Avg 90-Day Conversion Lift'];
 
-export function TrainingHero({ content }: { content: Content }) {
+interface TrainingHeroProps {
+  content: Content;
+  onOpenQuoteModal?: () => void;
+  onExploreGallery?: () => void;
+}
+
+export function TrainingHero({ content, onOpenQuoteModal, onExploreGallery }: TrainingHeroProps) {
+  const scrollToContent = () => {
+    const el = document.getElementById('activity-gallery');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    } else if (onExploreGallery) {
+      onExploreGallery();
+    }
+  };
+
   return (
-    <section className="relative py-20 bg-white dark:bg-slate-900 text-slate-900 dark:text-white overflow-hidden border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
+    <section className="relative py-16 lg:py-24 overflow-hidden transition-colors duration-300">
+      
+      {/* 3D Pyramids Canvas Background */}
+      <Interactive3DBg variant="pyramids" />
+
+      {/* Tech Grid Overlay */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#05966910_1px,transparent_1px),linear-gradient(to_bottom,#05966910_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#10b98115_1px,transparent_1px),linear-gradient(to_bottom,#10b98115_1px,transparent_1px)] bg-[size:3rem_3rem] pointer-events-none opacity-40 dark:opacity-50" />
+
+      <div className="absolute inset-0 opacity-30 pointer-events-none overflow-hidden">
+        <div className="absolute -top-32 left-1/4 w-[600px] h-[600px] bg-emerald-500/15 dark:bg-emerald-500/25 blur-[140px] rounded-full animate-pulse" />
+        <div className="absolute top-1/2 -right-32 w-[500px] h-[500px] bg-emerald-600/10 dark:bg-teal-600/20 blur-[130px] rounded-full" />
+      </div>
+
       <ScrollReveal animation="up">
-        <div className="relative z-10 max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 text-center space-y-4">
-          <span className="px-3.5 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-widest rounded-full inline-block">{content.badge ?? 'UNT Trade Capacity Building Institute'}</span>
-          <h1 className="text-4xl sm:text-6xl font-display font-black tracking-tight text-slate-900 dark:text-white">{content.headline ?? <>Mastering the Art of <span className="emerald-gradient-text">Global Commerce</span></>}</h1>
-          <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg max-w-3xl mx-auto leading-relaxed">{content.subheadline ?? "Elevate your commercial team's B2B negotiation skills, buyer psychology, key account retention, and international supply chain management."}</p>
-          <div className="pt-8 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
-            {FALLBACK_VALUES.map((fallback, index) => <div key={fallback} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 shadow-sm"><div className="text-2xl font-display font-bold text-emerald-700 dark:text-emerald-400">{content[`stat${index + 1}_value`] ?? fallback}</div><div className="text-[11px] text-slate-600 dark:text-slate-400 mt-1">{content[`stat${index + 1}_label`] ?? FALLBACK_LABELS[index]}</div></div>)}
+        <div className="relative z-10 max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 text-center space-y-6">
+          
+          {/* Live Activity & Badge */}
+          <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-emerald-50 dark:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-400/40 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm font-bold shadow-md backdrop-blur-md animate-gentle-float">
+            <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400 animate-spin" />
+            <span>{content.badge ?? 'UNT Trade Capacity Building Institute'}</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping ml-1" />
           </div>
+
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-black tracking-tight text-slate-900 dark:text-white leading-[1.1] max-w-5xl mx-auto">
+            {content.headline ?? <>Mastering the Art of <span className="text-emerald-600 dark:text-emerald-400">Global Commerce</span></>}
+          </h1>
+
+          <p className="text-slate-600 dark:text-emerald-100/90 text-base sm:text-xl max-w-3xl mx-auto leading-relaxed font-normal">
+            {content.subheadline ?? "Elevate your commercial team's B2B negotiation skills, buyer psychology, key account retention, and international supply chain management with hands-on activity bootcamps."}
+          </p>
+
+          {/* Action CTAs */}
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button
+              onClick={scrollToContent}
+              className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-display font-bold text-sm shadow-xl shadow-emerald-600/30 flex items-center justify-center gap-2 hover:scale-105 transition-all"
+            >
+              <Video className="w-4 h-4" />
+              <span>Explore Live Activity & Media Gallery</span>
+              <ArrowDown className="w-4 h-4" />
+            </button>
+            {onOpenQuoteModal && (
+              <button
+                onClick={onOpenQuoteModal}
+                className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-900 dark:text-white font-display font-bold text-sm border border-slate-300 dark:border-slate-700 shadow-md flex items-center justify-center gap-2 transition-all"
+              >
+                <Calendar className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <span>Reserve Corporate Masterclass</span>
+              </button>
+            )}
+          </div>
+
+          {/* Key Metrics Grid */}
+          <div className="pt-8 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            {FALLBACK_VALUES.map((fallback, index) => (
+              <div key={fallback} className="p-4 rounded-2xl bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-sm backdrop-blur-md">
+                <div className="text-2xl sm:text-3xl font-display font-black text-emerald-600 dark:text-emerald-400">
+                  {content[`stat${index + 1}_value`] ?? fallback}
+                </div>
+                <div className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 font-medium mt-1">
+                  {content[`stat${index + 1}_label`] ?? FALLBACK_LABELS[index]}
+                </div>
+              </div>
+            ))}
+          </div>
+
         </div>
       </ScrollReveal>
     </section>
   );
 }
-

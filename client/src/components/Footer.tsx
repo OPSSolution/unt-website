@@ -20,10 +20,10 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }
   };
 
   return (
-    <footer className="bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-300 border-t border-slate-200 dark:border-slate-800 pt-16 pb-12 shadow-inner transition-colors duration-300">
+    <footer className="bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-300 border-t border-slate-200 dark:border-slate-800 pt-10 sm:pt-12 pb-12 shadow-inner transition-colors duration-300">
       <div className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
         {/* Top Callout Banner */}
-        <div className="mb-16 rounded-3xl bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-emerald-500/10 dark:from-emerald-950/50 dark:via-slate-900/50 dark:to-emerald-950/50 border border-emerald-200 dark:border-emerald-800/80 p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden shadow-sm">
+        <div className="mb-10 sm:mb-12 rounded-3xl bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-emerald-500/10 dark:from-emerald-950/50 dark:via-slate-900/50 dark:to-emerald-950/50 border border-emerald-200 dark:border-emerald-800/80 p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden shadow-sm">
           <div className="relative z-10 max-w-2xl text-left">
             <span className="inline-block px-3 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-xs font-extrabold tracking-wider uppercase rounded-full mb-3">
               {nb.footer_callout_badge ?? 'Ready to Expand Your Wholesale Supply Chain?'}

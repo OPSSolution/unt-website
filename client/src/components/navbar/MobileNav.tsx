@@ -1,5 +1,6 @@
 import { ArrowRight, Calculator, Moon, Search, Sun } from 'lucide-react';
 import type { PageTab } from '../../types';
+import { LanguageToggle } from '../../i18n/LanguageContext';
 import { NAV_LINKS } from './data';
 
 interface Props {
@@ -16,7 +17,11 @@ interface Props {
 export function MobileNav({ activeTab, darkMode, ctaLabel, setDarkMode, onNavigate, onSearch, onCalculate, onQuote }: Props) {
   return (
     <div className="lg:hidden px-4 pt-2 pb-5 space-y-3 animate-in slide-in-from-top duration-200 text-left">
-      <div className="border-t border-slate-200 dark:border-white/10 pt-3 space-y-1">
+      <div className="flex items-center justify-between border-t border-slate-200 dark:border-white/10 pt-3">
+        <span className="text-xs font-bold text-slate-500 dark:text-slate-400">Language</span>
+        <LanguageToggle />
+      </div>
+      <div className="space-y-1">
         {NAV_LINKS.map((link) => (
           <button
             key={link.id}
