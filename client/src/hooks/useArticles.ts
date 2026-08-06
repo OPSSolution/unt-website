@@ -1,8 +1,8 @@
 import { Article } from '../types';
 import { ARTICLES as MOCK_ARTICLES } from '../data/mockData';
 import { useSharedResource } from './sharedResource';
+import { API_BASE } from '../lib/apiBase';
 
-const BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:5000';
 
 function mapRow(row: any): Article {
   return {
@@ -16,7 +16,7 @@ function mapRow(row: any): Article {
 
 async function loadArticles(): Promise<Article[] | null> {
   try {
-    const res = await fetch(`${BASE}/api/articles`);
+    const res = await fetch(`${API_BASE}/api/articles`);
     if (!res.ok) return null;
     const rows = await res.json();
     return Array.isArray(rows) && rows.length > 0 ? rows.map(mapRow) : MOCK_ARTICLES;

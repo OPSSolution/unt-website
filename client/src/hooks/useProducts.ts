@@ -1,8 +1,8 @@
 import { Product } from '../types';
 import { PRODUCTS as MOCK_PRODUCTS } from '../data/mockData';
 import { useSharedResource } from './sharedResource';
+import { API_BASE } from '../lib/apiBase';
 
-const BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:5000';
 
 function mapRow(row: any): Product {
   return {
@@ -16,7 +16,7 @@ function mapRow(row: any): Product {
 
 async function loadProducts(): Promise<Product[] | null> {
   try {
-    const res = await fetch(`${BASE}/api/products`);
+    const res = await fetch(`${API_BASE}/api/products`);
     if (!res.ok) return null;
     const rows = await res.json();
     return Array.isArray(rows) && rows.length > 0 ? rows.map(mapRow) : MOCK_PRODUCTS;

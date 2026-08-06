@@ -1,6 +1,6 @@
 import { useSharedResource } from './sharedResource';
+import { API_BASE } from '../lib/apiBase';
 
-const BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:5000';
 export type HomepageSections = Record<string, any>;
 const EMPTY_SECTIONS: HomepageSections = {};
 
@@ -12,7 +12,7 @@ const SECTION_KEYS = [
 
 async function loadSections(): Promise<HomepageSections | null> {
   try {
-    const res = await fetch(`${BASE}/api/homepage`);
+    const res = await fetch(`${API_BASE}/api/homepage`);
     if (!res.ok) return null;
     const rows = await res.json();
     if (!Array.isArray(rows)) return null;

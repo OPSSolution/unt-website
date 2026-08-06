@@ -1,6 +1,6 @@
 import { useSharedResource } from './sharedResource';
+import { API_BASE } from '../lib/apiBase';
 
-const BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:5000';
 export interface HeroContent {
   id?: string; badge_text?: string; headline?: string; subtitle?: string;
   cta_primary?: string; cta_secondary?: string; feature_image?: string; updated_at?: string;
@@ -8,7 +8,7 @@ export interface HeroContent {
 
 async function loadHero(): Promise<HeroContent | null> {
   try {
-    const res = await fetch(`${BASE}/api/hero/content`);
+    const res = await fetch(`${API_BASE}/api/hero/content`);
     return res.ok ? res.json() : null;
   } catch { return null; }
 }
