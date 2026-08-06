@@ -1,12 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useHomepageSections } from '../hooks/useHomepageSections';
-import type { TrainingTrack } from '../types';
 import { TrainingHero } from './training/TrainingHero';
 import { TrainingActivityGallery } from './training/TrainingActivityGallery';
 import { TrainingPromosSchedule } from './training/TrainingPromosSchedule';
-import { TrainingTracks } from './training/TrainingTracks';
-import { TrainingBootcamp } from './training/TrainingBootcamp';
-import { TrainingTrackModal } from './training/TrainingTrackModal';
 import { Interactive3DBg } from '../components/Interactive3DBg';
 
 interface TrainingPageProps {
@@ -14,13 +10,7 @@ interface TrainingPageProps {
 }
 
 export const TrainingPage: React.FC<TrainingPageProps> = ({ onOpenQuoteModal }) => {
-  const [selectedTrack, setSelectedTrack] = useState<TrainingTrack | null>(null);
   const content = useHomepageSections().training_page ?? {};
-
-  const registerForTrack = () => {
-    setSelectedTrack(null);
-    onOpenQuoteModal();
-  };
 
   const scrollToGallery = () => {
     const galleryEl = document.getElementById('activity-gallery');
@@ -50,22 +40,8 @@ export const TrainingPage: React.FC<TrainingPageProps> = ({ onOpenQuoteModal }) 
         <div id="activity-gallery">
           <TrainingActivityGallery content={content} onOpenQuoteModal={onOpenQuoteModal} />
         </div>
-
-        {/* 4. Specialized B2B Commercial Tracks / Syllabus */}
-        <TrainingTracks content={content} onSelect={setSelectedTrack} />
-
-        {/* 5. In-House Corporate Bootcamp Configurator / Quote Banner */}
-        <TrainingBootcamp content={content} onQuote={onOpenQuoteModal} />
       </div>
 
-      {/* Track Syllabus Modal */}
-      {selectedTrack && (
-        <TrainingTrackModal
-          track={selectedTrack}
-          onClose={() => setSelectedTrack(null)}
-          onRegister={registerForTrack}
-        />
-      )}
     </div>
   );
 };
