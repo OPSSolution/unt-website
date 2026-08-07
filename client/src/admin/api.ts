@@ -1,19 +1,48 @@
 import { API_BASE } from '../lib/apiBase';
 import { storedLanguage } from '../i18n/LanguageContext';
+import { supabase } from '../supabaseClient';
+
+async function currentAccessToken(fallback?: string, forceRefresh = false) {
+  if (!supabase || !fallback) return fallback;
+
+  if (forceRefresh) {
+    const { data, error } = await supabase.auth.refreshSession();
+    if (error || !data.session) {
+      await supabase.auth.signOut({ scope: 'local' });
+      throw new Error('Your admin session expired. Please sign in again.');
+    }
+    return data.session.access_token;
+  }
+
+  const { data } = await supabase.auth.getSession();
+  const session = data.session;
+  if (!session) return fallback;
+  const expiresSoon = (session.expires_at ?? 0) * 1000 <= Date.now() + 60_000;
+  if (expiresSoon) return currentAccessToken(fallback, true);
+  return session.access_token;
+}
 
 async function request<T>(
   path: string,
   options: RequestInit = {},
   token?: string
 ): Promise<T> {
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    'X-Content-Language': storedLanguage(),
-    ...(options.headers as Record<string, string>),
+  let accessToken = await currentAccessToken(token);
+  const send = (authToken?: string) => {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'X-Content-Language': storedLanguage(),
+      ...(options.headers as Record<string, string>),
+    };
+    if (authToken) headers.Authorization = `Bearer ${authToken}`;
+    return fetch(`${API_BASE}${path}`, { ...options, headers });
   };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
 
-  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  let res = await send(accessToken);
+  if (res.status === 401 && token && supabase) {
+    accessToken = await currentAccessToken(token, true);
+    res = await send(accessToken);
+  }
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: res.statusText }));
     throw new Error(err.error ?? 'Request failed');

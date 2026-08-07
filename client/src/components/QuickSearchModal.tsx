@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X, Package, Newspaper, Calculator, FileText, ArrowRight, Sparkles, ShieldCheck } from 'lucide-react';
-import { PRODUCTS, ARTICLES } from '../data/mockData';
+import { PRODUCTS } from '../data/mockData';
 import { Product, Article, PageTab } from '../types';
+import { useArticles } from '../hooks/useArticles';
 
 interface QuickSearchModalProps {
   isOpen: boolean;
@@ -25,6 +26,7 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
   const [query, setQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<'all' | 'products' | 'articles' | 'actions'>('all');
   const inputRef = useRef<HTMLInputElement>(null);
+  const articles = useArticles();
 
   useEffect(() => {
     if (isOpen) {
@@ -52,7 +54,7 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
     p.description.toLowerCase().includes(query.toLowerCase())
   );
 
-  const filteredArticles = ARTICLES.filter(a =>
+  const filteredArticles = articles.filter(a =>
     a.title.toLowerCase().includes(query.toLowerCase()) ||
     a.category.toLowerCase().includes(query.toLowerCase()) ||
     a.tags.some(t => t.toLowerCase().includes(query.toLowerCase()))

@@ -1,12 +1,12 @@
 import React from 'react';
 import { Search, Filter, Sparkles, ShieldCheck, Factory, Truck, ShoppingCart } from 'lucide-react';
 
-export const BLOG_CATEGORIES = [
-  { id: 'All', label: 'All Reports', icon: Sparkles },
-  { id: 'Regulatory Updates', label: 'Regulatory Updates', icon: ShieldCheck },
-  { id: 'OEM Case Studies', label: 'OEM Case Studies', icon: Factory },
-  { id: 'Supply Chain', label: 'Supply Chain', icon: Truck },
-  { id: 'Retail Strategy', label: 'Retail Strategy', icon: ShoppingCart },
+const BLOG_CATEGORIES = [
+  { id: 'All', labelKey: 'category_all', fallback: 'All Reports', icon: Sparkles },
+  { id: 'Regulatory Updates', labelKey: 'category_regulatory', fallback: 'Regulatory Updates', icon: ShieldCheck },
+  { id: 'OEM Case Studies', labelKey: 'category_oem', fallback: 'OEM Case Studies', icon: Factory },
+  { id: 'Supply Chain', labelKey: 'category_supply', fallback: 'Supply Chain', icon: Truck },
+  { id: 'Retail Strategy', labelKey: 'category_retail', fallback: 'Retail Strategy', icon: ShoppingCart },
 ];
 
 interface Props {
@@ -15,6 +15,7 @@ interface Props {
   totalResultsCount: number;
   onCategoryChange: (category: string) => void;
   onSearchChange: (query: string) => void;
+  content: Record<string, string>;
 }
 
 export function BlogFilters({
@@ -23,6 +24,7 @@ export function BlogFilters({
   totalResultsCount,
   onCategoryChange,
   onSearchChange,
+  content,
 }: Props) {
   return (
     <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg space-y-5 text-left">
@@ -33,7 +35,7 @@ export function BlogFilters({
           <input
             type="search"
             aria-label="Search trade insights"
-            placeholder="Search GDCE customs guides, FMCG market reports, or Ministry rules..."
+            placeholder={content.search_placeholder ?? 'Search GDCE customs guides, FMCG market reports, or Ministry rules...'}
             value={searchQuery}
             onChange={(event) => onSearchChange(event.target.value)}
             className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl pl-12 pr-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all shadow-inner"
@@ -44,7 +46,7 @@ export function BlogFilters({
         <div className="flex items-center gap-3 shrink-0">
           <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold font-mono">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>{totalResultsCount} Verified Intelligence Briefings</span>
+            <span>{totalResultsCount} {content.results_label ?? 'Verified Intelligence Briefings'}</span>
           </div>
         </div>
       </div>
@@ -66,7 +68,7 @@ export function BlogFilters({
               }`}
             >
               <Icon className="w-3.5 h-3.5" />
-              <span>{cat.label}</span>
+              <span>{content[cat.labelKey] ?? cat.fallback}</span>
             </button>
           );
         })}
@@ -74,13 +76,13 @@ export function BlogFilters({
 
       {/* Trending Topic Tags */}
       <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800/60 text-xs">
-        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Trending Topics:</span>
+        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{content.trending_label ?? 'Trending Topics:'}</span>
         {[
-          { tag: 'GDCECustoms2026', query: 'customs' },
-          { tag: 'AKFTAPermits', query: 'AKFTA' },
-          { tag: 'MoHCosmetics', query: 'MoH' },
-          { tag: 'FMCGBulkPricing', query: 'FMCG' },
-          { tag: 'PrivateLabelOEM', query: 'OEM' },
+          { tag: content.trending_1 ?? 'GDCECustoms2026', query: 'customs' },
+          { tag: content.trending_2 ?? 'AKFTAPermits', query: 'AKFTA' },
+          { tag: content.trending_3 ?? 'MoHCosmetics', query: 'MoH' },
+          { tag: content.trending_4 ?? 'FMCGBulkPricing', query: 'FMCG' },
+          { tag: content.trending_5 ?? 'PrivateLabelOEM', query: 'OEM' },
         ].map((item) => (
           <button
             key={item.tag}

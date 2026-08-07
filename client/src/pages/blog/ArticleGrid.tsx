@@ -5,13 +5,14 @@ import type { Article } from '../../types';
 interface Props {
   articles: Article[];
   onOpen: (article: Article) => void;
+  content: Record<string, string>;
 }
 
-export function ArticleGrid({ articles, onOpen }: Props) {
+export function ArticleGrid({ articles, onOpen, content }: Props) {
   if (articles.length === 0) {
     return (
       <div className="py-16 text-center rounded-3xl border border-dashed border-slate-300 dark:border-slate-700 text-sm text-slate-500 dark:text-slate-400">
-        No trade insights match your search.
+        {content.empty_message ?? 'No trade insights match your search.'}
       </div>
     );
   }
@@ -26,7 +27,7 @@ export function ArticleGrid({ articles, onOpen }: Props) {
                 <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 <div className="absolute top-3 left-3 px-3 py-1 bg-emerald-600 text-white font-bold text-xs rounded-full shadow-md">{article.category}</div>
                 <div className="absolute top-3 right-3 live-pulse-badge bg-slate-900/90 backdrop-blur-md border-emerald-500/40 text-emerald-300">
-                  <span className="live-pulse-dot" /><span>Verified Briefing</span>
+                  <span className="live-pulse-dot" /><span>{content.card_verified ?? 'Verified Briefing'}</span>
                 </div>
               </div>
               <div className="p-6 space-y-3">
@@ -36,7 +37,7 @@ export function ArticleGrid({ articles, onOpen }: Props) {
               </div>
             </div>
             <div className="p-6 pt-0 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-emerald-700 dark:text-emerald-400 mt-3">
-              <span>Read Trade Analysis</span><ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <span>{content.card_read ?? 'Read Trade Analysis'}</span><ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </div>
           </article>
         </Card3D>

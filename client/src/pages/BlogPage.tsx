@@ -36,7 +36,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ onOpenArticleModal }) => {
     <div className="relative isolate space-y-12 pb-24 animate-fade-in bg-slate-50 dark:bg-[#090D16] text-slate-900 dark:text-slate-100 transition-colors duration-300 overflow-hidden min-h-screen">
       <PageAnimatedBackground />
       {/* Upgraded Hero Section with CodePen Title Reveal & Uniform 3D Hex-Grid Canvas */}
-      <BlogHero badge={content.badge} headline={content.headline} subheadline={content.subheadline} />
+      <BlogHero content={content} />
 
       {/* Main Content Area */}
       <section className="relative z-10 max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 space-y-10">
@@ -47,13 +47,14 @@ export const BlogPage: React.FC<BlogPageProps> = ({ onOpenArticleModal }) => {
           totalResultsCount={filteredArticles.length}
           onCategoryChange={setSelectedCategory}
           onSearchChange={setSearchQuery}
+          content={content}
         />
 
         {/* Featured Trade Analysis Article */}
-        {featuredArticle && <FeaturedArticle article={featuredArticle} onOpen={onOpenArticleModal} />}
+        {featuredArticle && <FeaturedArticle article={featuredArticle} onOpen={onOpenArticleModal} content={content} />}
 
         {/* Article Cards Grid */}
-        <ArticleGrid articles={filteredArticles} onOpen={onOpenArticleModal} />
+        <ArticleGrid articles={filteredArticles} onOpen={onOpenArticleModal} content={content} />
       </section>
     </div>
   );

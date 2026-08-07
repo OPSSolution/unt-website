@@ -6,9 +6,10 @@ import type { Article } from '../../types';
 interface Props {
   article: Article;
   onOpen: (article: Article) => void;
+  content: Record<string, string>;
 }
 
-export function FeaturedArticle({ article, onOpen }: Props) {
+export function FeaturedArticle({ article, onOpen, content }: Props) {
   return (
     <section className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 my-6">
       <Card3D intensity={10} onClick={() => onOpen(article)}>
@@ -27,14 +28,14 @@ export function FeaturedArticle({ article, onOpen }: Props) {
             <div className="absolute top-4 left-4 flex items-center gap-2">
               <span className="px-3.5 py-1.5 bg-emerald-600 text-white font-bold text-xs uppercase tracking-wider rounded-full shadow-lg flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>Featured Trade Analysis</span>
+                <span>{content.featured_badge ?? 'Featured Trade Analysis'}</span>
               </span>
             </div>
 
             <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-white text-xs font-mono">
               <span className="px-3 py-1 rounded-lg bg-slate-900/80 backdrop-blur-md border border-white/10 text-emerald-300 flex items-center gap-1">
                 <ShieldCheck className="w-3.5 h-3.5" />
-                <span>GDCE Verified Briefing</span>
+                <span>{content.featured_verified ?? 'GDCE Verified Briefing'}</span>
               </span>
             </div>
           </div>
@@ -77,7 +78,7 @@ export function FeaturedArticle({ article, onOpen }: Props) {
               </div>
 
               <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/30 group-hover:scale-105 transition-all">
-                <span>Read Full Briefing</span>
+                <span>{content.featured_read ?? 'Read Full Briefing'}</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
             </div>

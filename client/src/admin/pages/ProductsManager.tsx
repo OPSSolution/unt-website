@@ -80,9 +80,9 @@ export function ProductsManager() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {products.map((p) => (
-            <div key={p.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
+            <div key={p.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-800 transition-all">
                 <div className={`flex items-center gap-4 p-4 ${editingId === p.id ? 'ring-2 ring-inset ring-emerald-500/70' : ''}`}>
-                  <img src={p.image} alt={p.name} className="w-14 h-14 rounded-xl object-cover bg-slate-800 shrink-0" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                  <img src={p.image} alt={p.name} className="w-24 h-20 rounded-xl object-cover bg-slate-800 shrink-0" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                   <div className="flex-1 min-w-0">
                     <div className="text-slate-900 dark:text-white font-semibold text-sm truncate">{p.name}</div>
                     <div className="text-slate-500 dark:text-slate-500 text-xs mt-0.5">{p.category} · {p.origin_flag} {p.origin}</div>
