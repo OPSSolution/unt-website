@@ -2,6 +2,7 @@ import React from 'react';
 import { PageTab } from '../types';
 import { Mail, Phone, MapPin, ShieldCheck, ArrowRight } from 'lucide-react';
 import { useHomepageSections } from '../hooks/useHomepageSections';
+import { useLanguage } from '../i18n/LanguageContext';
 import { footerNavigation, legalLinks, tradingSolutions } from './footer/data';
 import { NewsletterSignup } from './footer/NewsletterSignup';
 
@@ -13,6 +14,8 @@ interface FooterProps {
 export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }) => {
   const sections = useHomepageSections();
   const nb = sections.navbar_footer ?? {};
+  const { language } = useLanguage();
+  const isKm = language === 'km';
 
   const navigateTo = (tab: PageTab) => {
     setActiveTab(tab);
@@ -40,14 +43,14 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }
               onClick={onOpenQuoteModal}
               className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold text-sm shadow-md shadow-emerald-600/20 transition-all flex items-center justify-center space-x-2"
             >
-              <span>Request Sourcing Quote</span>
+              <span>{(nb.footer_callout_cta || (isKm ? 'ស្នើសុំតម្លៃ' : 'Request Sourcing Quote'))}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
             <button
               onClick={() => navigateTo('contact')}
               className="px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-sm border border-slate-300 dark:border-slate-700 transition-all flex items-center justify-center"
             >
-              Contact Phnom Penh Office
+              {nb.footer_callout_cta_secondary || (isKm ? 'ទំនាក់ទំនងការិយាល័យភ្នំពេញ' : 'Contact Phnom Penh Office')}
             </button>
           </div>
         </div>

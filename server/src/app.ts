@@ -13,6 +13,7 @@ import articlesRouter from "./routes/articles.js";
 import partnersRouter from "./routes/partners.js";
 import homepageRouter from "./routes/homepage.js";
 import heroRouter from "./routes/hero.js";
+import quotesRouter from "./routes/quotes.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const clientDistPath = path.join(__dirname, "../../client/dist");
@@ -48,6 +49,7 @@ export function createApp() {
   app.use("/api/partners", publicApiLimiter, partnersRouter);
   app.use("/api/hero", publicApiLimiter, heroRouter);
   app.use("/api/homepage", publicApiLimiter, homepageRouter);
+  app.use("/api/quotes", publicApiLimiter, quotesRouter);
   app.use("/api/admin", adminApiLimiter, adminRouter);
 
   app.get(["/admin", "/admin/"], (_req, res) => res.sendFile(path.join(clientDistPath, "admin.html")));

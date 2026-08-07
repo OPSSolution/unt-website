@@ -1,17 +1,27 @@
 import { CheckCircle2, Globe } from 'lucide-react';
-import { ORIGINS, VOLUMES } from './quoteModalData';
+import { ORIGINS, ORIGINS_KM, VOLUMES, VOLUMES_KM, type QuoteFormContent } from './quoteModalData';
 import { stepAnimation, type QuoteStepProps } from './types';
+import type { ContentLanguage } from '../../i18n/LanguageContext';
 
-export function QuoteDetailsStep({ formData, setFormData, direction }: QuoteStepProps) {
+interface Props extends QuoteStepProps {
+  language: ContentLanguage;
+  content: QuoteFormContent;
+}
+
+export function QuoteDetailsStep({ formData, setFormData, direction, language, content }: Props) {
+  const isKm = language === 'km';
+  const volumes = content.volume_options?.length ? content.volume_options : (isKm ? VOLUMES_KM : VOLUMES);
+
   return (
     <div className={`space-y-5 ${stepAnimation(direction)}`}>
       <div>
         <label className="block text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider mb-3">
-          Preferred Origin Country
+          {content.origin_label || (isKm ? 'ប្រទេសដើមដែលពេញចិត្ត' : 'Preferred Origin Country')}
         </label>
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-3">
           {ORIGINS.map((origin) => {
             const isActive = formData.originPreference === origin.value;
+            const displayName = content.origin_options?.[ORIGINS.indexOf(origin)] || (isKm ? (ORIGINS_KM[origin.value] ?? origin.value) : origin.value.split(' / ')[0]);
             return (
               <button
                 type="button"
@@ -40,7 +50,7 @@ export function QuoteDetailsStep({ formData, setFormData, direction }: QuoteStep
                   )}
                 </div>
                 <span className={`text-[11px] font-bold transition-colors ${isActive ? 'text-emerald-700 dark:text-emerald-300' : 'text-slate-700 dark:text-slate-300'}`}>
-                  {origin.value.split(' / ')[0]}
+                  {displayName}
                 </span>
               </button>
             );
@@ -49,15 +59,15 @@ export function QuoteDetailsStep({ formData, setFormData, direction }: QuoteStep
       </div>
 
       <div>
-        <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Target Purchase Volume</label>
+        <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">{content.volume_label || (isKm ? 'បរិមាណទិញគោលដៅ' : 'Target Purchase Volume')}</label>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {VOLUMES.map((volume) => {
-            const isActive = formData.estimatedVolume === volume;
+          {volumes.map((volume, index) => {
+            const isActive = isKm ? formData.estimatedVolume === VOLUMES[index] : formData.estimatedVolume === volume;
             return (
               <button
                 type="button"
                 key={volume}
-                onClick={() => setFormData((current) => ({ ...current, estimatedVolume: volume }))}
+                onClick={() => setFormData((current) => ({ ...current, estimatedVolume: VOLUMES[index] }))}
                 className={`px-4 py-3 rounded-2xl border-2 transition-all duration-200 text-xs font-semibold text-left ${
                   isActive
                     ? 'bg-emerald-50 dark:bg-emerald-950/50 border-emerald-500 dark:border-emerald-400 text-emerald-700 dark:text-emerald-300 shadow-sm'
@@ -74,11 +84,11 @@ export function QuoteDetailsStep({ formData, setFormData, direction }: QuoteStep
 
       <div>
         <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">
-          Specific Requirements <span className="font-normal text-slate-400">(optional)</span>
+          {isKm ? 'តម្រូវការពិសេស' : 'Specific Requirements'} <span className="font-normal text-slate-400">({isKm ? 'ស្រេចចិត្ត' : 'optional'})</span>
         </label>
         <textarea
           rows={3}
-          placeholder="Target pricing, custom formulation, packaging label details..."
+          placeholder={isKm ? 'តម្លៃគោលដៅ ការបង្កើតរូបមន្តតាមបំណង ព័ត៌មានវេចខ្ចប់ស្លាក...' : 'Target pricing, custom formulation, packaging label details...'}
           value={formData.notes}
           onChange={(event) => setFormData((current) => ({ ...current, notes: event.target.value }))}
           className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all resize-none"
@@ -87,4 +97,3 @@ export function QuoteDetailsStep({ formData, setFormData, direction }: QuoteStep
     </div>
   );
 }
-

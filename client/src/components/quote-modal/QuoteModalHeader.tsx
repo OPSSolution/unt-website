@@ -2,6 +2,8 @@ import React from 'react';
 import { CheckCircle2, Package, X } from 'lucide-react';
 import { STEPS } from './quoteModalData';
 import type { StepDirection } from './types';
+import type { ContentLanguage } from '../../i18n/LanguageContext';
+import type { QuoteFormContent } from './quoteModalData';
 
 interface Props {
   step: number;
@@ -9,9 +11,12 @@ interface Props {
   onClose: () => void;
   setStep: (step: number) => void;
   setDirection: (direction: StepDirection) => void;
+  language: ContentLanguage;
+  onToggleLanguage: (value: ContentLanguage) => void;
+  content: QuoteFormContent;
 }
 
-export function QuoteModalHeader({ step, isSubmitted, onClose, setStep, setDirection }: Props) {
+export function QuoteModalHeader({ step, isSubmitted, onClose, setStep, setDirection, language, onToggleLanguage, content }: Props) {
   return (
     <div className="relative bg-gradient-to-b from-slate-50 to-white dark:from-[#0e1527] dark:to-[#0c1322] px-6 pt-5 pb-4 border-b border-slate-200/80 dark:border-slate-800 shrink-0">
       <div className="flex items-center justify-between">
@@ -20,16 +25,30 @@ export function QuoteModalHeader({ step, isSubmitted, onClose, setStep, setDirec
             <Package className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-lg font-display font-bold text-slate-900 dark:text-white">Request a B2B Quote</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Direct factory pricing & custom import solutions</p>
+            <h3 className="text-lg font-display font-bold text-slate-900 dark:text-white">{content.title || (language === 'km' ? 'ស្នើសុំតម្លៃ B2B' : 'Request a B2B Quote')}</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400">{content.subtitle || (language === 'km' ? 'តម្លៃរោងចក្រផ្ទាល់ និងដំណោះស្រាយនាំចូលតាមបំណង' : 'Direct factory pricing & custom import solutions')}</p>
           </div>
         </div>
-        <button
-          onClick={onClose}
-          className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-950/50 text-slate-400 hover:text-red-500 dark:hover:text-red-400 flex items-center justify-center transition-all duration-200 border border-slate-200 dark:border-slate-700 hover:border-red-200 dark:hover:border-red-800"
-        >
-          <X className="w-4 h-4" />
-        </button>
+        <div className="flex items-center space-x-2">
+          <div className="flex items-center rounded-full bg-slate-100 dark:bg-white/10 border border-slate-200 dark:border-white/10 p-0.5" aria-label="Content language">
+            {(['en', 'km'] as const).map((value) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => onToggleLanguage(value)}
+                className={`px-2.5 py-1 rounded-full text-[10px] font-bold transition-colors ${language === value ? 'bg-emerald-600 text-white' : 'text-slate-500 dark:text-slate-300'}`}
+              >
+                {value === 'en' ? 'EN' : 'ខ្មែរ'}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={onClose}
+            className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-950/50 text-slate-400 hover:text-red-500 dark:hover:text-red-400 flex items-center justify-center transition-all duration-200 border border-slate-200 dark:border-slate-700 hover:border-red-200 dark:hover:border-red-800"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
       {!isSubmitted && (
@@ -57,7 +76,7 @@ export function QuoteModalHeader({ step, isSubmitted, onClose, setStep, setDirec
                 ) : (
                   <span className="w-4 h-4 rounded-full bg-current/20 flex items-center justify-center text-[10px]">{item.number}</span>
                 )}
-                <span>{item.label}</span>
+                <span>{language === 'km' ? item.labelKm : item.label}</span>
               </button>
               {index < STEPS.length - 1 && (
                 <div className={`w-6 h-px transition-colors duration-300 ${step > item.number ? 'bg-emerald-400' : 'bg-slate-200 dark:bg-slate-700'}`} />
@@ -69,4 +88,3 @@ export function QuoteModalHeader({ step, isSubmitted, onClose, setStep, setDirec
     </div>
   );
 }
-

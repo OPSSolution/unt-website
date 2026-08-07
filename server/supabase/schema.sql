@@ -241,3 +241,22 @@ alter table articles add column if not exists translations jsonb not null defaul
 alter table partners add column if not exists translations jsonb not null default '{}'::jsonb;
 alter table hero_content add column if not exists translations jsonb not null default '{}'::jsonb;
 alter table hero_stats add column if not exists translations jsonb not null default '{}'::jsonb;
+
+-- Client B2B quote request submissions
+create table if not exists public.quotes (
+  id uuid primary key default gen_random_uuid(),
+  data jsonb not null default '{}'::jsonb,
+  language text not null default 'en',
+  status text not null default 'new',
+  created_at timestamptz default now()
+);
+
+alter table public.quotes
+  drop constraint if exists quotes_language_check,
+  add constraint quotes_language_check check (language in ('en', 'km')),
+  drop constraint if exists quotes_status_check,
+  add constraint quotes_status_check check (status in ('new', 'in_progress', 'completed'));
+alter table public.quotes enable row level security;
+drop policy if exists "public insert quotes" on public.quotes;
+create policy "public insert quotes" on public.quotes for insert with check (true);
+drop policy if exists "public read quotes" on public.quotes;

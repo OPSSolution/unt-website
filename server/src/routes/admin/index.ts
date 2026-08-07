@@ -7,6 +7,7 @@ import partnersRouter from "./partners.js";
 import heroRouter from "./hero.js";
 import homepageRouter from "./homepage.js";
 import mediaRouter from "./media.js";
+import quotesRouter from "./quotes.js";
 import { protectLanguageIntegrity, requireContentLanguage } from "../../i18n.js";
 
 const router = Router();
@@ -18,4 +19,5 @@ router.use("/partners", partnersRouter);
 router.use("/hero", heroRouter);
 router.use("/homepage", homepageRouter);
 router.use("/media", mediaRouter);
+router.use("/quotes", quotesRouter);
 export default router;

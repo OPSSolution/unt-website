@@ -10,7 +10,7 @@ import { useHomepageSections } from '../hooks/useHomepageSections';
 import { DesktopNav } from './navbar/DesktopNav';
 import { MobileNav } from './navbar/MobileNav';
 import type { MegaMenuName } from './navbar/data';
-import { LanguageToggle } from '../i18n/LanguageContext';
+import { LanguageToggle, useLanguage } from '../i18n/LanguageContext';
 
 interface NavbarProps {
   activeTab: PageTab;
@@ -53,6 +53,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeMegaMenu, setActiveMegaMenu] = useState<MegaMenuName>(null);
   const navbarContent = useHomepageSections().navbar_footer ?? {};
+  const { language } = useLanguage();
+  const isKm = language === 'km';
 
   // Compress on scroll
   useEffect(() => {
@@ -176,7 +178,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={onOpenQuoteModal}
                 className="btn-shine inline-flex items-center gap-1.5 px-4 sm:px-5 py-2.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold transition-all hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap shrink-0 group shadow-lg shadow-slate-900/20 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 dark:shadow-black/30"
               >
-                <span>{navbarContent.navbar_cta ?? 'Get a Quote'}</span>
+                <span>{navbarContent.navbar_cta || (isKm ? 'ស្នើសុំតម្លៃ' : 'Get a Quote')}</span>
                 <ArrowRight className="w-4 h-4 shrink-0 group-hover:translate-x-1 transition-transform" />
               </button>
 
@@ -195,7 +197,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <MobileNav
               activeTab={activeTab}
               darkMode={darkMode}
-              ctaLabel={navbarContent.mobile_cta ?? 'Request B2B Sourcing Quote'}
+              ctaLabel={navbarContent.mobile_cta || (isKm ? 'ស្នើសុំតម្លៃ B2B' : 'Request B2B Sourcing Quote')}
               setDarkMode={setDarkMode}
               onNavigate={handleNavigate}
               onSearch={openSearch}

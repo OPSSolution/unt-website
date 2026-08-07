@@ -7,6 +7,10 @@ import { QuoteNavigation } from './quote-modal/QuoteNavigation';
 import { QuoteServiceStep } from './quote-modal/QuoteServiceStep';
 import { QuoteSuccess } from './quote-modal/QuoteSuccess';
 import type { StepDirection } from './quote-modal/types';
+import { useLanguage } from '../i18n/LanguageContext';
+import { API_BASE } from '../lib/apiBase';
+import { api } from '../admin/api';
+import type { QuoteFormContent } from './quote-modal/quoteModalData';
 
 interface QuoteModalProps {
   isOpen: boolean;
@@ -27,11 +31,14 @@ const initialFormData = (preselectedProduct?: string): QuoteRequestState => ({
 });
 
 export const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose, preselectedProduct }) => {
+  const { language, setLanguage } = useLanguage();
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState<StepDirection>('forward');
   const [formData, setFormData] = useState<QuoteRequestState>(() => initialFormData(preselectedProduct));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  const [content, setContent] = useState<QuoteFormContent>({});
   const [animateIn, setAnimateIn] = useState(false);
 
   useEffect(() => {
@@ -42,6 +49,13 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose, presele
       setAnimateIn(false);
     }
   }, [isOpen, preselectedProduct]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    api.getHomepageSection('quote_form')
+      .then((result) => setContent(result.data ?? {}))
+      .catch(() => setContent({}));
+  }, [isOpen, language]);
 
   if (!isOpen) return null;
 
@@ -57,13 +71,29 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose, presele
     setStep((current) => current - 1);
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsSubmitting(true);
-    window.setTimeout(() => {
-      setIsSubmitting(false);
+    setSubmitError('');
+    try {
+      const response = await fetch(`${API_BASE}/api/quotes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, language }),
+      });
+      if (!response.ok) {
+        const result = await response.json().catch(() => null);
+        throw new Error(result?.error || 'Unable to submit quote request.');
+      }
       setIsSubmitted(true);
-    }, 1500);
+    } catch (error) {
+      console.error('Quote submission error:', error);
+      setSubmitError(language === 'km'
+        ? 'មិនអាចផ្ញើសំណើបានទេ។ សូមព្យាយាមម្តងទៀត។'
+        : 'Unable to send your quote request. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const resetAndClose = () => {
@@ -105,21 +135,27 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose, presele
           onClose={resetAndClose}
           setStep={setStep}
           setDirection={setDirection}
+          language={language}
+          content={content}
+          onToggleLanguage={setLanguage}
         />
 
         <div className="px-6 py-5 overflow-y-auto flex-1">
           {isSubmitted ? (
-            <QuoteSuccess formData={formData} onClose={resetAndClose} />
+            <QuoteSuccess formData={formData} onClose={resetAndClose} language={language} />
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5 text-left">
-              {step === 1 && <QuoteServiceStep {...stepProps} />}
-              {step === 2 && <QuoteDetailsStep {...stepProps} />}
-              {step === 3 && <QuoteContactStep {...stepProps} />}
+              {step === 1 && <QuoteServiceStep {...stepProps} language={language} content={content} />}
+              {step === 2 && <QuoteDetailsStep {...stepProps} language={language} content={content} />}
+              {step === 3 && <QuoteContactStep {...stepProps} language={language} content={content} />}
+              {submitError && <div role="alert" className="rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300">{submitError}</div>}
               <QuoteNavigation
                 step={step}
                 isSubmitting={isSubmitting}
                 onBack={goBack}
                 onNext={goNext}
+                language={language}
+                content={content}
               />
             </form>
           )}

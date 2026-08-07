@@ -1,18 +1,29 @@
 import { CheckCircle2 } from 'lucide-react';
-import { CATEGORIES, SERVICE_TYPES } from './quoteModalData';
+import { CATEGORIES, CATEGORIES_KM, SERVICE_TYPES, type QuoteFormContent } from './quoteModalData';
 import { stepAnimation, type QuoteStepProps } from './types';
+import type { ContentLanguage } from '../../i18n/LanguageContext';
 
-export function QuoteServiceStep({ formData, setFormData, direction }: QuoteStepProps) {
+const CURRENT_CATEGORIES = CATEGORIES;
+
+interface Props extends QuoteStepProps {
+  language: ContentLanguage;
+  content: QuoteFormContent;
+}
+
+export function QuoteServiceStep({ formData, setFormData, direction, language, content }: Props) {
+  const isKm = language === 'km';
+  const categories = content.category_options?.length ? content.category_options : (isKm ? CATEGORIES_KM : CATEGORIES);
+
   return (
     <div className={`space-y-5 ${stepAnimation(direction)}`}>
       <div>
         <label className="block text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider mb-3">
-          What do you need?
+          {content.need_label || (isKm ? 'តើអ្នកត្រូវការអ្វី?' : 'What do you need?')}
         </label>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {SERVICE_TYPES.map((service) => {
             const Icon = service.icon;
-            const isActive = formData.serviceType === service.value;
+            const isActive = (formData.serviceType === service.value) || (isKm && formData.serviceType === service.value);
             return (
               <button
                 type="button"
@@ -34,9 +45,9 @@ export function QuoteServiceStep({ formData, setFormData, direction }: QuoteStep
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className={`text-sm font-bold transition-colors ${isActive ? 'text-emerald-700 dark:text-emerald-300' : 'text-slate-800 dark:text-slate-200'}`}>
-                    {service.label}
+                    {content.service_labels?.[SERVICE_TYPES.indexOf(service)] || (isKm ? service.labelKm : service.label)}
                   </div>
-                  <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">{service.desc}</div>
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">{isKm ? service.descKm : service.desc}</div>
                 </div>
               </button>
             );
@@ -45,15 +56,15 @@ export function QuoteServiceStep({ formData, setFormData, direction }: QuoteStep
       </div>
 
       <div>
-        <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Product Category</label>
+        <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">{content.category_label || (isKm ? 'ប្រភេទផលិតផល' : 'Product Category')}</label>
         <div className="flex flex-wrap gap-2">
-          {CATEGORIES.map((category) => (
+          {categories.map((category, index) => (
             <button
               type="button"
               key={category}
-              onClick={() => setFormData((current) => ({ ...current, productCategory: category }))}
+              onClick={() => setFormData((current) => ({ ...current, productCategory: CURRENT_CATEGORIES[index] }))}
               className={`px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all duration-200 ${
-                formData.productCategory === category
+                ((formData.productCategory === category) || (isKm && formData.productCategory === CURRENT_CATEGORIES[index]))
                   ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border-emerald-400 dark:border-emerald-700 shadow-sm'
                   : 'bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:text-slate-800 dark:hover:text-white'
               }`}

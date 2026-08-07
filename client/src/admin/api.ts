@@ -66,4 +66,11 @@ export const api = {
   getHomepageSection: (key: string) => request<any>(`/api/homepage/${key}`),
   updateHomepageSection: (key: string, body: any, token: string) =>
     request(`/api/admin/homepage/${key}`, { method: 'PUT', body: JSON.stringify(body) }, token),
+
+  // Quote Requests (admin)
+  getQuotes: (token: string) => request<any[]>('/api/admin/quotes', {}, token),
+  updateQuoteStatus: (id: string, status: 'new' | 'in_progress' | 'completed', token: string) =>
+    request(`/api/admin/quotes/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }, token),
+  deleteQuote: (id: string, token: string) =>
+    request(`/api/admin/quotes/${id}`, { method: 'DELETE' }, token),
 };

@@ -15,6 +15,8 @@ const DEFAULTS = {
   footer_callout_badge: 'Ready to Expand Your Wholesale Supply Chain?',
   footer_callout_heading: "Partner with Cambodia's Leading Sourcing Ecosystem",
   footer_callout_desc: 'From verified factory matching to door-to-door customs clearance and private label formulation — we deliver reliability at scale.',
+  footer_callout_cta: 'Request Sourcing Quote',
+  footer_callout_cta_secondary: 'Contact Phnom Penh Office',
   // Footer brand block
   footer_desc: 'Empowering Asian commerce by bridging world-class manufacturers with retail networks, wholesale distributors, and emerging brands in Cambodia and ASEAN.',
   footer_copyright: 'Unique Noble Trading Co., Ltd. (UNT Company). All rights reserved.',
@@ -96,6 +98,16 @@ export function NavbarFooterEditor() {
               <Field label="Badge Text" value={data.footer_callout_badge} onChange={set('footer_callout_badge')} />
               <Field label="Heading" value={data.footer_callout_heading} onChange={set('footer_callout_heading')} multiline />
               <Field label="Description" value={data.footer_callout_desc} onChange={set('footer_callout_desc')} multiline rows={3} />
+            </div>
+          </Card>
+          <Card>
+            <div className="space-y-4">
+              <SectionDivider label="Callout Buttons (bilingual)" />
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Toggle EN / ខ្មែរ in the top bar, then edit each language. The Quote button opens the client quote form.
+              </p>
+              <Field label='Quote Button ("Request Sourcing Quote")' value={data.footer_callout_cta} onChange={set('footer_callout_cta')} />
+              <Field label="Secondary Button" value={data.footer_callout_cta_secondary} onChange={set('footer_callout_cta_secondary')} />
             </div>
           </Card>
           <Card>

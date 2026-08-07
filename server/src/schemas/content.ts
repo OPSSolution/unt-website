@@ -62,3 +62,20 @@ export const heroStatSchema = z.object({
 });
 
 export const homepageSectionSchema = z.record(z.string(), z.unknown());
+
+export const quoteSubmissionSchema = z.object({
+  serviceType: z.string().trim().min(1).max(200),
+  productCategory: z.string().trim().min(1).max(300),
+  originPreference: z.string().trim().min(1).max(200),
+  estimatedVolume: z.string().trim().min(1).max(300),
+  companyName: z.string().trim().min(1).max(200),
+  contactName: z.string().trim().min(1).max(200),
+  email: z.string().trim().email().max(200),
+  phone: z.string().trim().min(1).max(100),
+  notes: z.string().max(5000).default(""),
+  language: z.enum(["en", "km"]).default("en"),
+});
+
+export const quoteStatusSchema = z.object({
+  status: z.enum(["new", "in_progress", "completed"]),
+});

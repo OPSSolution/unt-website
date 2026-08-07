@@ -37,7 +37,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setActiveTab, onOpenQuoteMod
       <HomeSolutions onNavigate={setActiveTab} />
       <HomeHeritage />
       <HomeProducts hubs={hubs} products={products} content={sections.products_section ?? {}} onSelectOrigin={setSelectedOrigin} onNavigate={setActiveTab} onOpenProduct={onOpenProductModal} />
-      <HomeOem onQuote={onOpenQuoteModal} />
+      <HomeOem content={sections.oem_banner ?? {}} onQuote={onOpenQuoteModal} />
       <HomePartners partners={partners} />
       <HomeInsights articles={articles} content={sections.insights_section ?? {}} onNavigate={setActiveTab} onOpenArticle={onOpenArticleModal} />
     </div>

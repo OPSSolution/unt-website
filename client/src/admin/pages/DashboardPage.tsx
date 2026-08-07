@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Package, FileText, Users, Sparkles, ArrowRight } from 'lucide-react';
+import { Package, FileText, Users, Sparkles, ArrowRight, Inbox } from 'lucide-react';
 import { api } from '../api';
+import { useAdminAuth } from '../hooks/useAdminAuth';
 import type { AdminPage } from '../components/Sidebar';
 
 interface Props {
@@ -8,7 +9,8 @@ interface Props {
 }
 
 export function DashboardPage({ onNavigate }: Props) {
-  const [counts, setCounts] = useState({ products: 0, articles: 0, partners: 0 });
+  const { token } = useAdminAuth();
+  const [counts, setCounts] = useState({ products: 0, articles: 0, partners: 0, quotes: 0 });
 
   useEffect(() => {
     Promise.all([api.getProducts(), api.getArticles(), api.getPartners()])
@@ -17,10 +19,16 @@ export function DashboardPage({ onNavigate }: Props) {
           products: products?.length ?? 0,
           articles: articles?.length ?? 0,
           partners: partners?.length ?? 0,
+          quotes: 0,
         });
       })
       .catch(() => {});
-  }, []);
+    if (token) {
+      api.getQuotes(token)
+        .then((quotes) => setCounts((c) => ({ ...c, quotes: quotes?.length ?? 0 })))
+        .catch(() => {});
+    }
+  }, [token]);
 
   const cards = [
     { id: 'homepage' as AdminPage,      label: 'Homepage Editor',   desc: 'Hero, pillars, heritage, OEM…',   icon: <Sparkles className="w-5 h-5" />, count: null },
@@ -32,6 +40,7 @@ export function DashboardPage({ onNavigate }: Props) {
     { id: 'partners' as AdminPage,      label: 'Partners',          desc: 'Manage partner logos',             icon: <Users className="w-5 h-5" />,    count: counts.partners },
     { id: 'training' as AdminPage,      label: 'Training Page',     desc: 'Training hero & CTA banner',       icon: <Sparkles className="w-5 h-5" />, count: null },
     { id: 'contact' as AdminPage,       label: 'Contact Page',      desc: 'Address, phone, email info',       icon: <Sparkles className="w-5 h-5" />, count: null },
+    { id: 'quotes' as AdminPage,        label: 'Quote Requests',    desc: 'Client B2B quote form submissions', icon: <Inbox className="w-5 h-5" />,     count: counts.quotes },
     { id: 'navbar_footer' as AdminPage, label: 'Navbar & Footer',   desc: 'Brand name, CTAs, copyright',      icon: <Sparkles className="w-5 h-5" />, count: null },
   ];
 
