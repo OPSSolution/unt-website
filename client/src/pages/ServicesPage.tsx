@@ -6,7 +6,7 @@ import { SalesTrainingService } from './services/SalesTrainingService';
 import { ServicePackageBuilder } from './services/ServicePackageBuilder';
 import { SourcingMatrix } from './services/SourcingMatrix';
 import { ServicesFaqAccordion } from './services/ServicesFaqAccordion';
-import { Interactive3DBg } from '../components/Interactive3DBg';
+import { PageAnimatedBackground } from '../components/PageAnimatedBackground';
 import { ScrollReveal } from '../components/ScrollReveal';
 import { SourcingCalculator } from '../components/SourcingCalculator';
 import { useHomepageSections } from '../hooks/useHomepageSections';
@@ -32,10 +32,10 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ onOpenQuoteModal }) 
   }, []);
 
   return (
-    <div className="relative space-y-10 sm:space-y-12 pb-4 bg-slate-50 dark:bg-[#080B11] text-slate-900 dark:text-slate-100 transition-colors duration-300 bg-ambient-mesh overflow-hidden min-h-screen">
+    <div className="relative isolate space-y-10 sm:space-y-12 pb-4 bg-slate-50 dark:bg-[#080B11] text-slate-900 dark:text-slate-100 transition-colors duration-300 overflow-hidden min-h-screen">
       
       {/* 3D Global Canvas Background */}
-      <Interactive3DBg variant="cubes" />
+      <PageAnimatedBackground />
 
       {/* Hero Section */}
       <ServicesHero activeTab={activeTab} setActiveTab={handleTabChange} content={content} />

@@ -9,7 +9,7 @@ export function AboutTimeline() {
   const activeMilestone = TIMELINE[activeIndex];
 
   return (
-    <section className="py-12 bg-white/50 dark:bg-transparent transition-colors duration-300">
+    <section className="py-12 bg-transparent transition-colors duration-300">
       <div className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
         <ScrollReveal animation="up">
           <div className="text-center space-y-3 mb-10">

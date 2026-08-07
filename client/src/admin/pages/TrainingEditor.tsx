@@ -14,6 +14,8 @@ const DEFAULTS = {
   badge: 'UNT Trade Capacity Building Institute',
   headline: 'Mastering the Art of Global Commerce',
   subheadline: "Elevate your commercial team's B2B negotiation skills, buyer psychology, key account retention, and international supply chain management.",
+  hero_gallery_cta: 'Explore Live Activity & Media Gallery',
+  hero_reserve_cta: 'Reserve Corporate Masterclass',
   stat1_value: '1,200+', stat1_label: 'Professionals Certified',
   stat2_value: '4.9 / 5.0', stat2_label: 'Average Course Rating',
   stat3_value: '15+', stat3_label: 'Senior Trade Instructors',
@@ -439,6 +441,8 @@ export function TrainingEditor() {
               <Field label="Badge Text (Top Label)" value={data.badge ?? ''} onChange={set('badge')} />
               <Field label="Main Headline" value={data.headline ?? ''} onChange={set('headline')} multiline rows={2} />
               <Field label="Subheadline Paragraph" value={data.subheadline ?? ''} onChange={set('subheadline')} multiline rows={5} />
+              <Field label="Gallery Button" value={data.hero_gallery_cta ?? ''} onChange={set('hero_gallery_cta')} />
+              <Field label="Reserve Button" value={data.hero_reserve_cta ?? ''} onChange={set('hero_reserve_cta')} />
             </div>
           </Card>
           <Card>

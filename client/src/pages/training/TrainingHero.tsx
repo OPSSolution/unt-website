@@ -2,7 +2,6 @@ import React from 'react';
 import { Sparkles, Video, ArrowDown, Calendar } from 'lucide-react';
 import { ScrollReveal } from '../../components/ScrollReveal';
 import { ScrollTextReveal } from '../../components/ScrollTextReveal';
-import { Interactive3DBg } from '../../components/Interactive3DBg';
 
 type Content = Record<string, string>;
 const FALLBACK_VALUES = ['1,200+', '4.9 / 5.0', '15+', '34%'];
@@ -25,10 +24,9 @@ export function TrainingHero({ content, onOpenQuoteModal, onExploreGallery }: Tr
   };
 
   return (
-    <section className="relative py-20 lg:py-24 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 transition-colors duration-300 overflow-hidden">
+    <section className="relative z-10 py-20 lg:py-24 bg-transparent border-b border-emerald-500/10 text-slate-900 dark:text-slate-100 transition-colors duration-300 overflow-hidden">
       
       {/* 3D Hex-Grid Canvas Background (Uniform across all pages) */}
-      <Interactive3DBg variant="hex-grid" />
 
       {/* Tech Grid Overlay */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#05966910_1px,transparent_1px),linear-gradient(to_bottom,#05966910_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#10b98115_1px,transparent_1px),linear-gradient(to_bottom,#10b98115_1px,transparent_1px)] bg-[size:3rem_3rem] pointer-events-none opacity-40 dark:opacity-50" />
@@ -62,7 +60,7 @@ export function TrainingHero({ content, onOpenQuoteModal, onExploreGallery }: Tr
               className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-display font-bold text-sm shadow-xl shadow-emerald-600/30 flex items-center justify-center gap-2 hover:scale-105 transition-all"
             >
               <Video className="w-4 h-4" />
-              <span>Explore Live Activity & Media Gallery</span>
+              <span>{content.hero_gallery_cta ?? 'Explore Live Activity & Media Gallery'}</span>
               <ArrowDown className="w-4 h-4" />
             </button>
             {onOpenQuoteModal && (
@@ -71,7 +69,7 @@ export function TrainingHero({ content, onOpenQuoteModal, onExploreGallery }: Tr
                 className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-900 dark:text-white font-display font-bold text-sm border border-slate-300 dark:border-slate-700 shadow-md flex items-center justify-center gap-2 transition-all"
               >
                 <Calendar className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                <span>Reserve Corporate Masterclass</span>
+                <span>{content.hero_reserve_cta ?? 'Reserve Corporate Masterclass'}</span>
               </button>
             )}
           </div>

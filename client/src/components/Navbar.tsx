@@ -101,12 +101,12 @@ export const Navbar: React.FC<NavbarProps> = ({
           } ${mobileMenuOpen ? 'rounded-[2rem]' : 'rounded-full'}`}>
           <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-emerald-400/50 to-transparent pointer-events-none rounded-full" />
           <div className={`flex items-center justify-between gap-2 pl-3 sm:pl-4 pr-2 sm:pr-3 transition-all duration-300 ${isScrolled ? 'h-12 xl:h-14' : 'h-14 xl:h-16'}`}>
-            <button onClick={() => handleNavigate('home')} className="flex items-center space-x-2.5 text-left group focus:outline-none shrink-0" aria-label="UNT Company home">
+            <button onClick={() => handleNavigate('home')} className="flex items-center space-x-2.5 text-left group focus:outline-none shrink-0" aria-label="Unique Noble Trading Co., Ltd. home">
               <div className="relative w-10 h-10 rounded-xl bg-white border border-emerald-200 shadow-sm p-1 group-hover:scale-105 transition-all duration-300 shrink-0">
                 <img src="/images/logos/image.png" alt="UNT Logo" className="w-full h-full object-contain" />
               </div>
               <div className="hidden xl:block shrink-0">
-                <div className="font-display font-bold text-sm tracking-tight text-slate-900 dark:text-white leading-none">{navbarContent.company_name ?? 'UNT COMPANY'}</div>
+                <div className="font-display font-bold text-sm tracking-tight text-slate-900 dark:text-white leading-none">{navbarContent.company_name ?? 'Unique Noble Trading Co., Ltd.'}</div>
                 <div className="text-[9px] text-emerald-600 dark:text-emerald-400 font-semibold tracking-wide mt-1 leading-none">{navbarContent.company_tagline ?? 'Trusted Global Trading Partner'}</div>
               </div>
             </button>

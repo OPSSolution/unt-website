@@ -2,7 +2,6 @@ import React from 'react';
 import { Sparkles, Layers, ShoppingBag, Globe2, GraduationCap } from 'lucide-react';
 import { ScrollReveal } from '../../components/ScrollReveal';
 import { ScrollTextReveal } from '../../components/ScrollTextReveal';
-import { Interactive3DBg } from '../../components/Interactive3DBg';
 
 export type ServiceTab = 'all' | 'product-sales' | 'sourcing' | 'training';
 
@@ -14,10 +13,9 @@ interface ServicesHeroProps {
 
 export const ServicesHero: React.FC<ServicesHeroProps> = ({ activeTab, setActiveTab, content }) => {
   return (
-    <section className="relative py-20 lg:py-24 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 transition-colors duration-300 overflow-hidden">
+    <section className="relative z-10 py-20 lg:py-24 bg-transparent border-b border-emerald-500/10 text-slate-900 dark:text-slate-100 transition-colors duration-300 overflow-hidden">
       
       {/* 3D Hex-Grid Canvas Background (Uniform across all pages) */}
-      <Interactive3DBg variant="hex-grid" />
 
       {/* Tech Grid Overlay */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#05966910_1px,transparent_1px),linear-gradient(to_bottom,#05966910_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#10b98115_1px,transparent_1px),linear-gradient(to_bottom,#10b98115_1px,transparent_1px)] bg-[size:3rem_3rem] pointer-events-none opacity-40 dark:opacity-50" />
