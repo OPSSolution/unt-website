@@ -6,7 +6,7 @@ import { ImageField } from '../components/ImageField';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { TRAINING_TRACKS } from '../../data/mockData';
 import type { TrainingTrack } from '../../types';
-import { ACTIVITIES, REMOVED_STATIC_ACTIVITY_IDS, type ActivityItem } from '../../pages/training/TrainingActivityGallery';
+import { ACTIVITIES, type ActivityItem } from '../../pages/training/TrainingActivityGallery';
 import { RECENT_ACTIVITIES, UPCOMING_SESSIONS } from '../../pages/training/TrainingPromosSchedule';
 import { AlertCircle, Braces, CheckCircle2, Database, Pencil, Plus, Save, Trash2, X } from 'lucide-react';
 
@@ -64,8 +64,6 @@ function restoreClientActivities(saved: unknown): ActivityItem[] {
     const title = typeof activity.title === 'string' ? activity.title.trim() : '';
     const mediaUrl = typeof activity.mediaUrl === 'string' ? activity.mediaUrl.trim() : '';
     if (!id || !title || !mediaUrl) return [];
-    if (REMOVED_STATIC_ACTIVITY_IDS.has(id)) return [];
-
     return [{
       ...EMPTY_ACTIVITY,
       ...activity,
@@ -395,7 +393,7 @@ export function TrainingEditor() {
 
   const restoreOriginalGallery = () => {
     const shouldRestore = window.confirm(
-      'Restore the original English Gallery text and remove the old hardcoded client images/videos? Activities you added yourself will be kept.'
+      'Restore the original English Gallery text and activities? Activities you added yourself will also be kept.'
     );
     if (!shouldRestore) return;
     setData((current: any) => ({
@@ -420,7 +418,7 @@ export function TrainingEditor() {
       activities: restoreClientActivities(current.activities),
     }));
     setGalleryRestoreMessage(
-      'Original Gallery form text restored and old static client media removed locally. Click Save Changes to store this in Supabase.'
+      'Original Gallery text and activities restored locally. Click Save Changes to store this in Supabase.'
     );
   };
 
@@ -510,7 +508,7 @@ export function TrainingEditor() {
                     onClick={restoreOriginalGallery}
                     className="shrink-0 inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-500/10 text-slate-700 dark:text-slate-200 hover:text-emerald-700 dark:hover:text-emerald-400 text-xs font-bold border border-slate-200 dark:border-slate-700"
                   >
-                    <Database className="w-4 h-4" /> Restore Text & Remove Static Media
+                    <Database className="w-4 h-4" /> Restore Gallery Text
                   </button>
                 )}
               </div>
@@ -548,7 +546,7 @@ export function TrainingEditor() {
               </div>
             )}
             <div className="mb-4 rounded-xl bg-sky-50 dark:bg-sky-500/10 border border-sky-200 dark:border-sky-500/20 px-4 py-3 text-xs text-sky-700 dark:text-sky-300">
-              Gallery images and videos now come only from activities saved in Supabase with ImageKit URLs. Use <strong>Restore Text &amp; Remove Static Media</strong> to restore the English labels and remove the old hardcoded client media while keeping activities you added yourself.
+              Gallery activities are saved in Supabase. Original gallery media and activities uploaded through ImageKit are kept together. Use <strong>Restore Gallery Text</strong> to reset the English labels without deleting your added activities.
             </div>
             <ActivityManager value={data.activities ?? []} onChange={(activities) => setData((current: any) => ({ ...current, activities }))} />
           </Card>

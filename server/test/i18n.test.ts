@@ -22,6 +22,12 @@ test("localized homepage sections blank untranslated English fields", () => {
   assert.deepEqual(localizedSection(data, "en"), data.en);
 });
 
+test("training activity media remains available when Khmer text is empty", () => {
+  const activity = { id: "activity-1", title: "Workshop", mediaUrl: "https://example.com/photo.jpg" };
+  const data = { en: { heading: "Training", activities: [activity] }, km: { heading: "", activities: [] } };
+  assert.deepEqual(localizedSection(data, "km"), { heading: "", activities: [activity] });
+});
+
 test("admin writes require an explicit content language", async () => {
   const app = express();
   app.put("/content", requireContentLanguage, (_req, res) => res.sendStatus(204));

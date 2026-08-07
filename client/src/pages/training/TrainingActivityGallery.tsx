@@ -229,9 +229,9 @@ const REMOVED_STATIC_ACTIVITIES: ActivityItem[] = [
   }
 ];
 
-// Gallery media is managed from Supabase/ImageKit. Do not provide hardcoded
-// client images or videos as a public fallback.
-export const ACTIVITIES: ActivityItem[] = [];
+// These originals remain available as a fallback and can coexist with
+// activities uploaded through the admin panel.
+export const ACTIVITIES: ActivityItem[] = REMOVED_STATIC_ACTIVITIES;
 export const REMOVED_STATIC_ACTIVITY_IDS = new Set(REMOVED_STATIC_ACTIVITIES.map((activity) => activity.id));
 
 interface Props {
@@ -242,9 +242,9 @@ interface Props {
 export const TrainingActivityGallery: React.FC<Props> = ({ content, onOpenQuoteModal }) => {
   const { language } = useLanguage();
   const text = (key: string, english: string) => content[key] ?? (language === 'en' ? english : '');
-  const activities: ActivityItem[] = Array.isArray(content.activities)
-    ? content.activities.filter((activity: ActivityItem) => !REMOVED_STATIC_ACTIVITY_IDS.has(activity.id))
-    : [];
+  const activities: ActivityItem[] = Array.isArray(content.activities) && content.activities.length > 0
+    ? content.activities
+    : ACTIVITIES;
   const [activeTab, setActiveTab] = useState<'all' | 'workshop' | 'video' | 'negotiation' | 'graduation'>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 4;

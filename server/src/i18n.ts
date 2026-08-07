@@ -17,6 +17,22 @@ function blankLocalizedFields(value: Record<string, unknown>) {
   return Object.fromEntries(Object.entries(value).map(([key, field]) => [key, emptyLocalizedValue(key, field)]));
 }
 
+function mergeSharedActivities(english: unknown, khmer: unknown) {
+  if (!Array.isArray(english)) return Array.isArray(khmer) ? khmer : [];
+  if (!Array.isArray(khmer) || khmer.length === 0) return english;
+  const khmerById = new Map(khmer
+    .filter((item): item is Record<string, unknown> => !!item && typeof item === "object" && !Array.isArray(item))
+    .map((item) => [item.id, item]));
+  return english.map((item, index) => {
+    if (!item || typeof item !== "object" || Array.isArray(item)) return item;
+    const base = item as Record<string, unknown>;
+    const translated = khmerById.get(base.id) ?? khmer[index];
+    return translated && typeof translated === "object" && !Array.isArray(translated)
+      ? { ...base, ...translated }
+      : base;
+  });
+}
+
 export function requestLanguage(req: Request): ContentLanguage {
   const value = req.headers["x-content-language"] ?? req.query.lang;
   return value === "km" ? "km" : "en";
@@ -59,7 +75,13 @@ export function localizedSection(data: unknown, language: ContentLanguage) {
   if (!("en" in value) && !("km" in value)) return value;
   const english = value.en && typeof value.en === "object" ? value.en : {};
   const khmer = value.km && typeof value.km === "object" ? value.km : {};
-  return language === "km"
-    ? { ...blankLocalizedFields(english as Record<string, unknown>), ...khmer }
-    : english;
+  if (language !== "km") return english;
+  const localized = { ...blankLocalizedFields(english as Record<string, unknown>), ...khmer };
+  if ("activities" in english) {
+    localized.activities = mergeSharedActivities(
+      (english as Record<string, unknown>).activities,
+      (khmer as Record<string, unknown>).activities,
+    );
+  }
+  return localized;
 }
