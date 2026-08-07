@@ -1,5 +1,6 @@
 import { ArrowRight, Globe, Sparkles } from 'lucide-react';
 import { ThreeBackground, type TradeHub } from '../../components/ThreeBackground';
+import { HeroAnimatedCounter } from '../../components/HeroAnimatedCounter';
 import type { HeroContent } from '../../hooks/useHeroContent';
 import type { HeroStat } from '../../hooks/useHeroStats';
 import type { PageTab } from '../../types';
@@ -17,11 +18,11 @@ interface Props {
   onQuote: () => void;
 }
 
-const FALLBACK_STATS = [
-  { id: 'volume', value: '$50M+', label: 'Annual Trade Volume' },
-  { id: 'factories', value: '500+', label: 'Audited Factories' },
-  { id: 'origins', value: '15+', label: 'Global Trade Origins' },
-  { id: 'clearance', value: '99.4%', label: 'On-Time Customs Clearance' },
+const FALLBACK_STATS: HeroStat[] = [
+  { id: 'volume', value: '$50M+', label: 'Annual Trade Volume', sort_order: 1 },
+  { id: 'factories', value: '500+', label: 'Audited Factories', sort_order: 2 },
+  { id: 'origins', value: '15+', label: 'Global Trade Origins', sort_order: 3 },
+  { id: 'clearance', value: '99.4%', label: 'On-Time Customs Clearance', sort_order: 4 },
 ];
 
 export function HomeHero({ hero, stats, hubs, selectedOrigin, globeLabel, globeAllLabel, onSelectOrigin, onNavigate, onQuote }: Props) {
@@ -47,7 +48,7 @@ export function HomeHero({ hero, stats, hubs, selectedOrigin, globeLabel, globeA
           {selectedHub && <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-900 to-slate-900 text-white text-left shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-emerald-500/30"><div><div className="text-emerald-400 font-bold text-xs">{selectedHub.name} ➜ {language === 'km' ? 'ភ្នំពេញ កម្ពុជា' : 'Phnom Penh, Cambodia'}</div><div className="text-sm font-semibold">{language === 'km' ? 'ពាណិជ្ជកម្មចម្បង' : 'Primary Trade'}: <span className="text-emerald-200">{selectedHub.categories}</span></div></div><div className="flex items-center gap-3 text-xs"><Metric label={language === 'km' ? 'ល្បឿនដឹកជញ្ជូន' : 'Logistics Speed'} value={selectedHub.leadTime} /><Metric label={language === 'km' ? 'ការបញ្ជាទិញអប្បបរមា' : 'Min. Wholesale Order'} value={selectedHub.moq} /><button onClick={onQuote} className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-lg">{language === 'km' ? 'ស្នើសុំតម្លៃ' : 'Get Quote'}</button></div></div>}
         </div>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4"><button onClick={() => onNavigate('services')} className="btn-shine group px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-600 text-white font-bold shadow-xl flex items-center space-x-2"><span>{hero?.cta_primary ?? 'Explore Sourcing Solutions'}</span><ArrowRight className="w-5 h-5" /></button><button onClick={onQuote} className="px-8 py-4 rounded-xl bg-slate-900 text-white font-bold border border-slate-700">{hero?.cta_secondary ?? 'Request B2B Quote'}</button></div>
-        <div className="pt-10 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">{visibleStats.map((stat, index) => <div key={stat.id} className={`p-5 rounded-2xl ${index === 0 ? 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm' : 'stripe-glass-card stripe-card-tilt'}`}><div className="text-2xl sm:text-3xl font-display font-bold text-emerald-700 dark:text-emerald-400">{stat.value}</div><div className="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1">{stat.label}</div></div>)}</div>
+        <HeroAnimatedCounter stats={visibleStats} onQuote={onQuote} className="pt-10 max-w-5xl mx-auto" />
       </div>
     </section>
   );

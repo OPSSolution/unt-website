@@ -1,14 +1,15 @@
 import { CheckCircle2, MapPin, Sparkles } from 'lucide-react';
 import { Card3D } from '../../components/Card3D';
 import { ScrollReveal } from '../../components/ScrollReveal';
+import { Interactive3DBg } from '../../components/Interactive3DBg';
+import { ScrollTextReveal } from '../../components/ScrollTextReveal';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { InteractiveServiceBg } from '../services/InteractiveServiceBg';
 
 export function AboutHero({ content }: { content: Record<string, any> }) {
   return (
-    <section className="relative py-20 lg:py-28 overflow-hidden transition-colors duration-300">
-      {/* 3D Dynamic Floating Canvas Background */}
-      <InteractiveServiceBg />
+    <section className="relative py-20 lg:py-24 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 transition-colors duration-300 overflow-hidden">
+      {/* 3D Hex-Grid Canvas Background (Uniform across all pages) */}
+      <Interactive3DBg variant="hex-grid" />
 
       {/* Tech Grid Overlay */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#05966910_1px,transparent_1px),linear-gradient(to_bottom,#05966910_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#10b98115_1px,transparent_1px),linear-gradient(to_bottom,#10b98115_1px,transparent_1px)] bg-[size:3rem_3rem] pointer-events-none opacity-40 dark:opacity-50" />
@@ -24,10 +25,10 @@ export function AboutHero({ content }: { content: Record<string, any> }) {
             <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400 animate-spin" />
             <span>{content.badge}</span>
           </div>
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-black tracking-tight text-slate-900 dark:text-white leading-[1.1]">
-            <span className="text-emerald-600 dark:text-emerald-400">{content.headline}</span>
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-black tracking-tight text-slate-900 dark:text-white leading-[1.1] max-w-5xl mx-auto">
+            <ScrollTextReveal text={content.headline} mode="codepen-title" />
           </h1>
-          <p className="text-slate-600 dark:text-emerald-100/90 text-base sm:text-xl max-w-3xl mx-auto leading-relaxed font-normal">
+          <p className="text-slate-600 dark:text-slate-300 text-base sm:text-xl max-w-3xl mx-auto leading-relaxed font-normal">
             {content.subheadline}
           </p>
 
