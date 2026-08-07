@@ -62,7 +62,7 @@ export function TrainingHero({ content, onOpenQuoteModal, onExploreGallery }: Tr
               className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-display font-bold text-sm shadow-xl shadow-emerald-600/30 flex items-center justify-center gap-2 hover:scale-105 transition-all"
             >
               <Video className="w-4 h-4" />
-              <span>Explore Live Activity & Media Gallery</span>
+              <span>{content.hero_gallery_cta ?? 'Explore Live Activity & Media Gallery'}</span>
               <ArrowDown className="w-4 h-4" />
             </button>
             {onOpenQuoteModal && (
@@ -71,7 +71,7 @@ export function TrainingHero({ content, onOpenQuoteModal, onExploreGallery }: Tr
                 className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-900 dark:text-white font-display font-bold text-sm border border-slate-300 dark:border-slate-700 shadow-md flex items-center justify-center gap-2 transition-all"
               >
                 <Calendar className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                <span>Reserve Corporate Masterclass</span>
+                <span>{content.hero_reserve_cta ?? 'Reserve Corporate Masterclass'}</span>
               </button>
             )}
           </div>
