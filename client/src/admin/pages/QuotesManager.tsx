@@ -63,6 +63,8 @@ export function QuotesManager() {
   const [contentOpen, setContentOpen] = useState(false);
   const [contentSaving, setContentSaving] = useState(false);
   const [contentSaved, setContentSaved] = useState(false);
+  const [testingEmail, setTestingEmail] = useState(false);
+  const [emailTestMessage, setEmailTestMessage] = useState('');
 
   const t = (en: string, km: string) => (isKm ? km : en);
 
@@ -97,6 +99,21 @@ export function QuotesManager() {
       setError(e.message || 'Failed to save quote form text.');
     } finally {
       setContentSaving(false);
+    }
+  };
+
+  const testEmail = async () => {
+    if (!token) return;
+    setTestingEmail(true);
+    setEmailTestMessage('');
+    setError('');
+    try {
+      await api.testQuoteEmail(token);
+      setEmailTestMessage(t('Test email sent. Check the company inbox.', 'អ៊ីមែលសាកល្បងត្រូវបានផ្ញើ។ សូមពិនិត្យប្រអប់សាររបស់ក្រុមហ៊ុន។'));
+    } catch (e: any) {
+      setError(e.message || 'Failed to send test email.');
+    } finally {
+      setTestingEmail(false);
     }
   };
 
@@ -155,10 +172,17 @@ export function QuotesManager() {
             {t('Client B2B quote form submissions.', 'សំណើសុំតម្លៃ B2B ពីអតិថិជន។')}
           </p>
         </div>
-        <button onClick={load} className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold transition-colors shrink-0">
-          {t('Refresh', 'ធ្វើឱ្យស្រស់')}
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={testEmail} disabled={testingEmail} className="px-4 py-2 rounded-xl border border-emerald-600 text-emerald-700 dark:text-emerald-400 text-sm font-bold transition-colors disabled:opacity-50 shrink-0">
+            {testingEmail ? t('Sending...', 'កំពុងផ្ញើ...') : t('Send Test Email', 'ផ្ញើអ៊ីមែលសាកល្បង')}
+          </button>
+          <button onClick={load} className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold transition-colors shrink-0">
+            {t('Refresh', 'ធ្វើឱ្យស្រស់')}
+          </button>
+        </div>
       </div>
+
+      {emailTestMessage && <div className="px-4 py-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-700 dark:text-emerald-300 text-sm">{emailTestMessage}</div>}
 
       <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
         <button type="button" onClick={() => setContentOpen((open) => !open)} className="w-full flex items-center justify-between gap-3 p-4 text-left hover:bg-slate-50 dark:hover:bg-slate-800/50">

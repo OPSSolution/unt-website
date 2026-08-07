@@ -69,6 +69,7 @@ export const api = {
 
   // Quote Requests (admin)
   getQuotes: (token: string) => request<any[]>('/api/admin/quotes', {}, token),
+  testQuoteEmail: (token: string) => request<{ sent: boolean }>('/api/admin/quotes/test-email', { method: 'POST' }, token),
   updateQuoteStatus: (id: string, status: 'new' | 'in_progress' | 'completed', token: string) =>
     request(`/api/admin/quotes/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }, token),
   deleteQuote: (id: string, token: string) =>

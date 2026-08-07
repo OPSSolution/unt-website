@@ -9,6 +9,13 @@ const envSchema = z.object({
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
   IMAGEKIT_PUBLIC_KEY: z.string().min(1).optional(),
   IMAGEKIT_PRIVATE_KEY: z.string().min(1).optional(),
+  SMTP_HOST: z.string().min(1).optional(),
+  SMTP_PORT: z.coerce.number().int().min(1).max(65535).default(587),
+  SMTP_SECURE: z.enum(["true", "false"]).default("false").transform((value) => value === "true"),
+  SMTP_USER: z.string().min(1).optional(),
+  SMTP_PASS: z.string().min(1).optional(),
+  QUOTE_EMAIL_TO: z.string().email().optional(),
+  EMAIL_FROM: z.string().min(1).optional(),
   CORS_ORIGIN: z.string().min(1).default("*"),
 }).superRefine((value, context) => {
   const configured = [value.IMAGEKIT_PUBLIC_KEY, value.IMAGEKIT_PRIVATE_KEY].filter(Boolean).length;

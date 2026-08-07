@@ -4,8 +4,19 @@ import { validateParams } from "../../middleware/validate.js";
 import { idParamsSchema } from "../../schemas/common.js";
 import { validateBody } from "../../middleware/validate.js";
 import { quoteStatusSchema } from "../../schemas/content.js";
+import { emailConfigured, sendQuoteTestEmail } from "../../email.js";
 
 const router = Router();
+
+router.post("/test-email", async (_req, res) => {
+  if (!emailConfigured) return res.status(503).json({ error: "Quote email is not configured in server/.env" });
+  try {
+    await sendQuoteTestEmail();
+    return res.json({ sent: true });
+  } catch (error) {
+    return res.status(502).json({ error: error instanceof Error ? error.message : "Test email failed" });
+  }
+});
 
 router.get("/", async (_req, res) => {
   const { data, error } = await supabase
