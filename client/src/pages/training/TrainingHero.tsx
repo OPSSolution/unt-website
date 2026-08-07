@@ -1,6 +1,7 @@
 import React from 'react';
-import { Sparkles, Video, Play, ArrowDown, Calendar, Award } from 'lucide-react';
+import { Sparkles, Video, ArrowDown, Calendar } from 'lucide-react';
 import { ScrollReveal } from '../../components/ScrollReveal';
+import { ScrollTextReveal } from '../../components/ScrollTextReveal';
 import { Interactive3DBg } from '../../components/Interactive3DBg';
 
 type Content = Record<string, string>;
@@ -24,10 +25,10 @@ export function TrainingHero({ content, onOpenQuoteModal, onExploreGallery }: Tr
   };
 
   return (
-    <section className="relative py-16 lg:py-24 overflow-hidden transition-colors duration-300">
+    <section className="relative py-20 lg:py-24 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 transition-colors duration-300 overflow-hidden">
       
-      {/* 3D Pyramids Canvas Background */}
-      <Interactive3DBg variant="pyramids" />
+      {/* 3D Hex-Grid Canvas Background (Uniform across all pages) */}
+      <Interactive3DBg variant="hex-grid" />
 
       {/* Tech Grid Overlay */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#05966910_1px,transparent_1px),linear-gradient(to_bottom,#05966910_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#10b98115_1px,transparent_1px),linear-gradient(to_bottom,#10b98115_1px,transparent_1px)] bg-[size:3rem_3rem] pointer-events-none opacity-40 dark:opacity-50" />
@@ -40,18 +41,17 @@ export function TrainingHero({ content, onOpenQuoteModal, onExploreGallery }: Tr
       <ScrollReveal animation="up">
         <div className="relative z-10 max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 text-center space-y-6">
           
-          {/* Live Activity & Badge */}
-          <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-emerald-50 dark:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-400/40 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm font-bold shadow-md backdrop-blur-md animate-gentle-float">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-400/40 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm font-bold shadow-sm backdrop-blur-md animate-gentle-float">
             <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400 animate-spin" />
             <span>{content.badge ?? 'UNT Trade Capacity Building Institute'}</span>
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping ml-1" />
           </div>
 
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-black tracking-tight text-slate-900 dark:text-white leading-[1.1] max-w-5xl mx-auto">
-            {content.headline ?? <>Mastering the Art of <span className="text-emerald-600 dark:text-emerald-400">Global Commerce</span></>}
+            <ScrollTextReveal text={content.headline ?? 'Mastering the Art of Global Commerce'} mode="codepen-title" />
           </h1>
 
-          <p className="text-slate-600 dark:text-emerald-100/90 text-base sm:text-xl max-w-3xl mx-auto leading-relaxed font-normal">
+          <p className="text-slate-600 dark:text-slate-300 text-base sm:text-xl max-w-3xl mx-auto leading-relaxed font-normal">
             {content.subheadline ?? "Elevate your commercial team's B2B negotiation skills, buyer psychology, key account retention, and international supply chain management with hands-on activity bootcamps."}
           </p>
 

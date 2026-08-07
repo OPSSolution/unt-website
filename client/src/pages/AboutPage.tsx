@@ -17,7 +17,6 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onOpenQuoteModal }) => {
 
   return (
     <div className="relative space-y-10 sm:space-y-12 pb-12 bg-slate-50 dark:bg-[#080B11] text-slate-900 dark:text-slate-100 transition-colors duration-300 bg-ambient-mesh min-h-screen overflow-hidden">
-      <Interactive3DBg variant="globe" />
       <AboutHero content={content} />
       <div className="relative z-10 space-y-12">
         <AboutMission content={content} />

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { startGlobeAnimation } from './three-background/animation';
 import { TRADE_HUBS, type TradeHub } from './three-background/data';
@@ -23,6 +23,7 @@ export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ activeOrigin =
   const targetRotationYRef = useRef(0);
   const targetRotationXRef = useRef(0);
   const activeOriginRef = useRef(activeOrigin);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     activeOriginRef.current = activeOrigin;
@@ -32,91 +33,113 @@ export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ activeOrigin =
     const container = mountRef.current;
     if (!container) return;
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
-    camera.position.set(0, 0, 22);
-    scene.add(new THREE.AmbientLight(0xffffff, 1.2));
-    const cyanLight = new THREE.DirectionalLight(0x38bdf8, 2);
-    cyanLight.position.set(20, 20, 20);
-    scene.add(cyanLight);
-    const greenLight = new THREE.DirectionalLight(0x10b981, 2);
-    greenLight.position.set(-20, -20, -20);
-    scene.add(greenLight);
+    let stopAnimation: (() => void) | null = null;
+    let observer: IntersectionObserver | null = null;
+    let renderer: THREE.WebGLRenderer | null = null;
+    let globeGroup: THREE.Group | null = null;
+    let handleResize: (() => void) | null = null;
+    let handlePointerDown: ((e: PointerEvent) => void) | null = null;
+    let handlePointerMove: ((e: PointerEvent) => void) | null = null;
+    let handlePointerUp: (() => void) | null = null;
 
-    const renderer = new THREE.WebGLRenderer({
-      alpha: true,
-      antialias: true,
-      powerPreference: 'high-performance',
-      precision: 'mediump',
-    });
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-    container.appendChild(renderer.domElement);
+    // Defer heavy Three.js canvas creation off critical initial paint tick
+    const initTimer = setTimeout(() => {
+      if (!mountRef.current) return;
 
-    const globe = buildGlobeScene(activeHubs);
-    scene.add(globe.globeGroup);
-    const defaultPosition = latLonToVector3(11.55, 104.91, GLOBE_RADIUS);
-    targetRotationYRef.current = -Math.atan2(defaultPosition.x, defaultPosition.z);
-    targetRotationXRef.current = Math.asin(defaultPosition.y / GLOBE_RADIUS) * 0.5;
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
+      camera.position.set(0, 0, 22);
+      scene.add(new THREE.AmbientLight(0xffffff, 1.2));
+      const cyanLight = new THREE.DirectionalLight(0x38bdf8, 2);
+      cyanLight.position.set(20, 20, 20);
+      scene.add(cyanLight);
+      const greenLight = new THREE.DirectionalLight(0x10b981, 2);
+      greenLight.position.set(-20, -20, -20);
+      scene.add(greenLight);
 
-    let dragging = false;
-    let visible = true;
-    let previousPointer = { x: 0, y: 0 };
-    const handlePointerDown = (event: PointerEvent) => {
-      dragging = true;
-      previousPointer = { x: event.clientX, y: event.clientY };
-    };
-    const handlePointerMove = (event: PointerEvent) => {
-      if (!dragging) return;
-      targetRotationYRef.current += (event.clientX - previousPointer.x) * 0.004;
-      targetRotationXRef.current += (event.clientY - previousPointer.y) * 0.004;
-      previousPointer = { x: event.clientX, y: event.clientY };
-    };
-    const handlePointerUp = () => { dragging = false; };
-    const handleResize = () => {
-      camera.aspect = container.clientWidth / container.clientHeight;
-      camera.updateProjectionMatrix();
+      renderer = new THREE.WebGLRenderer({
+        alpha: true,
+        antialias: true,
+        powerPreference: 'high-performance',
+        precision: 'mediump',
+      });
       renderer.setSize(container.clientWidth, container.clientHeight);
-    };
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+      container.appendChild(renderer.domElement);
 
-    const observer = new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting;
-    }, { threshold: 0.1 });
-    observer.observe(container);
-    window.addEventListener('resize', handleResize, { passive: true });
-    container.addEventListener('pointerdown', handlePointerDown);
-    window.addEventListener('pointermove', handlePointerMove);
-    window.addEventListener('pointerup', handlePointerUp);
+      const globe = buildGlobeScene(activeHubs);
+      globeGroup = globe.globeGroup;
+      scene.add(globe.globeGroup);
+      const defaultPosition = latLonToVector3(11.55, 104.91, GLOBE_RADIUS);
+      targetRotationYRef.current = -Math.atan2(defaultPosition.x, defaultPosition.z);
+      targetRotationXRef.current = Math.asin(defaultPosition.y / GLOBE_RADIUS) * 0.5;
 
-    const stopAnimation = startGlobeAnimation({
-      renderer,
-      scene,
-      camera,
-      globeGroup: globe.globeGroup,
-      targetRotationX: targetRotationXRef,
-      targetRotationY: targetRotationYRef,
-      activeOrigin: activeOriginRef,
-      isDragging: () => dragging,
-      isVisible: () => visible,
-      holoRing1: globe.holoRing1,
-      holoRing2: globe.holoRing2,
-      khRing: globe.khRing,
-      sequentialFlags: globe.sequentialFlags,
-      routes: globe.routes,
-      airplanes: globe.airplanes,
-      ships: globe.ships,
-    });
+      let dragging = false;
+      let visible = true;
+      let previousPointer = { x: 0, y: 0 };
+      handlePointerDown = (event: PointerEvent) => {
+        dragging = true;
+        previousPointer = { x: event.clientX, y: event.clientY };
+      };
+      handlePointerMove = (event: PointerEvent) => {
+        if (!dragging) return;
+        targetRotationYRef.current += (event.clientX - previousPointer.x) * 0.004;
+        targetRotationXRef.current += (event.clientY - previousPointer.y) * 0.004;
+        previousPointer = { x: event.clientX, y: event.clientY };
+      };
+      handlePointerUp = () => { dragging = false; };
+      handleResize = () => {
+        if (!renderer) return;
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      };
+
+      observer = new IntersectionObserver(([entry]) => {
+        visible = entry.isIntersecting;
+      }, { threshold: 0.1 });
+      observer.observe(container);
+
+      window.addEventListener('resize', handleResize, { passive: true });
+      container.addEventListener('pointerdown', handlePointerDown);
+      window.addEventListener('pointermove', handlePointerMove);
+      window.addEventListener('pointerup', handlePointerUp);
+
+      stopAnimation = startGlobeAnimation({
+        renderer,
+        scene,
+        camera,
+        globeGroup: globe.globeGroup,
+        targetRotationX: targetRotationXRef,
+        targetRotationY: targetRotationYRef,
+        activeOrigin: activeOriginRef,
+        isDragging: () => dragging,
+        isVisible: () => visible,
+        holoRing1: globe.holoRing1,
+        holoRing2: globe.holoRing2,
+        khRing: globe.khRing,
+        sequentialFlags: globe.sequentialFlags,
+        routes: globe.routes,
+        airplanes: globe.airplanes,
+        ships: globe.ships,
+      });
+
+      setIsReady(true);
+    }, 16);
 
     return () => {
-      stopAnimation();
-      observer.disconnect();
-      window.removeEventListener('resize', handleResize);
-      container.removeEventListener('pointerdown', handlePointerDown);
-      window.removeEventListener('pointermove', handlePointerMove);
-      window.removeEventListener('pointerup', handlePointerUp);
-      renderer.domElement.remove();
-      disposeGlobeScene(globe.globeGroup);
-      renderer.dispose();
+      clearTimeout(initTimer);
+      if (stopAnimation) stopAnimation();
+      if (observer) observer.disconnect();
+      if (handleResize) window.removeEventListener('resize', handleResize);
+      if (handlePointerDown) container.removeEventListener('pointerdown', handlePointerDown);
+      if (handlePointerMove) window.removeEventListener('pointermove', handlePointerMove);
+      if (handlePointerUp) window.removeEventListener('pointerup', handlePointerUp);
+      if (renderer) {
+        if (renderer.domElement) renderer.domElement.remove();
+        renderer.dispose();
+      }
+      if (globeGroup) disposeGlobeScene(globeGroup);
     };
   }, [activeHubsKey]);
 
@@ -132,7 +155,9 @@ export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ activeOrigin =
   return (
     <div
       ref={mountRef}
-      className="absolute inset-0 pointer-events-none z-0 overflow-hidden cursor-grab active:cursor-grabbing"
+      className={`absolute inset-0 pointer-events-none z-0 overflow-hidden cursor-grab active:cursor-grabbing transition-opacity duration-700 ${
+        isReady ? 'opacity-100' : 'opacity-0'
+      }`}
       aria-hidden="true"
     />
   );
