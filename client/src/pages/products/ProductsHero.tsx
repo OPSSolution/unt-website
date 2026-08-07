@@ -1,5 +1,7 @@
+import React from 'react';
 import { Sparkles } from 'lucide-react';
 import { ScrollReveal } from '../../components/ScrollReveal';
+import { ScrollTextReveal } from '../../components/ScrollTextReveal';
 import { Interactive3DBg } from '../../components/Interactive3DBg';
 
 interface Props {
@@ -10,7 +12,7 @@ interface Props {
 
 export function ProductsHero({ badge, headline, subheadline }: Props) {
   return (
-    <section className="relative py-20 lg:py-24 overflow-hidden transition-colors duration-300">
+    <section className="relative py-20 lg:py-24 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 transition-colors duration-300 overflow-hidden">
       
       {/* 3D Hex-Grid Canvas Background */}
       <Interactive3DBg variant="hex-grid" />
@@ -31,11 +33,11 @@ export function ProductsHero({ badge, headline, subheadline }: Props) {
             <span>{badge ?? 'Verified B2B Wholesale & OEM Products'}</span>
           </div>
 
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-black tracking-tight text-slate-900 dark:text-white leading-[1.1]">
-            {headline ?? <>Verified Global <span className="text-emerald-600 dark:text-emerald-400">Wholesale Catalog</span></>}
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-black tracking-tight text-slate-900 dark:text-white leading-[1.1] max-w-5xl mx-auto">
+            <ScrollTextReveal text={headline ?? 'Verified Global Wholesale Catalog'} mode="codepen-title" />
           </h1>
 
-          <p className="text-slate-600 dark:text-emerald-100/90 text-base sm:text-xl max-w-3xl mx-auto leading-relaxed font-normal">
+          <p className="text-slate-600 dark:text-slate-300 text-base sm:text-xl max-w-3xl mx-auto leading-relaxed font-normal">
             {subheadline ?? 'Direct-from-factory imported goods pre-audited for Cambodian Ministry compliance, Khmer labeling standards, and volume trade distribution.'}
           </p>
 
