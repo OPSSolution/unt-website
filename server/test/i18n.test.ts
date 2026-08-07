@@ -44,6 +44,14 @@ test("training activity media remains available when Khmer text is empty", () =>
   assert.deepEqual(localizedSection(data, "km"), { heading: "", activities: [activity] });
 });
 
+test("upcoming training session structure is shared without leaking English into Khmer", () => {
+  const session = { id: "session-1", title: "English title", format: "Hybrid", seatsLeft: 4, totalSeats: 25 };
+  const data = { en: { upcoming_sessions: [session] }, km: { upcoming_sessions: [] } };
+  assert.deepEqual(localizedSection(data, "km"), {
+    upcoming_sessions: [{ id: "session-1", title: "", format: "Hybrid", seatsLeft: 4, totalSeats: 25 }],
+  });
+});
+
 test("admin writes require an explicit content language", async () => {
   const app = express();
   app.put("/content", requireContentLanguage, (_req, res) => res.sendStatus(204));

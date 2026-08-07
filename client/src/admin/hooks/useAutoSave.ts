@@ -38,6 +38,17 @@ export function useAutoSave<T>(
   const prevStoreDataStrRef = useRef<string>('');
   const prevSaveDataStrRef = useRef<string>('');
 
+  // A language-specific editor changes its section key without necessarily
+  // unmounting. Reset the baseline so freshly loaded translated content is
+  // never mistaken for a user edit in the previous language.
+  useEffect(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    hasLoadedRef.current = false;
+    pendingDataRef.current = null;
+    prevStoreDataStrRef.current = '';
+    prevSaveDataStrRef.current = '';
+  }, [sectionKey]);
+
   // Keep refs in sync
   useEffect(() => { saveFnRef.current = saveFn; }, [saveFn]);
   useEffect(() => { dataRef.current = data; }, [data]);

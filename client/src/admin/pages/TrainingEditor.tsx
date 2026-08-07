@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../api';
 import { useAdminAuth } from '../hooks/useAdminAuth';
+import { useAutoSave } from '../hooks/useAutoSave';
 import { EditorShell, Field, Card, SectionDivider } from '../components/EditorShell';
 import { ImageField } from '../components/ImageField';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { TRAINING_TRACKS } from '../../data/mockData';
 import type { TrainingTrack } from '../../types';
 import type { ActivityItem } from '../../pages/training/activityTypes';
-import { RECENT_ACTIVITIES, UPCOMING_SESSIONS } from '../../pages/training/TrainingPromosSchedule';
+import { RECENT_ACTIVITIES, UPCOMING_SESSIONS, type UpcomingSession } from '../../pages/training/TrainingPromosSchedule';
 import { AlertCircle, Braces, CheckCircle2, Database, Pencil, Plus, Save, Trash2, X } from 'lucide-react';
 
 const DEFAULTS = {
@@ -56,6 +57,71 @@ const DEFAULTS = {
 
 const TABS = ['Hero', 'Stats', 'Schedule', 'Gallery', 'Bootcamp'] as const;
 type Tab = typeof TABS[number];
+
+const EMPTY_SESSION: UpcomingSession = {
+  id: '', title: '', badge: '', month: '', days: '', year: '', duration: '', time: '',
+  location: '', format: 'In-Person', seatsLeft: 0, totalSeats: 25, instructor: '',
+  promoCode: '', discount: '', pricePerParticipant: '',
+};
+
+function SessionManager({ value, onChange, onCommit }: { value: UpcomingSession[]; onChange: (value: UpcomingSession[]) => void; onCommit: (value: UpcomingSession[]) => void }) {
+  const sessions = Array.isArray(value) ? value : [];
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [draft, setDraft] = useState<UpcomingSession>(EMPTY_SESSION);
+  const editing = editingIndex !== null;
+  const setField = <Key extends keyof UpcomingSession>(key: Key, fieldValue: UpcomingSession[Key]) => {
+    const updated = { ...draft, [key]: fieldValue };
+    setDraft(updated);
+    // Existing sessions feed the page state as the user types, allowing the
+    // language-aware debounced auto-save to persist every field change.
+    if (editingIndex !== null && editingIndex < sessions.length) {
+      onChange(sessions.map((session, index) => index === editingIndex ? updated : session));
+    }
+  };
+  const beginAdd = () => { setEditingIndex(sessions.length); setDraft({ ...EMPTY_SESSION, id: `session-${Date.now()}` }); };
+  const beginEdit = (index: number) => { setEditingIndex(index); setDraft({ ...sessions[index] }); };
+  const cancel = () => { setEditingIndex(null); setDraft(EMPTY_SESSION); };
+  const upsert = () => {
+    if (!draft.title.trim() || !draft.month.trim() || !draft.days.trim()) return;
+    const updatedSessions = editingIndex === sessions.length
+      ? [...sessions, draft]
+      : sessions.map((session, index) => index === editingIndex ? draft : session);
+    onChange(updatedSessions);
+    onCommit(updatedSessions);
+    cancel();
+  };
+  const remove = (index: number) => {
+    if (!confirm('Delete this training session?')) return;
+    const updatedSessions = sessions.filter((_, itemIndex) => itemIndex !== index);
+    onChange(updatedSessions);
+    onCommit(updatedSessions);
+  };
+
+  return <div className="space-y-4">
+    <div className="flex items-center justify-between gap-3"><div><h3 className="font-bold text-slate-900 dark:text-white">Upcoming Sessions</h3><p className="text-xs text-slate-500 mt-1">Session changes are saved to Supabase immediately.</p></div><button type="button" onClick={beginAdd} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-bold"><Plus className="w-4 h-4" />Add Session</button></div>
+    {editing && <div className="rounded-2xl border border-emerald-300 dark:border-emerald-800 bg-emerald-50/40 dark:bg-emerald-950/20 p-4 sm:p-6 space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div className="sm:col-span-2 xl:col-span-3"><Field label="Session Title" value={draft.title} onChange={(value) => setField('title', value)} /></div>
+        <Field label="Status Badge" value={draft.badge} onChange={(value) => setField('badge', value)} />
+        <Field label="Month (AUG)" value={draft.month} onChange={(value) => setField('month', value.toUpperCase())} />
+        <Field label="Days (24–26)" value={draft.days} onChange={(value) => setField('days', value)} />
+        <Field label="Year" value={draft.year} onChange={(value) => setField('year', value)} />
+        <Field label="Duration" value={draft.duration} onChange={(value) => setField('duration', value)} />
+        <Field label="Time" value={draft.time} onChange={(value) => setField('time', value)} />
+        <div className="sm:col-span-2"><Field label="Location" value={draft.location} onChange={(value) => setField('location', value)} /></div>
+        <div className="space-y-1.5"><label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Format</label><select value={draft.format} onChange={(event) => setField('format', event.target.value as UpcomingSession['format'])} className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2.5 text-sm"><option>In-Person</option><option>Hybrid</option><option>Online</option></select></div>
+        <Field label="Seats Left" value={String(draft.seatsLeft)} onChange={(value) => setField('seatsLeft', Number(value) || 0)} />
+        <Field label="Total Seats" value={String(draft.totalSeats)} onChange={(value) => setField('totalSeats', Number(value) || 0)} />
+        <Field label="Investment" value={draft.pricePerParticipant} onChange={(value) => setField('pricePerParticipant', value)} />
+        <div className="sm:col-span-2"><Field label="Instructor" value={draft.instructor} onChange={(value) => setField('instructor', value)} /></div>
+        <Field label="Promo Code" value={draft.promoCode ?? ''} onChange={(value) => setField('promoCode', value)} />
+        <div className="sm:col-span-2"><Field label="Discount / Promotion" value={draft.discount ?? ''} onChange={(value) => setField('discount', value)} /></div>
+      </div>
+      <div className="flex gap-2"><button type="button" onClick={upsert} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-bold"><Save className="w-4 h-4" />Save Session</button><button type="button" onClick={cancel} className="px-4 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-xs font-bold">Cancel</button></div>
+    </div>}
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">{sessions.map((session, index) => <div key={session.id} className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 flex gap-4 items-center"><div className="w-16 rounded-xl overflow-hidden text-center border border-emerald-200 dark:border-emerald-800 shrink-0"><div className="bg-emerald-600 text-white text-[10px] font-bold py-1">{session.month} {session.year}</div><div className="py-2 font-black text-slate-900 dark:text-white">{session.days}</div></div><div className="flex-1 min-w-0"><h4 className="font-bold text-sm text-slate-900 dark:text-white line-clamp-2">{session.title}</h4><p className="text-xs text-slate-500 mt-1">{session.format} · {session.seatsLeft}/{session.totalSeats} seats left · {session.pricePerParticipant}</p></div><div className="flex gap-1"><button type="button" onClick={() => beginEdit(index)} className="p-2 text-slate-400 hover:text-emerald-600"><Pencil className="w-4 h-4" /></button><button type="button" onClick={() => remove(index)} className="p-2 text-slate-400 hover:text-red-500"><Trash2 className="w-4 h-4" /></button></div></div>)}</div>
+  </div>;
+}
 
 function restoreClientActivities(saved: unknown): ActivityItem[] {
   const savedActivities = Array.isArray(saved) ? saved : [];
@@ -364,11 +430,26 @@ export function TrainingEditor() {
   const [data, setData] = useState<any>(DEFAULTS);
   const [activeTab, setActiveTab] = useState<Tab>('Hero');
   const [loading, setLoading] = useState(true);
+  const [loadedLanguage, setLoadedLanguage] = useState<'en' | 'km' | null>(null);
   const [galleryRestoreMessage, setGalleryRestoreMessage] = useState('');
+  const [scheduleSaveMessage, setScheduleSaveMessage] = useState('');
+  const [scheduleSaveError, setScheduleSaveError] = useState('');
+
+  const { saving, saved, error, dirty, autoSaving, autoSaved, autoSaveError } = useAutoSave(
+    `training_page-${language}`,
+    data,
+    async (latestData) => {
+      if (!token) throw new Error('Your admin session is unavailable. Please sign in again.');
+      await api.updateHomepageSection('training_page', latestData, token, language);
+    },
+    1200,
+    !loading && loadedLanguage === language,
+  );
 
   useEffect(() => {
     setLoading(true);
-    api.getHomepageSection('training_page')
+    setLoadedLanguage(null);
+    api.getHomepageSection('training_page', language)
       .then((r) => {
         if (r.data) {
           if (language === 'en') {
@@ -383,14 +464,41 @@ export function TrainingEditor() {
         }
       })
       .catch(() => {})
-      .finally(() => setLoading(false));
+      .finally(() => { setLoadedLanguage(language); setLoading(false); });
   }, [language]);
 
   const set = (key: string) => (v: string) => setData((d: any) => ({ ...d, [key]: v }));
 
   const handleSave = async () => {
     if (!token) return;
-    await api.updateHomepageSection('training_page', data, token);
+    await api.updateHomepageSection('training_page', data, token, language);
+  };
+
+  const persistSessions = async (upcoming_sessions: UpcomingSession[]) => {
+    const nextData = { ...data, upcoming_sessions };
+    setData(nextData);
+    setScheduleSaveMessage('');
+    setScheduleSaveError('');
+    if (!token) {
+      setScheduleSaveError('Your admin session is unavailable. Please sign in again.');
+      return;
+    }
+    try {
+      await api.updateHomepageSection('training_page', nextData, token, language);
+      const verified = await api.getHomepageSection('training_page', language);
+      const verifiedSessions: UpcomingSession[] = Array.isArray(verified.data?.upcoming_sessions)
+        ? verified.data.upcoming_sessions
+        : [];
+      const savedTitles = new Map(verifiedSessions.map((session) => [session.id, session.title]));
+      const expectedTitles = upcoming_sessions.filter((session) => session.title.trim());
+      if (expectedTitles.some((session) => savedTitles.get(session.id) !== session.title)) {
+        throw new Error('The Khmer session was not confirmed by Supabase. Please try signing in again.');
+      }
+      setData((current: any) => ({ ...current, upcoming_sessions: verifiedSessions }));
+      setScheduleSaveMessage(language === 'km' ? 'វគ្គបណ្តុះបណ្តាលត្រូវបានរក្សាទុកដោយជោគជ័យ។' : 'Training session saved successfully.');
+    } catch (error) {
+      setScheduleSaveError(error instanceof Error ? error.message : 'Failed to save training session.');
+    }
   };
 
   const restoreOriginalGallery = () => {
@@ -427,9 +535,10 @@ export function TrainingEditor() {
   return (
     <EditorShell
       title="Sales Training Page"
-      description="Edit content shown on the Sales Training page, then click Save Changes when you are ready."
-      saving={false} saved={false} error="" onSave={handleSave}
-      loading={loading}
+      description="Edit Sales Training content in English or Khmer. Changes are saved automatically to Supabase."
+      saving={saving} saved={saved} error={error} onSave={handleSave}
+      loading={loading || loadedLanguage !== language}
+      autoSaving={autoSaving} autoSaved={autoSaved} autoSaveError={autoSaveError} dirty={dirty}
       tabs={[...TABS]} activeTab={activeTab} onTabChange={(t) => setActiveTab(t as Tab)}
     >
       {activeTab === 'Hero' && (
@@ -495,7 +604,15 @@ export function TrainingEditor() {
               <Field label="Subtext" value={data.schedule_sub ?? ''} onChange={set('schedule_sub')} multiline />
             </div>
           </Card>
-          <Card><StructuredJsonField label="Upcoming Sessions" value={data.upcoming_sessions} onChange={(upcoming_sessions) => setData((current: any) => ({ ...current, upcoming_sessions }))} rows={20} /></Card>
+          <Card>
+            {scheduleSaveMessage && <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/30 px-4 py-3 text-xs font-semibold text-emerald-700 dark:text-emerald-300">{scheduleSaveMessage}</div>}
+            {scheduleSaveError && <div className="mb-4 rounded-xl border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/30 px-4 py-3 text-xs font-semibold text-red-600 dark:text-red-300">{scheduleSaveError}</div>}
+            <SessionManager
+              value={data.upcoming_sessions ?? []}
+              onChange={(upcoming_sessions) => setData((current: any) => ({ ...current, upcoming_sessions }))}
+              onCommit={(upcoming_sessions) => { void persistSessions(upcoming_sessions); }}
+            />
+          </Card>
           <Card><StructuredJsonField label="Live Update Messages" value={data.recent_activities} onChange={(recent_activities) => setData((current: any) => ({ ...current, recent_activities }))} rows={8} /></Card>
         </div>
       )}

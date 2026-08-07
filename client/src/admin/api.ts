@@ -92,9 +92,16 @@ export const api = {
     request(`/api/admin/hero/stats/${id}`, { method: 'PUT', body: JSON.stringify(body) }, token),
 
   // Homepage Sections
-  getHomepageSection: (key: string) => request<any>(`/api/homepage/${key}`),
-  updateHomepageSection: (key: string, body: any, token: string) =>
-    request(`/api/admin/homepage/${key}`, { method: 'PUT', body: JSON.stringify(body) }, token),
+  getHomepageSection: (key: string, language?: 'en' | 'km') => request<any>(
+    `/api/homepage/${key}${language ? `?lang=${language}` : ''}`,
+    language ? { headers: { 'X-Content-Language': language } } : {},
+  ),
+  updateHomepageSection: (key: string, body: any, token: string, language?: 'en' | 'km') =>
+    request(`/api/admin/homepage/${key}`, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+      ...(language ? { headers: { 'X-Content-Language': language } } : {}),
+    }, token),
 
   // Quote Requests (admin)
   getQuotes: (token: string) => request<any[]>('/api/admin/quotes', {}, token),

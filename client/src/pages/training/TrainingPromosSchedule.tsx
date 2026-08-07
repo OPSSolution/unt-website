@@ -76,7 +76,7 @@ interface Props {
 export const TrainingPromosSchedule: React.FC<Props> = ({ content, onOpenQuoteModal }) => {
   const { language } = useLanguage();
   const sessions: UpcomingSession[] = Array.isArray(content.upcoming_sessions)
-    ? content.upcoming_sessions
+    ? content.upcoming_sessions.filter((session: UpcomingSession) => session.title?.trim())
     : language === 'en' ? UPCOMING_SESSIONS : [];
   const recentActivities: string[] = Array.isArray(content.recent_activities)
     ? content.recent_activities

@@ -50,6 +50,26 @@ function mergeSharedActivities(english: unknown, khmer: unknown) {
   });
 }
 
+function mergeLocalizedSessions(english: unknown, khmer: unknown) {
+  if (!Array.isArray(english)) return Array.isArray(khmer) ? khmer : [];
+  const localizedItems = Array.isArray(khmer) ? khmer : [];
+  const localizedById = new Map(localizedItems
+    .filter((item): item is Record<string, unknown> => !!item && typeof item === "object" && !Array.isArray(item))
+    .map((item) => [item.id, item]));
+  return english.map((item, index) => {
+    if (!item || typeof item !== "object" || Array.isArray(item)) return item;
+    const base = item as Record<string, unknown>;
+    const blank = blankLocalizedFields(base);
+    // These fields control identity/filtering and are not translated copy.
+    blank.format = base.format;
+    if (base.promoCode !== undefined) blank.promoCode = base.promoCode;
+    const translated = localizedById.get(base.id) ?? localizedItems[index];
+    return translated && typeof translated === "object" && !Array.isArray(translated)
+      ? { ...blank, ...translated }
+      : blank;
+  });
+}
+
 export function requestLanguage(req: Request): ContentLanguage {
   const value = req.headers["x-content-language"] ?? req.query.lang;
   return value === "km" ? "km" : "en";
@@ -98,6 +118,12 @@ export function localizedSection(data: unknown, language: ContentLanguage) {
     localized.activities = mergeSharedActivities(
       (english as Record<string, unknown>).activities,
       (khmer as Record<string, unknown>).activities,
+    );
+  }
+  if ("upcoming_sessions" in english) {
+    localized.upcoming_sessions = mergeLocalizedSessions(
+      (english as Record<string, unknown>).upcoming_sessions,
+      (khmer as Record<string, unknown>).upcoming_sessions,
     );
   }
   return replaceLegacyCompanyName(localized);
