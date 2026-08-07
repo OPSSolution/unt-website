@@ -21,7 +21,7 @@ function SectionHeading({ badge, title, description }: { badge: string; title: s
 
 export function CoreValuesSection() {
   return (
-    <section className="py-12 bg-white/50 dark:bg-transparent transition-colors duration-300">
+    <section className="py-12 bg-transparent transition-colors duration-300">
       <div className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
         <SectionHeading badge="What Drives Us" title="Our Core Values" description="These principles guide every decision we make, from factory floor audits to client partnerships." />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

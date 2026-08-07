@@ -64,7 +64,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }
                 <img src="/images/logos/image.png" alt="UNT Logo" className="w-full h-full object-contain" />
               </div>
               <div>
-                <span className="font-display font-bold text-xl text-slate-900 dark:text-white block">{nb.company_name ?? 'UNT COMPANY'}</span>
+                <span className="font-display font-bold text-xl text-slate-900 dark:text-white block">{nb.company_name ?? 'Unique Noble Trading Co., Ltd.'}</span>
                 <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">{nb.company_legal ?? 'Unique Noble Trading Co., Ltd.'}</span>
               </div>
             </div>
@@ -130,7 +130,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }
         {/* Bottom Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
           <div>
-            © {new Date().getFullYear()} {nb.footer_copyright ?? 'Unique Noble Trading Co., Ltd. (UNT Company). All rights reserved.'}
+            © {new Date().getFullYear()} {nb.footer_copyright ?? 'Unique Noble Trading Co., Ltd. All rights reserved.'}
           </div>
           <div className="flex items-center space-x-6">
             {legalLinks.map((label) => (

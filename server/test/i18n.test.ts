@@ -22,6 +22,22 @@ test("localized homepage sections blank untranslated English fields", () => {
   assert.deepEqual(localizedSection(data, "en"), data.en);
 });
 
+test("legacy company names in saved homepage content use the legal company name", () => {
+  const data = {
+    en: {
+      company_name: "UNT COMPANY",
+      description: "Partner with UNT Company",
+      legal: "Unique Noble Trading Co., Ltd. (UNT Company)",
+    },
+    km: {},
+  };
+  assert.deepEqual(localizedSection(data, "en"), {
+    company_name: "Unique Noble Trading Co., Ltd.",
+    description: "Partner with Unique Noble Trading Co., Ltd.",
+    legal: "Unique Noble Trading Co., Ltd.",
+  });
+});
+
 test("training activity media remains available when Khmer text is empty", () => {
   const activity = { id: "activity-1", title: "Workshop", mediaUrl: "https://example.com/photo.jpg" };
   const data = { en: { heading: "Training", activities: [activity] }, km: { heading: "", activities: [] } };

@@ -2,7 +2,7 @@ import { PageTab } from '../../types';
 
 export const footerNavigation: ReadonlyArray<{ label: string; tab: PageTab }> = [
   { label: 'Home', tab: 'home' },
-  { label: 'About UNT Company', tab: 'about' },
+  { label: 'About Unique Noble Trading Co., Ltd.', tab: 'about' },
   { label: 'Sourcing-as-a-Service', tab: 'services' },
   { label: 'Wholesale Catalog', tab: 'products' },
   { label: 'Sales Capacity Training', tab: 'training' },

@@ -7,13 +7,14 @@ interface AdminAuthState {
   token: string | null;
   loading: boolean;
   isAdmin: boolean;
+  recovering: boolean;
 }
 
 const isAdmin = (user: User | null) =>
   user?.app_metadata?.role === 'admin' || user?.user_metadata?.role === 'admin';
 
 const toState = (user: User | null, token: string | null): AdminAuthState => ({
-  user, token, loading: false, isAdmin: isAdmin(user),
+  user, token, loading: false, isAdmin: isAdmin(user), recovering: false,
 });
 
 // Module-level cache & listener set
@@ -32,16 +33,17 @@ if (supabase) {
     broadcast(toState(session?.user ?? null, session?.access_token ?? null));
   });
 
-  supabase.auth.onAuthStateChange((_event, session) => {
-    broadcast(toState(session?.user ?? null, session?.access_token ?? null));
+  supabase.auth.onAuthStateChange((event, session) => {
+    const next = toState(session?.user ?? null, session?.access_token ?? null);
+    broadcast(event === 'PASSWORD_RECOVERY' ? { ...next, recovering: true } : next);
   });
 } else {
-  cache = { user: null, token: null, loading: false, isAdmin: false };
+  cache = { user: null, token: null, loading: false, isAdmin: false, recovering: false };
 }
 
 export function useAdminAuth(): AdminAuthState {
   const [state, setState] = useState<AdminAuthState>(
-    cache ?? { user: null, token: null, loading: true, isAdmin: false }
+    cache ?? { user: null, token: null, loading: true, isAdmin: false, recovering: false }
   );
 
   useEffect(() => {

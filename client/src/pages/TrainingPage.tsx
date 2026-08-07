@@ -3,7 +3,7 @@ import { useHomepageSections } from '../hooks/useHomepageSections';
 import { TrainingHero } from './training/TrainingHero';
 import { TrainingActivityGallery } from './training/TrainingActivityGallery';
 import { TrainingPromosSchedule } from './training/TrainingPromosSchedule';
-import { Interactive3DBg } from '../components/Interactive3DBg';
+import { PageAnimatedBackground } from '../components/PageAnimatedBackground';
 
 interface TrainingPageProps {
   onOpenQuoteModal: () => void;
@@ -20,10 +20,10 @@ export const TrainingPage: React.FC<TrainingPageProps> = ({ onOpenQuoteModal }) 
   };
 
   return (
-    <div className="relative space-y-16 pb-20 animate-fade-in bg-slate-50 dark:bg-[#080B11] text-slate-900 dark:text-slate-100 transition-colors duration-300 bg-ambient-mesh overflow-hidden min-h-screen">
+    <div className="relative isolate space-y-16 pb-20 animate-fade-in bg-slate-50 dark:bg-[#080B11] text-slate-900 dark:text-slate-100 transition-colors duration-300 overflow-hidden min-h-screen">
       
       {/* 3D Floating Pyramids Canvas Background for Sales Academy */}
-      <Interactive3DBg variant="pyramids" />
+      <PageAnimatedBackground />
 
       <div className="relative z-10 space-y-16">
         {/* 1. Hero Section with Quick Gallery Scroll */}

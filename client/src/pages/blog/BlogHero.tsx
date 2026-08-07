@@ -1,7 +1,6 @@
 import React from 'react';
 import { ScrollReveal } from '../../components/ScrollReveal';
 import { ScrollTextReveal } from '../../components/ScrollTextReveal';
-import { Interactive3DBg } from '../../components/Interactive3DBg';
 import { Sparkles, ShieldCheck, TrendingUp, Globe } from 'lucide-react';
 
 interface Props {
@@ -12,10 +11,9 @@ interface Props {
 
 export function BlogHero({ badge, headline, subheadline }: Props) {
   return (
-    <section className="relative py-20 lg:py-24 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 transition-colors duration-300 overflow-hidden">
+    <section className="relative z-10 py-20 lg:py-24 bg-transparent border-b border-emerald-500/10 text-slate-900 dark:text-slate-100 transition-colors duration-300 overflow-hidden">
       
       {/* 3D Hex-Grid Canvas Background (Uniform across all pages) */}
-      <Interactive3DBg variant="hex-grid" />
 
       {/* Background Glowing Ambient Orbs */}
       <div className="absolute inset-0 opacity-30 pointer-events-none overflow-hidden">

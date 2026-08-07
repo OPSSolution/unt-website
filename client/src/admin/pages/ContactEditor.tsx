@@ -7,7 +7,7 @@ import { EditorShell, Field, Card, SectionDivider } from '../components/EditorSh
 const DEFAULTS = {
   badge: 'Phnom Penh HQ & Regional Hubs',
   headline: "Let's Bridge the Gap Between Agriculture & Logistics",
-  subheadline: "Get in touch with UNT Company's sourcing specialists, customs brokers, and commercial training leads.",
+  subheadline: "Get in touch with Unique Noble Trading Co., Ltd.'s sourcing specialists, customs brokers, and commercial training leads.",
   section_badge: 'Direct Channels',
   section_heading: 'Connect With Our Team',
   section_desc: 'Whether you require urgent customs clearance support, bulk wholesale pricing, or custom OEM formulation — we respond within 4 business hours.',

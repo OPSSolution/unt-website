@@ -1,13 +1,13 @@
 import React from 'react';
 import { useAdminAuth } from '../hooks/useAdminAuth';
-import { LoginPage } from '../pages/LoginPage';
+import { LoginPage, PasswordRecoveryPage } from '../pages/LoginPage';
 
 interface Props {
   children: React.ReactNode;
 }
 
 export function AdminGuard({ children }: Props) {
-  const { loading, isAdmin } = useAdminAuth();
+  const { loading, isAdmin, recovering } = useAdminAuth();
 
   if (loading) {
     return (
@@ -17,6 +17,7 @@ export function AdminGuard({ children }: Props) {
     );
   }
 
+  if (recovering) return <PasswordRecoveryPage />;
   if (!isAdmin) return <LoginPage />;
 
   return <>{children}</>;

@@ -190,7 +190,7 @@ export const ARTICLES: Article[] = [
     content: [
       'As Cambodia continues its rapid modernization of commercial logistics, the Ministry of Economy and Finance alongside the General Department of Customs and Excise (GDCE) recently implemented updated tax structures affecting imported consumer packaged goods.',
       'Key updates include streamlined ASYCUDA World filing procedures, preferential tariff treatments under the Regional Comprehensive Economic Partnership (RCEP), and clarified guidelines for sub-packaging tax obligations.',
-      'At UNT Company, our dedicated in-house customs brokerage handles end-to-end filings to ensure 100% compliance, zero port delays, and optimal tariff categorization for all client shipments entering Phnom Penh and Sihanoukville Autonomous Port.',
+      'At Unique Noble Trading Co., Ltd., our dedicated in-house customs brokerage handles end-to-end filings to ensure 100% compliance, zero port delays, and optimal tariff categorization for all client shipments entering Phnom Penh and Sihanoukville Autonomous Port.',
       'Importers are advised to pay strict attention to multi-lingual Khmer label registration standards, which require certified translations of ingredient percentages, importer tax identification numbers (TIN), and manufacturing lot details prior to customs clearance.'
     ],
     tags: ['Cambodia Customs', 'FMCG Import', 'GDCE Clearance', 'Khmer Labeling', 'RCEP Tariff']
@@ -210,7 +210,7 @@ export const ARTICLES: Article[] = [
     excerpt: 'How local beauty entrepreneurs and retail chains are leveraging South Korean and Japanese GMP factories to launch proprietary skincare lines in record time.',
     content: [
       'The Asian beauty sector is experiencing unprecedented growth driven by consumer demand for clean ingredients, botanical formulations, and premium packaging.',
-      'Rather than building capital-intensive manufacturing facilities from scratch, forward-thinking Cambodian retail chains are partnering with UNT Company to access audited Korean and Japanese OEM facilities.',
+      'Rather than building capital-intensive manufacturing facilities from scratch, forward-thinking Cambodian retail chains are partnering with Unique Noble Trading Co., Ltd. to access audited Korean and Japanese OEM facilities.',
       'Through Sourcing-as-a-Service, UNT manages sample formulation testing, localized Khmer and English compliant packaging, stability trials, and door-to-door temperature-controlled delivery.',
       'Case study: A regional pharmacy chain launched a 6-SKU dermatologist-formulated hydration line in 90 days, capturing 28% market share in their initial 6 months.'
     ],

@@ -6,7 +6,7 @@ import { EditorShell, Field, Card, SectionDivider } from '../components/EditorSh
 
 const DEFAULTS = {
   // Navbar
-  company_name: 'UNT COMPANY',
+  company_name: 'Unique Noble Trading Co., Ltd.',
   company_tagline: 'Trusted Global Trading Partner',
   company_legal: 'Unique Noble Trading Co., Ltd.',
   navbar_cta: 'Get a Quote',
@@ -19,7 +19,7 @@ const DEFAULTS = {
   footer_callout_cta_secondary: 'Contact Phnom Penh Office',
   // Footer brand block
   footer_desc: 'Empowering Asian commerce by bridging world-class manufacturers with retail networks, wholesale distributors, and emerging brands in Cambodia and ASEAN.',
-  footer_copyright: 'Unique Noble Trading Co., Ltd. (UNT Company). All rights reserved.',
+  footer_copyright: 'Unique Noble Trading Co., Ltd. All rights reserved.',
 };
 
 const TABS = ['Navbar', 'Footer'] as const;

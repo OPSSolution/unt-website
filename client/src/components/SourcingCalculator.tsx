@@ -153,7 +153,7 @@ export const SourcingCalculator: React.FC<SourcingCalculatorProps> = ({ onOpenQu
         {/* CTA */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
           <div className="text-xs text-slate-500 text-center sm:text-left">
-            Estimates based on UNT Company's established trade lane frequencies.
+            Estimates based on Unique Noble Trading Co., Ltd.'s established trade lane frequencies.
           </div>
           <button
             onClick={onOpenQuoteModal}

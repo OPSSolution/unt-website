@@ -51,7 +51,7 @@ export async function sendQuoteEmail(data: Record<string, unknown>, language: st
         `ប្រភេទផលិតផល៖ ${String(data.productCategory ?? "")}`,
         `ក្រុមហ៊ុន៖ ${String(data.companyName ?? "")}`,
         "",
-        "សូមអរគុណដែលបានទាក់ទង UNT Company។",
+        "សូមអរគុណដែលបានទាក់ទង Unique Noble Trading Co., Ltd.។",
       ]
     : [
         `Hello ${String(data.contactName ?? "")},`,
@@ -62,7 +62,7 @@ export async function sendQuoteEmail(data: Record<string, unknown>, language: st
         `Product category: ${String(data.productCategory ?? "")}`,
         `Company: ${String(data.companyName ?? "")}`,
         "",
-        "Thank you for contacting UNT Company.",
+        "Thank you for contacting Unique Noble Trading Co., Ltd.",
       ];
 
   await transporter.sendMail({
