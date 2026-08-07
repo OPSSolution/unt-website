@@ -13,7 +13,10 @@ const SECTION_KEYS = [
 
 async function loadSections(language: ContentLanguage): Promise<HomepageSections | null> {
   try {
-    const res = await fetch(`${API_BASE}/api/homepage?lang=${language}`);
+    const res = await fetch(`${API_BASE}/api/homepage?lang=${language}`, {
+      cache: 'no-store',
+      headers: { 'X-Content-Language': language },
+    });
     if (!res.ok) return null;
     const rows = await res.json();
     if (!Array.isArray(rows)) return null;
