@@ -2,10 +2,11 @@ import React, { useMemo, useState } from 'react';
 import type { Article } from '../types';
 import { useArticles } from '../hooks/useArticles';
 import { useHomepageSections } from '../hooks/useHomepageSections';
-import { ArticleGrid } from './blog/ArticleGrid';
-import { BlogFilters } from './blog/BlogFilters';
 import { BlogHero } from './blog/BlogHero';
 import { FeaturedArticle } from './blog/FeaturedArticle';
+import { BlogFilters } from './blog/BlogFilters';
+import { ArticleGrid } from './blog/ArticleGrid';
+import { Interactive3DBg } from '../components/Interactive3DBg';
 
 interface BlogPageProps {
   onOpenArticleModal: (article: Article) => void;
@@ -32,16 +33,25 @@ export const BlogPage: React.FC<BlogPageProps> = ({ onOpenArticleModal }) => {
   }, [articles, selectedCategory, searchQuery]);
 
   return (
-    <div className="space-y-12 pb-16 animate-fade-in bg-slate-50 dark:bg-[#090D16] text-slate-900 dark:text-slate-100 transition-colors duration-300 bg-ambient-mesh">
+    <div className="relative space-y-12 pb-24 animate-fade-in bg-slate-50 dark:bg-[#090D16] text-slate-900 dark:text-slate-100 transition-colors duration-300 min-h-screen">
+      {/* Upgraded Hero Section with CodePen Title Reveal & Uniform 3D Hex-Grid Canvas */}
       <BlogHero badge={content.badge} headline={content.headline} subheadline={content.subheadline} />
-      {featuredArticle && <FeaturedArticle article={featuredArticle} onOpen={onOpenArticleModal} />}
-      <section className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 space-y-6">
+
+      {/* Main Content Area */}
+      <section className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 space-y-10">
+        {/* Search & Category Filter Toolbar */}
         <BlogFilters
           selectedCategory={selectedCategory}
           searchQuery={searchQuery}
+          totalResultsCount={filteredArticles.length}
           onCategoryChange={setSelectedCategory}
           onSearchChange={setSearchQuery}
         />
+
+        {/* Featured Trade Analysis Article */}
+        {featuredArticle && <FeaturedArticle article={featuredArticle} onOpen={onOpenArticleModal} />}
+
+        {/* Article Cards Grid */}
         <ArticleGrid articles={filteredArticles} onOpen={onOpenArticleModal} />
       </section>
     </div>

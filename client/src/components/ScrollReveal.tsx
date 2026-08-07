@@ -15,10 +15,10 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
   children,
   animation = 'up',
   delay = 0,
-  duration = 850,
+  duration = 750,
   className = '',
-  threshold = 0.12,
-  once = true,
+  threshold = 0.1,
+  once = false, // Bi-directional scroll animations (scrolling UP & DOWN)
   style = {},
 }) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -38,7 +38,7 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
       },
       {
         threshold,
-        rootMargin: '0px 0px -50px 0px',
+        rootMargin: '0px 0px -30px 0px',
       }
     );
 
@@ -67,10 +67,10 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
   );
 };
 
-// Custom Hook to auto-observe any element with class `.reveal-on-scroll`
+// Custom Hook to auto-observe elements with bi-directional scrolling
 export const useScrollReveal = (dep?: any) => {
   useEffect(() => {
-    const elements = document.querySelectorAll('.reveal-on-scroll:not(.is-revealed)');
+    const elements = document.querySelectorAll('.reveal-on-scroll');
     if (elements.length === 0) return;
 
     const observer = new IntersectionObserver(
@@ -78,13 +78,14 @@ export const useScrollReveal = (dep?: any) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('is-revealed');
-            observer.unobserve(entry.target);
+          } else {
+            entry.target.classList.remove('is-revealed');
           }
         });
       },
       {
         threshold: 0.1,
-        rootMargin: '0px 0px -40px 0px',
+        rootMargin: '0px 0px -30px 0px',
       }
     );
 

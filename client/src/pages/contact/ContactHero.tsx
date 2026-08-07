@@ -1,6 +1,7 @@
 import React from 'react';
 import { Sparkles, Clock, MessageSquare, Zap } from 'lucide-react';
 import { ScrollReveal } from '../../components/ScrollReveal';
+import { ScrollTextReveal } from '../../components/ScrollTextReveal';
 import { Interactive3DBg } from '../../components/Interactive3DBg';
 import type { ContactContent } from './types';
 
@@ -11,19 +12,25 @@ export function ContactHero({ content }: { content: ContactContent }) {
   };
 
   return (
-    <section className="relative py-20 bg-white dark:bg-[#070A10] text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 overflow-hidden transition-colors duration-300">
-      {/* 3D Floating Canvas Background */}
-      <Interactive3DBg variant="cubes" />
+    <section className="relative py-20 lg:py-24 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 transition-colors duration-300 overflow-hidden">
+      {/* 3D Hex-Grid Canvas Background (Uniform across all pages) */}
+      <Interactive3DBg variant="hex-grid" />
+
+      {/* Tech Grid Overlay */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#05966910_1px,transparent_1px),linear-gradient(to_bottom,#05966910_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#10b98115_1px,transparent_1px),linear-gradient(to_bottom,#10b98115_1px,transparent_1px)] bg-[size:3rem_3rem] pointer-events-none opacity-40 dark:opacity-50" />
 
       {/* Glow Effects */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-emerald-500/10 dark:bg-emerald-500/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute inset-0 opacity-30 pointer-events-none overflow-hidden">
+        <div className="absolute -top-32 left-1/4 w-[600px] h-[600px] bg-emerald-500/15 dark:bg-emerald-500/25 blur-[140px] rounded-full animate-pulse" />
+        <div className="absolute top-1/2 -right-32 w-[500px] h-[500px] bg-emerald-600/10 dark:bg-teal-600/20 blur-[130px] rounded-full" />
+      </div>
 
       <ScrollReveal animation="up">
         <div className="relative z-10 max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 text-center space-y-6">
           
           {/* Top Live Badges Strip */}
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-500/40 text-emerald-800 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider rounded-full shadow-sm backdrop-blur-md">
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-emerald-50 dark:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-400/40 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider rounded-full shadow-sm backdrop-blur-md">
               <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>{content.badge ?? 'Direct B2B Communication Portal'}</span>
             </span>
@@ -40,8 +47,8 @@ export function ContactHero({ content }: { content: ContactContent }) {
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-black tracking-tight text-slate-900 dark:text-white leading-tight">
-            Connect with <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 dark:from-emerald-400 dark:via-teal-300 dark:to-emerald-500">UNT Company</span>
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-black tracking-tight text-slate-900 dark:text-white leading-tight max-w-5xl mx-auto">
+            <ScrollTextReveal text="Connect with UNT Company" mode="codepen-title" />
           </h1>
 
           {/* Subheadline */}

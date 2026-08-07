@@ -6,7 +6,7 @@ import { ImageField } from '../components/ImageField';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { TRAINING_TRACKS } from '../../data/mockData';
 import type { TrainingTrack } from '../../types';
-import { ACTIVITIES, type ActivityItem } from '../../pages/training/TrainingActivityGallery';
+import { ACTIVITIES, REMOVED_STATIC_ACTIVITY_IDS, type ActivityItem } from '../../pages/training/TrainingActivityGallery';
 import { RECENT_ACTIVITIES, UPCOMING_SESSIONS } from '../../pages/training/TrainingPromosSchedule';
 import { AlertCircle, Braces, CheckCircle2, Database, Pencil, Plus, Save, Trash2, X } from 'lucide-react';
 
@@ -64,6 +64,7 @@ function restoreClientActivities(saved: unknown): ActivityItem[] {
     const title = typeof activity.title === 'string' ? activity.title.trim() : '';
     const mediaUrl = typeof activity.mediaUrl === 'string' ? activity.mediaUrl.trim() : '';
     if (!id || !title || !mediaUrl) return [];
+    if (REMOVED_STATIC_ACTIVITY_IDS.has(id)) return [];
     return [{
       ...EMPTY_ACTIVITY,
       ...activity,
@@ -393,7 +394,7 @@ export function TrainingEditor() {
 
   const restoreOriginalGallery = () => {
     const shouldRestore = window.confirm(
-      'Restore the original English Gallery text and activities? Activities you added yourself will also be kept.'
+      'Restore the original English Gallery text? Your uploaded activities will be kept.'
     );
     if (!shouldRestore) return;
     setData((current: any) => ({
@@ -418,7 +419,7 @@ export function TrainingEditor() {
       activities: restoreClientActivities(current.activities),
     }));
     setGalleryRestoreMessage(
-      'Original Gallery text and activities restored locally. Click Save Changes to store this in Supabase.'
+      'Original Gallery text restored locally. Uploaded activities were kept. Click Save Changes to store this in Supabase.'
     );
   };
 
@@ -546,7 +547,7 @@ export function TrainingEditor() {
               </div>
             )}
             <div className="mb-4 rounded-xl bg-sky-50 dark:bg-sky-500/10 border border-sky-200 dark:border-sky-500/20 px-4 py-3 text-xs text-sky-700 dark:text-sky-300">
-              Gallery activities are saved in Supabase. Original gallery media and activities uploaded through ImageKit are kept together. Use <strong>Restore Gallery Text</strong> to reset the English labels without deleting your added activities.
+              Gallery media comes only from activities added through Admin and saved in Supabase/ImageKit. <strong>Restore Gallery Text</strong> resets labels without deleting your uploaded activities.
             </div>
             <ActivityManager value={data.activities ?? []} onChange={(activities) => setData((current: any) => ({ ...current, activities }))} />
           </Card>

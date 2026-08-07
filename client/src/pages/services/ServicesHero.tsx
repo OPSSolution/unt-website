@@ -1,6 +1,7 @@
 import React from 'react';
 import { Sparkles, Layers, ShoppingBag, Globe2, GraduationCap } from 'lucide-react';
 import { ScrollReveal } from '../../components/ScrollReveal';
+import { ScrollTextReveal } from '../../components/ScrollTextReveal';
 import { Interactive3DBg } from '../../components/Interactive3DBg';
 
 export type ServiceTab = 'all' | 'product-sales' | 'sourcing' | 'training';
@@ -13,12 +14,12 @@ interface ServicesHeroProps {
 
 export const ServicesHero: React.FC<ServicesHeroProps> = ({ activeTab, setActiveTab, content }) => {
   return (
-    <section className="relative py-20 lg:py-24 overflow-hidden transition-colors duration-300">
+    <section className="relative py-20 lg:py-24 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 transition-colors duration-300 overflow-hidden">
       
-      {/* 3D Global Inventory & Freight Canvas Background */}
-      <Interactive3DBg variant="cubes" />
+      {/* 3D Hex-Grid Canvas Background (Uniform across all pages) */}
+      <Interactive3DBg variant="hex-grid" />
 
-      {/* Tech Grid Line Overlay */}
+      {/* Tech Grid Overlay */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#05966910_1px,transparent_1px),linear-gradient(to_bottom,#05966910_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#10b98115_1px,transparent_1px),linear-gradient(to_bottom,#10b98115_1px,transparent_1px)] bg-[size:3rem_3rem] pointer-events-none opacity-40 dark:opacity-50" />
 
       <div className="absolute inset-0 opacity-30 pointer-events-none overflow-hidden">
@@ -35,10 +36,10 @@ export const ServicesHero: React.FC<ServicesHeroProps> = ({ activeTab, setActive
           </div>
 
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-black tracking-tight text-slate-900 dark:text-white max-w-5xl mx-auto leading-[1.1]">
-            {content.headline ?? '3 Distinct Solutions to Scale'} <span className="text-emerald-600 dark:text-emerald-400">{content.headline_highlight ?? 'Your Enterprise'}</span>
+            <ScrollTextReveal text={`${content.headline ?? '3 Distinct Solutions to Scale'} ${content.headline_highlight ?? 'Your Enterprise'}`} mode="codepen-title" />
           </h1>
 
-          <p className="text-slate-600 dark:text-emerald-100/90 text-base sm:text-xl max-w-3xl mx-auto leading-relaxed font-normal">
+          <p className="text-slate-600 dark:text-slate-300 text-base sm:text-xl max-w-3xl mx-auto leading-relaxed font-normal">
             {content.subheadline ?? 'Each service is tailored with a dedicated workflow, operational structure, and support model for maximum business efficiency.'}
           </p>
 
@@ -59,7 +60,7 @@ export const ServicesHero: React.FC<ServicesHeroProps> = ({ activeTab, setActive
                   className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all duration-300 flex items-center gap-2 shadow-sm ${
                     isActive
                       ? 'bg-emerald-600 text-white dark:bg-emerald-500 dark:text-slate-950 shadow-md shadow-emerald-500/20 scale-105'
-                      : 'bg-white dark:bg-white/5 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 hover:border-emerald-500/50 hover:bg-emerald-50/50 dark:hover:bg-white/10 active:scale-95'
+                      : 'bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500/50 hover:bg-emerald-50/50 dark:hover:bg-slate-800 active:scale-95'
                   }`}
                 >
                   <TabIcon className={`w-4 h-4 ${isActive ? 'text-white dark:text-slate-950' : 'text-emerald-600 dark:text-emerald-400'}`} />
