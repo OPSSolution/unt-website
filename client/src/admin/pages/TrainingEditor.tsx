@@ -6,7 +6,7 @@ import { ImageField } from '../components/ImageField';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { TRAINING_TRACKS } from '../../data/mockData';
 import type { TrainingTrack } from '../../types';
-import { ACTIVITIES, REMOVED_STATIC_ACTIVITY_IDS, type ActivityItem } from '../../pages/training/TrainingActivityGallery';
+import type { ActivityItem } from '../../pages/training/activityTypes';
 import { RECENT_ACTIVITIES, UPCOMING_SESSIONS } from '../../pages/training/TrainingPromosSchedule';
 import { AlertCircle, Braces, CheckCircle2, Database, Pencil, Plus, Save, Trash2, X } from 'lucide-react';
 
@@ -47,7 +47,7 @@ const DEFAULTS = {
   gallery_cta_button: 'Schedule On-Site Workshop',
   gallery_video_enroll_cta: 'Enroll Team in This Masterclass',
   gallery_album_book_cta: 'Book Workshop',
-  activities: ACTIVITIES,
+  activities: [],
   bootcamp_badge: 'In-House Corporate Solutions',
   bootcamp_heading: 'Need a Private Masterclass for Your Commercial Team?',
   bootcamp_desc: 'We deliver custom on-site workshops tailored to your industry, product catalog, and specific negotiation challenges directly at your Phnom Penh corporate headquarters.',
@@ -66,7 +66,6 @@ function restoreClientActivities(saved: unknown): ActivityItem[] {
     const title = typeof activity.title === 'string' ? activity.title.trim() : '';
     const mediaUrl = typeof activity.mediaUrl === 'string' ? activity.mediaUrl.trim() : '';
     if (!id || !title || !mediaUrl) return [];
-    if (REMOVED_STATIC_ACTIVITY_IDS.has(id)) return [];
     return [{
       ...EMPTY_ACTIVITY,
       ...activity,
