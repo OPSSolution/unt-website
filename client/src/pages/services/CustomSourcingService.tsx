@@ -9,9 +9,10 @@ import { sourcingSteps } from './servicesData';
 interface CustomSourcingServiceProps {
   onOpenQuoteModal: () => void;
   delay?: number;
+  content: Record<string, string>;
 }
 
-export const CustomSourcingService: React.FC<CustomSourcingServiceProps> = ({ onOpenQuoteModal, delay = 0 }) => {
+export const CustomSourcingService: React.FC<CustomSourcingServiceProps> = ({ onOpenQuoteModal, delay = 0, content }) => {
   const [activeStep, setActiveStep] = useState<number>(0);
 
   return (
@@ -23,13 +24,13 @@ export const CustomSourcingService: React.FC<CustomSourcingServiceProps> = ({ on
           <div className="space-y-3 max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/20 border border-emerald-300 dark:border-emerald-400/40 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider shadow-sm">
               <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 animate-spin" />
-              <span>Service 02 — Custom B2B Procurement Desk</span>
+              <span>{content.sourcing_badge ?? 'Service 02 — Custom B2B Procurement Desk'}</span>
             </div>
             <h2 className="text-3xl sm:text-5xl font-display font-black tracking-tight text-slate-900 dark:text-white leading-[1.1]">
-              Sourcing-as-a-Service <span className="text-emerald-600 dark:text-emerald-400">(Factory Procurement)</span>
+              {content.sourcing_title ?? 'Sourcing-as-a-Service'} <span className="text-emerald-600 dark:text-emerald-400">{content.sourcing_highlight ?? '(Factory Procurement)'}</span>
             </h2>
             <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base leading-relaxed max-w-2xl">
-              Need a custom product made abroad? UNT acts as your external procurement team — handling factory audits, price negotiation, sample inspection, freight, and GDCE customs clearance.
+              {content.sourcing_desc ?? 'Need a custom product made abroad? UNT acts as your external procurement team — handling factory audits, price negotiation, sample inspection, freight, and GDCE customs clearance.'}
             </p>
           </div>
 
@@ -37,7 +38,7 @@ export const CustomSourcingService: React.FC<CustomSourcingServiceProps> = ({ on
             onClick={onOpenQuoteModal}
             className="btn-shine px-6 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white dark:bg-gradient-to-r dark:from-emerald-400 dark:to-teal-400 dark:text-slate-950 font-black text-sm shadow-xl shadow-emerald-600/20 flex items-center justify-center gap-2 shrink-0 self-start transition-all hover:scale-105 active:scale-95"
           >
-            <span>Request Custom B2B Sourcing</span>
+            <span>{content.sourcing_cta ?? 'Request Custom B2B Sourcing'}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

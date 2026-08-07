@@ -8,9 +8,10 @@ export type ServiceTab = 'all' | 'product-sales' | 'sourcing' | 'training';
 interface ServicesHeroProps {
   activeTab: ServiceTab;
   setActiveTab: (tab: ServiceTab) => void;
+  content: Record<string, string>;
 }
 
-export const ServicesHero: React.FC<ServicesHeroProps> = ({ activeTab, setActiveTab }) => {
+export const ServicesHero: React.FC<ServicesHeroProps> = ({ activeTab, setActiveTab, content }) => {
   return (
     <section className="relative py-20 lg:py-24 overflow-hidden transition-colors duration-300">
       
@@ -30,24 +31,24 @@ export const ServicesHero: React.FC<ServicesHeroProps> = ({ activeTab, setActive
           
           <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-400/40 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm font-bold shadow-sm backdrop-blur-md animate-gentle-float">
             <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400 animate-spin" />
-            <span>UNT Integrated Business Ecosystem</span>
+            <span>{content.badge ?? 'UNT Integrated Business Ecosystem'}</span>
           </div>
 
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-black tracking-tight text-slate-900 dark:text-white max-w-5xl mx-auto leading-[1.1]">
-            3 Distinct Solutions to Scale <span className="text-emerald-600 dark:text-emerald-400">Your Enterprise</span>
+            {content.headline ?? '3 Distinct Solutions to Scale'} <span className="text-emerald-600 dark:text-emerald-400">{content.headline_highlight ?? 'Your Enterprise'}</span>
           </h1>
 
           <p className="text-slate-600 dark:text-emerald-100/90 text-base sm:text-xl max-w-3xl mx-auto leading-relaxed font-normal">
-            Each service is tailored with a dedicated workflow, operational structure, and support model for maximum business efficiency.
+            {content.subheadline ?? 'Each service is tailored with a dedicated workflow, operational structure, and support model for maximum business efficiency.'}
           </p>
 
           {/* Filter Pills with improved hover & active states */}
           <div className="pt-4 flex flex-wrap items-center justify-center gap-3">
             {[
-              { id: 'all', label: 'All Services', icon: Layers },
-              { id: 'product-sales', label: '01. Product Sales', icon: ShoppingBag },
-              { id: 'sourcing', label: '02. Sourcing-as-a-Service', icon: Globe2 },
-              { id: 'training', label: '03. Sales Training', icon: GraduationCap },
+              { id: 'all', label: content.tab_all ?? 'All Services', icon: Layers },
+              { id: 'product-sales', label: content.tab_product ?? '01. Product Sales', icon: ShoppingBag },
+              { id: 'sourcing', label: content.tab_sourcing ?? '02. Sourcing-as-a-Service', icon: Globe2 },
+              { id: 'training', label: content.tab_training ?? '03. Sales Training', icon: GraduationCap },
             ].map((tab) => {
               const TabIcon = tab.icon;
               const isActive = activeTab === tab.id;

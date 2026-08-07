@@ -8,9 +8,10 @@ import { Card3D } from '../../components/Card3D';
 interface SalesTrainingServiceProps {
   onOpenQuoteModal: () => void;
   delay?: number;
+  content: Record<string, string>;
 }
 
-export const SalesTrainingService: React.FC<SalesTrainingServiceProps> = ({ onOpenQuoteModal, delay = 0 }) => {
+export const SalesTrainingService: React.FC<SalesTrainingServiceProps> = ({ onOpenQuoteModal, delay = 0, content }) => {
   const [selectedFormat, setSelectedFormat] = useState<string>('In-Person Workshops');
 
   return (
@@ -22,13 +23,13 @@ export const SalesTrainingService: React.FC<SalesTrainingServiceProps> = ({ onOp
           <div className="space-y-3 max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/20 border border-emerald-300 dark:border-emerald-400/40 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider shadow-sm">
               <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 animate-spin" />
-              <span>Service 03 — Sales Academy & Ecosystem</span>
+              <span>{content.training_badge ?? 'Service 03 — Sales Academy & Ecosystem'}</span>
             </div>
             <h2 className="text-3xl sm:text-5xl font-display font-black tracking-tight text-slate-900 dark:text-white leading-[1.1]">
-              Sales Training & <span className="text-emerald-600 dark:text-emerald-400">Ecosystem Enablement</span>
+              {content.training_title ?? 'Sales Training &'} <span className="text-emerald-600 dark:text-emerald-400">{content.training_highlight ?? 'Ecosystem Enablement'}</span>
             </h2>
             <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base leading-relaxed max-w-2xl">
-              Transform your sales team into high-revenue closer teams. We teach real-world customer psychology, objection handling, and negotiation — backed by UNT's complete sourcing and digital branding ecosystem.
+              {content.training_desc ?? "Transform your sales team into high-revenue closer teams. We teach real-world customer psychology, objection handling, and negotiation — backed by UNT's complete sourcing and digital branding ecosystem."}
             </p>
           </div>
 
@@ -36,7 +37,7 @@ export const SalesTrainingService: React.FC<SalesTrainingServiceProps> = ({ onOp
             onClick={onOpenQuoteModal}
             className="btn-shine px-6 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white dark:bg-gradient-to-r dark:from-emerald-400 dark:to-teal-400 dark:text-slate-950 font-black text-sm shadow-xl shadow-emerald-600/20 flex items-center justify-center gap-2 shrink-0 self-start transition-all hover:scale-105 active:scale-95"
           >
-            <span>Book Team Consultation</span>
+            <span>{content.training_cta ?? 'Book Team Consultation'}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

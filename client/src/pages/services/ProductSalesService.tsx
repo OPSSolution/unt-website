@@ -10,9 +10,10 @@ import { countryDetails, productCategories } from './servicesData';
 interface ProductSalesServiceProps {
   onOpenQuoteModal: () => void;
   delay?: number;
+  content: Record<string, string>;
 }
 
-export const ProductSalesService: React.FC<ProductSalesServiceProps> = ({ onOpenQuoteModal, delay = 0 }) => {
+export const ProductSalesService: React.FC<ProductSalesServiceProps> = ({ onOpenQuoteModal, delay = 0, content }) => {
   const [selectedCountry, setSelectedCountry] = useState<string>('Japan');
 
   const activeCountryInfo = countryDetails[selectedCountry] || countryDetails['Japan'];
@@ -27,13 +28,13 @@ export const ProductSalesService: React.FC<ProductSalesServiceProps> = ({ onOpen
           <div className="space-y-3 max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/20 border border-emerald-300 dark:border-emerald-400/40 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider shadow-sm">
               <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 animate-spin" />
-              <span>Service 01 — Local Stock Distribution</span>
+              <span>{content.product_badge ?? 'Service 01 — Local Stock Distribution'}</span>
             </div>
             <h2 className="text-3xl sm:text-5xl font-display font-black text-slate-900 dark:text-white tracking-tight leading-[1.1]">
-              Product Sales <span className="text-emerald-600 dark:text-emerald-400">(Local Cambodian Inventory)</span>
+              {content.product_title ?? 'Product Sales'} <span className="text-emerald-600 dark:text-emerald-400">{content.product_highlight ?? '(Local Cambodian Inventory)'}</span>
             </h2>
             <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base leading-relaxed max-w-2xl">
-              Skip foreign supplier risk and international freight delays. We import premium goods directly, verify quality, and hold local stock in Phnom Penh ready for immediate delivery.
+              {content.product_desc ?? 'Skip foreign supplier risk and international freight delays. We import premium goods directly, verify quality, and hold local stock in Phnom Penh ready for immediate delivery.'}
             </p>
           </div>
 
@@ -41,7 +42,7 @@ export const ProductSalesService: React.FC<ProductSalesServiceProps> = ({ onOpen
             onClick={onOpenQuoteModal}
             className="btn-shine px-6 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white dark:bg-gradient-to-r dark:from-emerald-400 dark:to-teal-400 dark:text-slate-950 font-black text-sm shadow-xl shadow-emerald-600/20 flex items-center justify-center gap-2 shrink-0 self-start transition-all hover:scale-105 active:scale-95"
           >
-            <span>Browse Live Wholesale Stock</span>
+            <span>{content.product_cta ?? 'Browse Live Wholesale Stock'}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

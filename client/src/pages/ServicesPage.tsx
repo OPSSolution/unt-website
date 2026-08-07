@@ -9,6 +9,7 @@ import { ServicesFaqAccordion } from './services/ServicesFaqAccordion';
 import { Interactive3DBg } from '../components/Interactive3DBg';
 import { ScrollReveal } from '../components/ScrollReveal';
 import { SourcingCalculator } from '../components/SourcingCalculator';
+import { useHomepageSections } from '../hooks/useHomepageSections';
 
 interface ServicesPageProps {
   onOpenQuoteModal: () => void;
@@ -16,6 +17,7 @@ interface ServicesPageProps {
 
 export const ServicesPage: React.FC<ServicesPageProps> = ({ onOpenQuoteModal }) => {
   const [activeTab, setActiveTab] = useState<ServiceTab>('all');
+  const content = useHomepageSections().services_page ?? {};
 
   // Smooth scroll when switching filter tabs so user sees the first result
   const handleTabChange = useCallback((tab: ServiceTab) => {
@@ -36,7 +38,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ onOpenQuoteModal }) 
       <Interactive3DBg variant="cubes" />
 
       {/* Hero Section */}
-      <ServicesHero activeTab={activeTab} setActiveTab={handleTabChange} />
+      <ServicesHero activeTab={activeTab} setActiveTab={handleTabChange} content={content} />
 
       {/* Services Container — Staggered Page Load Flow */}
       <div 
@@ -46,17 +48,17 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ onOpenQuoteModal }) 
 
         {/* Service 01: Product Sales */}
         {(activeTab === 'all' || activeTab === 'product-sales') && (
-          <ProductSalesService onOpenQuoteModal={onOpenQuoteModal} delay={80} />
+          <ProductSalesService onOpenQuoteModal={onOpenQuoteModal} delay={80} content={content} />
         )}
 
         {/* Service 02: Custom Sourcing */}
         {(activeTab === 'all' || activeTab === 'sourcing') && (
-          <CustomSourcingService onOpenQuoteModal={onOpenQuoteModal} delay={160} />
+          <CustomSourcingService onOpenQuoteModal={onOpenQuoteModal} delay={160} content={content} />
         )}
 
         {/* Service 03: Sales Training */}
         {(activeTab === 'all' || activeTab === 'training') && (
-          <SalesTrainingService onOpenQuoteModal={onOpenQuoteModal} delay={240} />
+          <SalesTrainingService onOpenQuoteModal={onOpenQuoteModal} delay={240} content={content} />
         )}
 
         {/* Custom Package Builder Configurator */}
