@@ -7,7 +7,6 @@ import {
 import { QuickSearchModal } from './QuickSearchModal';
 import { QuickCalcModal } from './QuickCalcModal';
 import { useHomepageSections } from '../hooks/useHomepageSections';
-import { DesktopNav } from './navbar/DesktopNav';
 import { MobileNav } from './navbar/MobileNav';
 import type { MegaMenuName } from './navbar/data';
 import { LanguageToggle, useLanguage } from '../i18n/LanguageContext';
@@ -106,7 +105,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <img src="/images/logos/image.png" alt="UNT Logo" className="w-full h-full object-contain" />
               </div>
               <div className="hidden xl:block shrink-0">
-                <div className="font-display font-bold text-sm tracking-tight text-slate-900 dark:text-white leading-none">{navbarContent.company_name ?? 'Unique Noble Trading Co., Ltd.'}</div>
+                <div className="font-display font-bold text-sm tracking-tight text-slate-900 dark:text-white leading-none">Unique Noble Trading Co., Ltd.</div>
                 <div className="text-[9px] text-emerald-600 dark:text-emerald-400 font-semibold tracking-wide mt-1 leading-none">{navbarContent.company_tagline ?? 'Trusted Global Trading Partner'}</div>
               </div>
             </button>
@@ -125,7 +124,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         : 'text-slate-700 hover:text-slate-950 hover:bg-slate-100 dark:text-white/75 dark:hover:text-white dark:hover:bg-white/10'
                       }`}
                   >
-                    <span className="whitespace-nowrap">{link.label}</span>
+                    <span className="whitespace-nowrap">{isKm ? link.labelKhmer ?? link.label : link.label}</span>
                   </button>
                 );
               })}

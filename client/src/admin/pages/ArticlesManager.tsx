@@ -171,7 +171,11 @@ export function ArticlesManager() {
           {articles.map((a) => (
             <div key={a.id} className={`bg-white dark:bg-slate-900 border rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-800 transition-all ${editingId === a.id ? 'border-emerald-400 ring-2 ring-emerald-500/15' : 'border-slate-200 dark:border-slate-800'}`}>
               <div className="flex items-center gap-4 p-4">
-                  <img src={a.image} alt={a.title} className="w-24 h-20 rounded-xl object-cover bg-slate-800 shrink-0" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                  {a.image ? (
+                    <img src={a.image} alt={a.title} className="w-24 h-20 rounded-xl object-cover bg-slate-800 shrink-0" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                  ) : (
+                    <div className="w-24 h-20 rounded-xl bg-slate-100 dark:bg-slate-800 shrink-0 flex items-center justify-center text-[10px] text-slate-400">No image</div>
+                  )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-slate-900 dark:text-white font-semibold text-sm truncate">{a.title}</span>

@@ -24,7 +24,11 @@ export function ArticleGrid({ articles, onOpen, content }: Props) {
           <article className="group cursor-pointer rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-md hover:shadow-2xl hover:border-emerald-400 dark:hover:border-emerald-500 transition-all flex flex-col justify-between text-left h-full">
             <div>
               <div className="relative aspect-video overflow-hidden bg-slate-100 dark:bg-slate-800">
-                <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                {article.image ? (
+                  <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-sm font-medium text-slate-400 dark:text-slate-500">No cover image</div>
+                )}
                 <div className="absolute top-3 left-3 px-3 py-1 bg-emerald-600 text-white font-bold text-xs rounded-full shadow-md">{article.category}</div>
                 <div className="absolute top-3 right-3 live-pulse-badge bg-slate-900/90 backdrop-blur-md border-emerald-500/40 text-emerald-300">
                   <span className="live-pulse-dot" /><span>{content.card_verified ?? 'Verified Briefing'}</span>

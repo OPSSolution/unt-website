@@ -11,17 +11,21 @@ interface Props {
 
 export function FeaturedArticle({ article, onOpen, content }: Props) {
   return (
-    <section className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 my-6">
+    <section className="w-full my-6">
       <Card3D intensity={10} onClick={() => onOpen(article)}>
         <article className="group cursor-pointer rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl hover:border-emerald-500 dark:hover:border-emerald-500 transition-all duration-300 grid grid-cols-1 lg:grid-cols-12 items-stretch text-left">
           
           {/* Image Thumbnail Column */}
-          <div className="lg:col-span-6 relative aspect-video lg:aspect-auto overflow-hidden bg-slate-950 min-h-[300px]">
-            <img
-              src={article.image}
-              alt={article.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-            />
+          <div className="lg:col-span-6 relative aspect-video lg:aspect-auto lg:min-h-[420px] overflow-hidden bg-slate-950">
+            {article.image ? (
+              <img
+                src={article.image}
+                alt={article.title}
+                className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+              />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center text-sm font-medium text-slate-500">No cover image</div>
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
 
             {/* Badges */}

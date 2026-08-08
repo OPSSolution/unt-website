@@ -28,8 +28,10 @@ export const articleSchema = z.object({
   read_time: nonEmptyString,
   author_name: nonEmptyString,
   author_role: nonEmptyString,
-  author_avatar: nonEmptyString,
-  image: nonEmptyString,
+  // Images can be cleared from the article editor. The database columns remain
+  // non-null, so an empty string represents an intentionally removed image.
+  author_avatar: z.string().trim(),
+  image: z.string().trim(),
   excerpt: nonEmptyString,
   content: z.array(nonEmptyString).min(1),
   tags: z.array(nonEmptyString),
