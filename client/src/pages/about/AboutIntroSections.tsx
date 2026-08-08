@@ -67,11 +67,28 @@ export function AboutMission({ content, products, onOpenProduct }: { content: Re
             <div className="catalog-orbit">
               {products.slice(0, 8).map((product, index, wheelProducts) => {
                 const angle = (360 / wheelProducts.length) * index - 90;
-                const flagUrl = TRADE_HUBS.find((hub) => hub.name === product.origin)?.flagUrl;
+                // Product origins can be translated (or intentionally blank) in
+                // Khmer, while the flag is shared across languages. Match either
+                // value so the orbit badge remains visible in both modes.
+                const flagHub = TRADE_HUBS.find((hub) =>
+                  hub.name === product.origin || hub.flag === product.originFlag
+                );
+                const flagUrl = flagHub?.flagUrl;
+                const flagEmoji = flagHub?.flag || product.originFlag;
                 return <div key={product.id} className="catalog-wheel-item" style={{ '--orbit-angle': `${angle}deg`, '--counter-angle': `${-angle}deg` } as CSSProperties}>
-                  <button type="button" onClick={() => onOpenProduct(product)} className="catalog-wheel-product" aria-label={`View ${product.name}`}>
+                  <button
+                    type="button"
+                    onClick={() => onOpenProduct(product)}
+                    className="catalog-wheel-product"
+                    aria-label={`View ${product.name}`}
+                  >
                     <img src={product.image} alt={product.name} />
-                    {flagUrl && <span><img src={flagUrl} alt="" /></span>}
+                    {(flagUrl || flagEmoji) && (
+                      <span aria-label={product.origin || 'Product origin'}>
+                        <b aria-hidden="true">{flagEmoji}</b>
+                        {flagUrl && <img src={flagUrl} alt="" onError={(event) => { event.currentTarget.style.display = 'none'; }} />}
+                      </span>
+                    )}
                   </button>
                 </div>;
               })}

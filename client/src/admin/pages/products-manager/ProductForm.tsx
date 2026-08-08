@@ -3,6 +3,7 @@ import { Save, X, Package, Image as ImageIcon, ListChecks, Eye, Clock3, Boxes } 
 import { ImageField } from '../../components/ImageField';
 import { Field } from '../../components/EditorShell';
 import { AdminProduct, PRODUCT_CATEGORIES, ProductDraft } from './types';
+import { COUNTRY_FLAG_EMOJIS, PRODUCT_ORIGINS } from '../../../pages/products/data';
 
 interface ProductFormProps {
   initial: ProductDraft | AdminProduct;
@@ -29,6 +30,17 @@ export function ProductForm({ initial, onSave, onCancel, saving }: ProductFormPr
       <div><h3 className="font-bold text-slate-900 dark:text-white text-sm">{title}</h3><p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{description}</p></div>
     </div>
   );
+  const originOptions = form.origin && !PRODUCT_ORIGINS.includes(form.origin)
+    ? [...PRODUCT_ORIGINS.filter((origin) => origin !== 'All'), form.origin]
+    : PRODUCT_ORIGINS.filter((origin) => origin !== 'All');
+
+  const updateOrigin = (origin: string) => {
+    setForm((current) => ({
+      ...current,
+      origin,
+      origin_flag: COUNTRY_FLAG_EMOJIS[origin] ?? current.origin_flag,
+    }));
+  };
 
   return (
     <form onSubmit={(event) => { event.preventDefault(); onSave(form); }} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 sm:p-7 space-y-7 shadow-xl shadow-slate-200/50 dark:shadow-black/20">
@@ -50,8 +62,16 @@ export function ProductForm({ initial, onSave, onCancel, saving }: ProductFormPr
             {PRODUCT_CATEGORIES.map((category) => <option key={category}>{category}</option>)}
           </select>
         </div>
-        <Field label="Origin Country" value={form.origin} onChange={(value) => set('origin', value)} />
-        <Field label="Origin Flag Emoji" value={form.origin_flag} onChange={(value) => set('origin_flag', value)} />
+        <div className="space-y-1.5">
+          <label htmlFor="product-origin" className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Origin Country</label>
+          <select id="product-origin" value={form.origin} onChange={(event) => updateOrigin(event.target.value)} className={selectClass} required>
+            <option value="" disabled>Select a country</option>
+            {originOptions.map((origin) => (
+              <option key={origin} value={origin}>{COUNTRY_FLAG_EMOJIS[origin] ?? form.origin_flag} {origin}</option>
+            ))}
+          </select>
+          <p className="text-[11px] text-slate-400 dark:text-slate-500">The country flag is added automatically.</p>
+        </div>
         <Field label="MOQ" value={form.moq} onChange={(value) => set('moq', value)} />
         <Field label="Lead Time" value={form.lead_time} onChange={(value) => set('lead_time', value)} />
         <Field label="Shelf Life" value={form.shelf_life} onChange={(value) => set('shelf_life', value)} />

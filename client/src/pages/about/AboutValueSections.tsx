@@ -1,7 +1,7 @@
 import { BarChart3, Sparkles } from 'lucide-react';
 import { Card3D } from '../../components/Card3D';
 import { ScrollReveal } from '../../components/ScrollReveal';
-import { ADVANTAGES, CORE_VALUES } from './data';
+import { ADVANTAGES, CORE_VALUES, CORE_VALUES_KM } from './data';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 function SectionHeading({ badge, title, description }: { badge: string; title: string; description?: string }) {
@@ -20,12 +20,18 @@ function SectionHeading({ badge, title, description }: { badge: string; title: s
 }
 
 export function CoreValuesSection() {
+  const { language } = useLanguage();
+  const values = language === 'km' ? CORE_VALUES_KM : CORE_VALUES;
   return (
     <section className="py-12 bg-transparent transition-colors duration-300">
       <div className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
-        <SectionHeading badge="What Drives Us" title="Our Core Values" description="These principles guide every decision we make, from factory floor audits to client partnerships." />
+        <SectionHeading
+          badge={language === 'km' ? 'អ្វីដែលជំរុញយើង' : 'What Drives Us'}
+          title={language === 'km' ? 'គុណតម្លៃស្នូលរបស់យើង' : 'Our Core Values'}
+          description={language === 'km' ? 'គោលការណ៍ទាំងនេះណែនាំរាល់ការសម្រេចចិត្តរបស់យើង ចាប់ពីការត្រួតពិនិត្យរោងចក្រ រហូតដល់ភាពជាដៃគូជាមួយអតិថិជន។' : 'These principles guide every decision we make, from factory floor audits to client partnerships.'}
+        />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {CORE_VALUES.map((value, index) => {
+          {values.map((value, index) => {
             const Icon = value.icon;
             return (
               <ScrollReveal key={value.title} animation="up" delay={index * 80}>
@@ -43,7 +49,7 @@ export function CoreValuesSection() {
                       </p>
                     </div>
                     <div className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mt-4 pt-3 border-t border-slate-100 dark:border-white/5">
-                      Value 0{index + 1}
+                      {language === 'km' ? 'គុណតម្លៃ' : 'Value'} 0{index + 1}
                     </div>
                   </div>
                 </Card3D>

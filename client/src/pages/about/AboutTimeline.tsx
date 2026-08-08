@@ -2,11 +2,14 @@ import { useState } from 'react';
 import { Award, CheckCircle2, TrendingUp, Sparkles } from 'lucide-react';
 import { Card3D } from '../../components/Card3D';
 import { ScrollReveal } from '../../components/ScrollReveal';
-import { TIMELINE } from './data';
+import { TIMELINE, TIMELINE_KM } from './data';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 export function AboutTimeline() {
-  const [activeIndex, setActiveIndex] = useState(TIMELINE.length - 1);
-  const activeMilestone = TIMELINE[activeIndex];
+  const { language } = useLanguage();
+  const timeline = language === 'km' ? TIMELINE_KM : TIMELINE;
+  const [activeIndex, setActiveIndex] = useState(timeline.length - 1);
+  const activeMilestone = timeline[activeIndex];
 
   return (
     <section className="py-12 bg-transparent transition-colors duration-300">
@@ -15,16 +18,16 @@ export function AboutTimeline() {
           <div className="text-center space-y-3 mb-10">
             <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/20 border border-emerald-300 dark:border-emerald-400/40 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider shadow-sm">
               <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span>Our Journey</span>
+              <span>{language === 'km' ? 'ដំណើររបស់យើង' : 'Our Journey'}</span>
             </span>
-            <h2 className="text-3xl sm:text-4xl font-display font-black text-slate-900 dark:text-white">Milestones & Growth</h2>
+            <h2 className="text-3xl sm:text-4xl font-display font-black text-slate-900 dark:text-white">{language === 'km' ? 'ព្រឹត្តិការណ៍សំខាន់ៗ និងការរីកចម្រើន' : 'Milestones & Growth'}</h2>
           </div>
         </ScrollReveal>
 
         <ScrollReveal animation="up" delay={100}>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             <div className="space-y-2">
-              {TIMELINE.map((milestone, index) => {
+              {timeline.map((milestone, index) => {
                 const isActive = activeIndex === index;
                 return (
                   <button 
@@ -66,16 +69,16 @@ export function AboutTimeline() {
                 <div className="relative z-10 space-y-4">
                   <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/20 border border-emerald-300 dark:border-emerald-400/30 text-emerald-800 dark:text-emerald-300 text-xs font-bold">
                     <Award className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                    <span>Year {activeMilestone.year}</span>
+                    <span>{language === 'km' ? 'ឆ្នាំ' : 'Year'} {activeMilestone.year}</span>
                   </div>
                   <h3 className="text-2xl sm:text-3xl font-display font-black leading-tight text-slate-900 dark:text-white">{activeMilestone.title}</h3>
                   <p className="text-slate-600 dark:text-emerald-100/90 text-sm leading-relaxed max-w-md">{activeMilestone.desc}</p>
                 </div>
                 <div className="relative z-10 flex items-center gap-3 pt-6 border-t border-slate-100 dark:border-emerald-500/20">
                   <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                  <span className="text-xs text-slate-600 dark:text-emerald-300 font-medium">Milestone {activeIndex + 1} of {TIMELINE.length}</span>
+                  <span className="text-xs text-slate-600 dark:text-emerald-300 font-medium">{language === 'km' ? 'ព្រឹត្តិការណ៍' : 'Milestone'} {activeIndex + 1} {language === 'km' ? 'នៃ' : 'of'} {timeline.length}</span>
                   <div className="flex items-center gap-1.5 ml-auto">
-                    {TIMELINE.map((milestone, index) => (
+                    {timeline.map((milestone, index) => (
                       <div 
                         key={milestone.year} 
                         className={`w-2 h-2 rounded-full transition-all duration-300 ${

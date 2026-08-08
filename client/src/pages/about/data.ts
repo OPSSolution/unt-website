@@ -8,11 +8,26 @@ export const TIMELINE = [
   { year: '2025', title: 'Regional Expansion', desc: 'Extended sourcing network to Japan, China, Laos, and Malaysia — serving 500+ retail partners across Cambodia with $50M+ annual trade volume.' },
 ];
 
+export const TIMELINE_KM = [
+  { year: '2018', title: 'បង្កើតឡើងនៅរាជធានីភ្នំពេញ', desc: 'UNT ត្រូវបានបង្កើតឡើងក្នុងគោលបំណងធ្វើទំនើបកម្មពាណិជ្ជកម្មនាំចូលកម្ពុជា និងភ្ជាប់រោងចក្រអន្តរជាតិជាមួយអ្នកលក់រាយក្នុងស្រុក។' },
+  { year: '2019', title: 'ដៃគូរោងចក្រដំបូង', desc: 'បានបង្កើតភាពជាដៃគូផ្ទាល់ជាមួយរោងចក្រនៅកូរ៉េខាងត្បូង និងវៀតណាម សម្រាប់ផលិតផលថែរក្សាស្បែក និងអាហារ-ភេសជ្ជៈ។' },
+  { year: '2021', title: 'ចាប់ផ្តើម OEM និងស្លាកយីហោផ្ទាល់ខ្លួន', desc: 'បានពង្រីកសេវាផលិត OEM ដើម្បីជួយម៉ាកយីហោកម្ពុជាបង្កើតផលិតផលតាមស្តង់ដារអន្តរជាតិ។' },
+  { year: '2023', title: 'សាលាបណ្តុះបណ្តាលផ្នែកលក់', desc: 'បានបើក UNT Sales Academy និងបណ្តុះបណ្តាលអ្នកជំនាញពាណិជ្ជកម្មជាង 1,200 នាក់លើការចរចា B2B និងការគ្រប់គ្រងអតិថិជនសំខាន់ៗ។' },
+  { year: '2025', title: 'ការពង្រីកបណ្តាញក្នុងតំបន់', desc: 'បានពង្រីកបណ្តាញផ្គត់ផ្គង់ទៅជប៉ុន ចិន ឡាវ និងម៉ាឡេស៊ី ដើម្បីបម្រើដៃគូលក់រាយជាង 500 នៅទូទាំងកម្ពុជា។' },
+];
+
 export const CORE_VALUES = [
   { icon: ShieldCheck, title: 'Integrity First', desc: 'Every product we source, every factory we audit, and every deal we broker is grounded in transparency and ethical business practices.' },
   { icon: Sparkles, title: 'Innovation', desc: 'We continuously modernize supply chains with technology, data-driven sourcing decisions, and new commercial training methodologies.' },
   { icon: Users, title: 'Partnership', desc: "We don't just sell products — we build long-term relationships with our clients, becoming an extension of their procurement team." },
   { icon: Award, title: 'Excellence', desc: 'From AQL 2.5 quality inspections to 99.4% on-time customs clearance, we hold ourselves to the highest operational standards.' },
+];
+
+export const CORE_VALUES_KM = [
+  { icon: ShieldCheck, title: 'សុចរិតភាពជាចម្បង', desc: 'គ្រប់ផលិតផល រោងចក្រ និងកិច្ចព្រមព្រៀងរបស់យើង ផ្អែកលើតម្លាភាព និងក្រមសីលធម៌អាជីវកម្ម។' },
+  { icon: Sparkles, title: 'នវានុវត្តន៍', desc: 'យើងបន្តធ្វើទំនើបកម្មខ្សែសង្វាក់ផ្គត់ផ្គង់ ដោយប្រើបច្ចេកវិទ្យា ទិន្នន័យ និងវិធីសាស្ត្របណ្តុះបណ្តាលថ្មីៗ។' },
+  { icon: Users, title: 'ភាពជាដៃគូ', desc: 'យើងមិនត្រឹមតែលក់ផលិតផលទេ ប៉ុន្តែបង្កើតទំនាក់ទំនងរយៈពេលវែង និងធ្វើការជាផ្នែកមួយនៃក្រុមលទ្ធកម្មរបស់អតិថិជន។' },
+  { icon: Award, title: 'ឧត្តមភាព', desc: 'ចាប់ពីការត្រួតពិនិត្យគុណភាព រហូតដល់ការបំពេញបែបបទគយ យើងប្រកាន់ខ្ជាប់ស្តង់ដារប្រតិបត្តិការខ្ពស់បំផុត។' },
 ];
 
 export const ADVANTAGES = [
