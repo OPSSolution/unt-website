@@ -31,3 +31,29 @@ export const COUNTRY_FLAGS: Record<string, string> = {
   Malaysia: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Flag_of_Malaysia.svg/250px-Flag_of_Malaysia.svg.png',
 };
 
+const COUNTRY_CODE_NAMES: Record<string, string> = {
+  KH: 'Cambodia', KHM: 'Cambodia',
+  TH: 'Thailand', THA: 'Thailand',
+  VN: 'Vietnam', VNM: 'Vietnam',
+  LA: 'Laos', LAO: 'Laos',
+  MY: 'Malaysia', MYS: 'Malaysia',
+  CN: 'China', CHN: 'China',
+  KR: 'South Korea', KOR: 'South Korea', SK: 'South Korea',
+  JP: 'Japan', JPN: 'Japan',
+};
+
+export function countryFlagUrl(origin: string, emoji: string): string | undefined {
+  if (COUNTRY_FLAGS[origin]) return COUNTRY_FLAGS[origin];
+  const countryFromCode = COUNTRY_CODE_NAMES[emoji.trim().toUpperCase()];
+  if (countryFromCode) return COUNTRY_FLAGS[countryFromCode];
+  const englishOrigin = Object.keys(COUNTRY_FLAG_EMOJIS).find((country) => COUNTRY_FLAG_EMOJIS[country] === emoji);
+  return englishOrigin ? COUNTRY_FLAGS[englishOrigin] : undefined;
+}
+
+export function countryNameFromFlag(flag: string): string {
+  const normalizedFlag = flag.trim();
+  const countryFromCode = COUNTRY_CODE_NAMES[normalizedFlag.toUpperCase()];
+  if (countryFromCode) return countryFromCode;
+  return Object.keys(COUNTRY_FLAG_EMOJIS).find((country) => COUNTRY_FLAG_EMOJIS[country] === normalizedFlag) ?? '';
+}
+

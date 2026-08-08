@@ -4,7 +4,7 @@ import type { RequestHandler } from "express";
 export type ContentLanguage = "en" | "km";
 export type Translations = Record<string, Record<string, unknown>>;
 
-const SHARED_FIELD = /(^id$|_id$|image|avatar|url|flag|created_at|updated_at|sort_order|featured|available)/i;
+const SHARED_FIELD = /(^id$|_id$|^origin$|image|avatar|url|flag|created_at|updated_at|sort_order|featured|available)/i;
 const LEGAL_COMPANY_NAME = "Unique Noble Trading Co., Ltd.";
 
 function replaceLegacyCompanyName(value: unknown): unknown {
@@ -97,9 +97,16 @@ export function localizeRow<T extends Record<string, unknown>>(row: T, language:
   const translations = (row.translations ?? {}) as Translations;
   const localized = language === "km" ? translations.km : undefined;
   const { translations: _translations, ...base } = row;
-  return (language === "km"
-    ? { ...blankLocalizedFields(base), ...(localized ?? {}) }
-    : base) as T;
+  if (language !== "km") return base as T;
+
+  const merged = { ...blankLocalizedFields(base), ...(localized ?? {}) } as Record<string, unknown>;
+  // Structural fields describe the same record in every language. Restore
+  // their canonical values after applying older translations so a stale blank
+  // translation cannot erase an image, flag, country origin, or identifier.
+  Object.entries(base).forEach(([key, value]) => {
+    if (SHARED_FIELD.test(key)) merged[key] = value;
+  });
+  return merged as T;
 }
 
 export function localizeRows<T extends Record<string, unknown>>(rows: T[] | null, language: ContentLanguage) {
