@@ -20,7 +20,7 @@ export function AppPageContent({ activeTab, onNavigate, onOpenQuote, onOpenProdu
     case 'home':
       return <HomePage setActiveTab={onNavigate} onOpenQuoteModal={() => onOpenQuote()} onOpenProductModal={onOpenProduct} onOpenArticleModal={onOpenArticle} />;
     case 'about':
-      return <AboutPage onOpenQuoteModal={() => onOpenQuote()} />;
+      return <AboutPage onOpenQuoteModal={() => onOpenQuote()} onOpenProduct={onOpenProduct} />;
     case 'services':
       return <ServicesPage onOpenQuoteModal={() => onOpenQuote()} />;
     case 'products':

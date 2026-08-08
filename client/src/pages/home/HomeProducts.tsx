@@ -20,6 +20,7 @@ export function HomeProducts({ hubs, products, content, onSelectOrigin, onNaviga
   const [allOrigins, setAllOrigins] = useState(false);
   const [animationKey, setAnimationKey] = useState(0);
   const pausedUntil = useRef(0);
+  const slideIndex = useRef(0);
   const hubsKey = hubs.map((hub) => hub.id).join('|');
   const productsByCountry = useMemo(() => {
     const grouped: Record<string, Product[]> = { all: products.slice(0, 4) };
@@ -28,26 +29,28 @@ export function HomeProducts({ hubs, products, content, onSelectOrigin, onNaviga
   }, [products, hubsKey]);
 
   useEffect(() => {
-    const cycleDuration = 3000;
-    const totalDuration = cycleDuration * hubs.length + 3700;
-    let frameId = 0;
-    const startedAt = performance.now();
-    const tick = (now: number) => {
-      if (Date.now() >= pausedUntil.current && hubs.length > 0) {
-        const elapsed = (now - startedAt) % totalDuration;
-        const index = Math.floor(elapsed / cycleDuration);
-        const nextId = index >= hubs.length ? 'all' : hubs[index].id;
-        setCountryId((current) => { if (current !== nextId) setAnimationKey((key) => key + 1); return nextId; });
-        setAllOrigins(nextId === 'all');
-      }
-      frameId = requestAnimationFrame(tick);
-    };
-    frameId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frameId);
-  }, [hubsKey]);
+    if (hubs.length === 0) return undefined;
+
+    const slideIds = [...hubs.map((hub) => hub.id), 'all'];
+    slideIndex.current = Math.max(0, slideIds.indexOf(countryId));
+    const timer = window.setInterval(() => {
+      if (Date.now() < pausedUntil.current) return;
+
+      slideIndex.current = (slideIndex.current + 1) % slideIds.length;
+      const nextId = slideIds[slideIndex.current];
+      setCountryId((current) => {
+        if (current !== nextId) setAnimationKey((key) => key + 1);
+        return nextId;
+      });
+      setAllOrigins(nextId === 'all');
+    }, 3000);
+
+    return () => window.clearInterval(timer);
+  }, [hubsKey, countryId]);
 
   const selectCountry = (id: string) => {
     pausedUntil.current = Date.now() + 8000;
+    slideIndex.current = Math.max(0, [...hubs.map((hub) => hub.id), 'all'].indexOf(id));
     setCountryId(id);
     setAllOrigins(id === 'all');
     setAnimationKey((key) => key + 1);

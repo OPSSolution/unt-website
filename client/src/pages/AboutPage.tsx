@@ -6,14 +6,18 @@ import { AboutTimeline } from './about/AboutTimeline';
 import { AdvantagesSection, CoreValuesSection } from './about/AboutValueSections';
 import { useLanguage } from '../i18n/LanguageContext';
 import { Interactive3DBg } from '../components/Interactive3DBg';
+import { useProducts } from '../hooks/useProducts';
+import type { Product } from '../types';
 
 interface AboutPageProps {
   onOpenQuoteModal: () => void;
+  onOpenProduct: (product: Product) => void;
 }
 
-export const AboutPage: React.FC<AboutPageProps> = ({ onOpenQuoteModal }) => {
+export const AboutPage: React.FC<AboutPageProps> = ({ onOpenQuoteModal, onOpenProduct }) => {
   const content = useHomepageSections().about_page ?? {};
   const { language } = useLanguage();
+  const products = useProducts();
 
   return (
     <div className="relative isolate space-y-10 sm:space-y-12 pb-12 bg-slate-50 dark:bg-[#080B11] text-slate-900 dark:text-slate-100 transition-colors duration-300 min-h-screen overflow-hidden">
@@ -26,7 +30,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onOpenQuoteModal }) => {
       </div>
       <AboutHero content={content} />
       <div className="relative z-10 space-y-12">
-        <AboutMission content={content} />
+        <AboutMission content={content} products={products} onOpenProduct={onOpenProduct} />
         {language === 'en' && <CoreValuesSection />}
         <AdvantagesSection content={content} />
         {language === 'en' && <AboutTimeline />}

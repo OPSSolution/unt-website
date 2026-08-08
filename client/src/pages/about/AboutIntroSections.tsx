@@ -1,8 +1,10 @@
-import { CheckCircle2, MapPin, Sparkles } from 'lucide-react';
-import { Card3D } from '../../components/Card3D';
+import { CheckCircle2, Sparkles } from 'lucide-react';
 import { ScrollReveal } from '../../components/ScrollReveal';
 import { ScrollTextReveal } from '../../components/ScrollTextReveal';
 import { useLanguage } from '../../i18n/LanguageContext';
+import type { Product } from '../../types';
+import type { CSSProperties } from 'react';
+import { TRADE_HUBS } from '../../components/ThreeBackground';
 
 export function AboutHero({ content }: { content: Record<string, any> }) {
   return (
@@ -29,7 +31,7 @@ export function AboutHero({ content }: { content: Record<string, any> }) {
 
 const MISSION_CHIPS = ['Factory Audits', 'OEM Manufacturing', 'Customs Brokerage', 'Sales Training', 'Cold Chain Logistics'];
 
-export function AboutMission({ content }: { content: Record<string, any> }) {
+export function AboutMission({ content, products, onOpenProduct }: { content: Record<string, any>; products: Product[]; onOpenProduct: (product: Product) => void }) {
   const { language } = useLanguage();
   return (
     <section className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 py-12 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center text-left">
@@ -59,24 +61,29 @@ export function AboutMission({ content }: { content: Record<string, any> }) {
       </ScrollReveal>
 
       <ScrollReveal animation="left" delay={200}>
-        <Card3D intensity={5}>
-          <div className="relative rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-2xl bg-white dark:bg-[#081a17] aspect-[4/3]">
-            <img src={content.mission_image} alt="" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-900/20 to-transparent" />
-            <div className="absolute bottom-6 left-6 right-6 p-5 bg-white/95 dark:bg-[#071816]/95 border border-slate-200 dark:border-emerald-500/30 backdrop-blur-xl rounded-2xl shadow-xl">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="flex items-center space-x-2 text-emerald-700 dark:text-emerald-400 font-bold text-sm">
-                    <MapPin className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                    <span>{content.hq_label}</span>
-                  </div>
-                  <div className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">{content.hq_address}</div>
-                </div>
-                {language === 'en' && <div className="live-pulse-badge"><span className="live-pulse-dot" /><span>Active</span></div>}
-              </div>
+        <div className="catalog-wheel-shell about-product-wheel">
+          <div className="catalog-wheel" aria-label="Rotating product showcase">
+            <div className="catalog-wheel-rings" aria-hidden="true" />
+            <div className="catalog-orbit">
+              {products.slice(0, 8).map((product, index, wheelProducts) => {
+                const angle = (360 / wheelProducts.length) * index - 90;
+                const flagUrl = TRADE_HUBS.find((hub) => hub.name === product.origin)?.flagUrl;
+                return <div key={product.id} className="catalog-wheel-item" style={{ '--orbit-angle': `${angle}deg`, '--counter-angle': `${-angle}deg` } as CSSProperties}>
+                  <button type="button" onClick={() => onOpenProduct(product)} className="catalog-wheel-product" aria-label={`View ${product.name}`}>
+                    <img src={product.image} alt={product.name} />
+                    {flagUrl && <span><img src={flagUrl} alt="" /></span>}
+                  </button>
+                </div>;
+              })}
+            </div>
+            <div className="catalog-wheel-center">
+              <div className="catalog-wheel-logo"><img src="/images/logos/image.png" alt="Unique Noble Trading" /></div>
+              <p>UNT Wholesale</p>
+              <strong>Product Showcase</strong>
+              <span className="catalog-wheel-center-note">Click a product to explore</span>
             </div>
           </div>
-        </Card3D>
+        </div>
       </ScrollReveal>
     </section>
   );

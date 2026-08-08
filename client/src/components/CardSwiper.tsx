@@ -107,11 +107,10 @@ export const CardSwiper: React.FC<CardSwiperProps> = ({
               <button
                 key={i}
                 onClick={() => setCurrentIndex(i)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  currentIndex === i
+                className={`h-2 rounded-full transition-all duration-300 ${currentIndex === i
                     ? 'w-8 bg-emerald-500 shadow-sm shadow-emerald-500/50'
                     : 'w-2 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600'
-                }`}
+                  }`}
                 aria-label={`Go to slide page ${i + 1}`}
               />
             ))}
