@@ -23,9 +23,9 @@ export function ArticleGrid({ articles, onOpen, content }: Props) {
         <Card3D key={article.id} intensity={12} onClick={() => onOpen(article)}>
           <article className="group cursor-pointer rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-md hover:shadow-2xl hover:border-emerald-400 dark:hover:border-emerald-500 transition-all flex flex-col justify-between text-left h-full">
             <div>
-              <div className="relative aspect-video overflow-hidden bg-slate-100 dark:bg-slate-800">
+              <div className="relative aspect-video overflow-hidden bg-white dark:bg-slate-950">
                 {article.image ? (
-                  <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img src={article.image} alt={article.title} className="w-full h-full object-contain p-1 sm:p-2 group-hover:scale-[1.02] transition-transform duration-500" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-sm font-medium text-slate-400 dark:text-slate-500">No cover image</div>
                 )}
