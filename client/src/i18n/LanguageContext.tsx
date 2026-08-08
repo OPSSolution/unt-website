@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 export type ContentLanguage = 'en' | 'km';
-let activeLanguage: ContentLanguage = 'en';
+let activeLanguage: ContentLanguage = 'km';
 const LanguageContext = createContext<{ language: ContentLanguage; setLanguage: (value: ContentLanguage) => void }>({
-  language: 'en', setLanguage: () => {},
+  language: 'km', setLanguage: () => {},
 });
 
 export function storedLanguage(): ContentLanguage {
@@ -11,7 +11,7 @@ export function storedLanguage(): ContentLanguage {
 }
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<ContentLanguage>('en');
+  const [language, setLanguageState] = useState<ContentLanguage>('km');
   const setLanguage = (value: ContentLanguage) => {
     activeLanguage = value;
     setLanguageState(value);

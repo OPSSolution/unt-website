@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { api } from '../api';
 import { useAdminAuth } from '../hooks/useAdminAuth';
 import { useAutoSave } from '../hooks/useAutoSave';
-import { ImageField } from '../components/ImageField';
 import { EditorShell, Field, Card, SectionDivider } from '../components/EditorShell';
 import { Plus, Trash2 } from 'lucide-react';
 import { AboutPageData, Advantage, NetworkHub, normalizeAboutData } from './about-editor/data';
@@ -112,7 +111,7 @@ export function AboutEditor() {
       {activeTab === 'Header' && <HeaderTab data={data} setField={set} />}
 
       {activeTab === 'Mission' && (
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <div className="max-w-4xl">
           <Card>
             <div className="space-y-4">
               <SectionDivider label="Mission Content" />
@@ -122,30 +121,6 @@ export function AboutEditor() {
               <Field label="Paragraph 2" value={data.mission_p2} onChange={set('mission_p2')} multiline rows={4} />
             </div>
           </Card>
-          <div className="space-y-6">
-            <Card>
-              <div className="space-y-4">
-                <SectionDivider label="Stats" />
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {[1, 2].map((n) => (
-                    <div key={n} className="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-3">
-                      <p className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Stat {n}</p>
-                      <Field label="Value" value={data[`stat${n}_value`]} onChange={set(`stat${n}_value`)} />
-                      <Field label="Label" value={data[`stat${n}_label`]} onChange={set(`stat${n}_label`)} />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </Card>
-            <Card>
-              <div className="space-y-4">
-                <SectionDivider label="HQ Info & Image" />
-                <ImageField label="Mission Image" value={data.mission_image} onChange={set('mission_image')} />
-                <Field label="HQ Label" value={data.hq_label} onChange={set('hq_label')} />
-                <Field label="HQ Address" value={data.hq_address} onChange={set('hq_address')} multiline />
-              </div>
-            </Card>
-          </div>
         </div>
       )}
 
