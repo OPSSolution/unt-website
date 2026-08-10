@@ -5,19 +5,23 @@ import {
 } from 'lucide-react';
 import { ScrollReveal } from '../../components/ScrollReveal';
 import { Card3D } from '../../components/Card3D';
-import { countryDetails, productCategories } from './servicesData';
+import { countryContentDefaults, countryDetails, productBenefits, productCategories } from './servicesData';
 
 interface ProductSalesServiceProps {
   onOpenQuoteModal: () => void;
   delay?: number;
-  content: Record<string, string>;
+  content: Record<string, any>;
 }
 
 export const ProductSalesService: React.FC<ProductSalesServiceProps> = ({ onOpenQuoteModal, delay = 0, content }) => {
-  const [selectedCountry, setSelectedCountry] = useState<string>('Japan');
+  const [selectedCountry, setSelectedCountry] = useState<string>('JP');
 
-  const activeCountryInfo = countryDetails[selectedCountry] || countryDetails['Japan'];
-  const ActiveFlagIcon = activeCountryInfo.FlagComponent;
+  const countries = Array.isArray(content.origin_countries) && content.origin_countries.length ? content.origin_countries : countryContentDefaults;
+  const categories = Array.isArray(content.product_categories) && content.product_categories.length ? content.product_categories : productCategories;
+  const benefits = Array.isArray(content.product_benefits) && content.product_benefits.length ? content.product_benefits : productBenefits;
+  const activeCountryInfo = countries.find((country: any) => country.code === selectedCountry) ?? countries[0] ?? countryContentDefaults[0];
+  const flagForCode = (code: string) => Object.values(countryDetails).find((country) => country.code === code)?.FlagComponent ?? countryDetails.Japan.FlagComponent;
+  const ActiveFlagIcon = flagForCode(activeCountryInfo.code);
 
   return (
     <section className="space-y-6">
@@ -53,17 +57,17 @@ export const ProductSalesService: React.FC<ProductSalesServiceProps> = ({ onOpen
         <div className="space-y-3">
           <div className="flex items-center gap-2 text-xs font-extrabold text-slate-500 dark:text-emerald-300/70 uppercase tracking-wider">
             <Globe2 className="w-3.5 h-3.5" />
-            <span>Select Origin Country</span>
+            <span>{content.origin_selector_label ?? 'Select Origin Country'}</span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            {Object.keys(countryDetails).map((cName, idx) => {
-              const country = countryDetails[cName];
-              const FlagLogo = country.FlagComponent;
-              const isSelected = selectedCountry === cName;
+            {countries.map((country: any, idx: number) => {
+              const cName = country.name;
+              const FlagLogo = flagForCode(country.code);
+              const isSelected = selectedCountry === country.code;
               return (
                 <button
                   key={cName}
-                  onClick={() => setSelectedCountry(cName)}
+                  onClick={() => setSelectedCountry(country.code)}
                   style={{ animationDelay: `${idx * 50}ms` }}
                   className={`p-3 rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all duration-300 border animate-fade-in ${isSelected
                     ? 'bg-emerald-600 text-white dark:bg-emerald-500 dark:text-slate-950 border-emerald-500 shadow-lg scale-[1.03] ring-2 ring-emerald-500/30'
@@ -118,7 +122,7 @@ export const ProductSalesService: React.FC<ProductSalesServiceProps> = ({ onOpen
                   onClick={onOpenQuoteModal}
                   className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white dark:bg-gradient-to-r dark:from-emerald-400 dark:to-teal-400 dark:text-slate-950 font-bold text-xs shadow-sm transition-all flex items-center gap-1.5 hover:scale-105 active:scale-95"
                 >
-                  <span>Source from {activeCountryInfo.name}</span>
+                  <span>{content.source_from_label ?? 'Source from'} {activeCountryInfo.name}</span>
                   <ArrowRight className="w-3 h-3" />
                 </button>
               </div>
@@ -127,12 +131,12 @@ export const ProductSalesService: React.FC<ProductSalesServiceProps> = ({ onOpen
             {/* 3-Column Info */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10 text-xs sm:text-sm">
               <div className="p-4 rounded-xl bg-slate-50/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 space-y-2">
-                <span className="font-extrabold uppercase text-[10px] tracking-wider text-emerald-700 dark:text-emerald-400 block">Corridor Overview</span>
+                <span className="font-extrabold uppercase text-[10px] tracking-wider text-emerald-700 dark:text-emerald-400 block">{content.corridor_overview_label ?? 'Corridor Overview'}</span>
                 <p className="text-slate-600 dark:text-slate-300 leading-relaxed font-medium">{activeCountryInfo.desc}</p>
               </div>
 
               <div className="p-4 rounded-xl bg-slate-50/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 space-y-2">
-                <span className="font-extrabold uppercase text-[10px] tracking-wider text-emerald-700 dark:text-emerald-400 block">Compliance Standards</span>
+                <span className="font-extrabold uppercase text-[10px] tracking-wider text-emerald-700 dark:text-emerald-400 block">{content.compliance_standards_label ?? 'Compliance Standards'}</span>
                 <div className="flex flex-wrap gap-1.5 pt-1">
                   {activeCountryInfo.standards.map((st) => (
                     <span key={st} className="px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-500/15 border border-emerald-300 dark:border-emerald-400/30 text-[11px] font-bold text-emerald-800 dark:text-emerald-200 flex items-center gap-1">
@@ -144,7 +148,7 @@ export const ProductSalesService: React.FC<ProductSalesServiceProps> = ({ onOpen
               </div>
 
               <div className="p-4 rounded-xl bg-slate-50/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 space-y-2">
-                <span className="font-extrabold uppercase text-[10px] tracking-wider text-emerald-700 dark:text-emerald-400 block">Top Sourced Products</span>
+                <span className="font-extrabold uppercase text-[10px] tracking-wider text-emerald-700 dark:text-emerald-400 block">{content.top_products_label ?? 'Top Sourced Products'}</span>
                 <ul className="space-y-1 text-slate-600 dark:text-slate-300 font-medium">
                   {activeCountryInfo.topProducts.map((tp) => (
                     <li key={tp} className="flex items-center gap-1.5">
@@ -164,10 +168,10 @@ export const ProductSalesService: React.FC<ProductSalesServiceProps> = ({ onOpen
         <div className="space-y-3">
           <h3 className="text-sm font-display font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <Flame className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-            Product Categories Available in Stock
+            {content.stock_categories_label ?? 'Product Categories Available in Stock'}
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            {productCategories.map((cat, idx) => (
+            {categories.map((cat: any, idx: number) => (
               <Card3D key={cat.title} intensity={10}>
                 <div
                   style={{ animationDelay: `${idx * 60}ms` }}
@@ -188,12 +192,8 @@ export const ProductSalesService: React.FC<ProductSalesServiceProps> = ({ onOpen
       {/* ─── 3 Key Benefits Row ─── */}
       <ScrollReveal animation="up" delay={delay + 240}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[
-            { icon: ShieldCheck, title: '100% Quality Guaranteed', desc: 'Every batch undergoes lab stability checks and ministry registration before hitting Cambodian shelves.' },
-            { icon: BadgePercent, title: 'Factory-Direct Pricing', desc: 'High volume importing lets us pass down competitive bulk pricing to Cambodian business owners.' },
-            { icon: Truck, title: 'Same-Day Local Dispatch', desc: 'No 30-day ocean freight wait time. Pick up locally in Phnom Penh or request fast nationwide transport.' },
-          ].map((benefit, idx) => {
-            const BenefitIcon = benefit.icon;
+          {benefits.map((benefit: any, idx: number) => {
+            const BenefitIcon = [ShieldCheck, BadgePercent, Truck][idx] ?? ShieldCheck;
             return (
               <Card3D key={benefit.title} intensity={8}>
                 <div

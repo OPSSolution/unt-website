@@ -4,6 +4,7 @@ import { useAdminAuth } from '../hooks/useAdminAuth';
 import { useAutoSave } from '../hooks/useAutoSave';
 import { EditorShell, Field, Card, SectionDivider } from '../components/EditorShell';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { countryContentDefaults, productBenefits, productCategories } from '../../pages/services/servicesData';
 
 const DEFAULTS = {
   badge: 'End-to-End Procurement Infrastructure',
@@ -19,6 +20,15 @@ const DEFAULTS = {
   product_highlight: '(Local Cambodian Inventory)',
   product_desc: 'Skip foreign supplier risk and international freight delays. We import premium goods directly, verify quality, and hold local stock in Phnom Penh ready for immediate delivery.',
   product_cta: 'Browse Live Wholesale Stock',
+  origin_selector_label: 'Select Origin Country',
+  source_from_label: 'Source from',
+  corridor_overview_label: 'Corridor Overview',
+  compliance_standards_label: 'Compliance Standards',
+  top_products_label: 'Top Sourced Products',
+  stock_categories_label: 'Product Categories Available in Stock',
+  origin_countries: countryContentDefaults,
+  product_categories: productCategories,
+  product_benefits: productBenefits,
   sourcing_badge: 'Service 02 — Custom B2B Procurement Desk',
   sourcing_title: 'Sourcing-as-a-Service',
   sourcing_highlight: '(Factory Procurement)',
@@ -30,7 +40,7 @@ const DEFAULTS = {
   training_desc: "Transform your sales team into high-revenue closer teams. We teach real-world customer psychology, objection handling, and negotiation — backed by UNT's complete sourcing and digital branding ecosystem.",
   training_cta: 'Book Team Consultation',
 };
-const EMPTY_TRANSLATIONS = Object.fromEntries(Object.keys(DEFAULTS).map((key) => [key, '']));
+const EMPTY_TRANSLATIONS = Object.fromEntries(Object.entries(DEFAULTS).map(([key, value]) => [key, Array.isArray(value) ? [] : '']));
 
 const TABS = ['Header', 'Product Sales', 'Sourcing', 'Sales Training'] as const;
 type Tab = typeof TABS[number];
@@ -41,6 +51,7 @@ export function ServicesEditor() {
   const [data, setData] = useState<any>(DEFAULTS);
   const [activeTab, setActiveTab] = useState<Tab>('Header');
   const [loading, setLoading] = useState(true);
+  const [selectedCountryIndex, setSelectedCountryIndex] = useState(0);
 
   const { saving, saved, error, dirty, autoSaving, autoSaved, autoSaveError } = useAutoSave(
     'services_page',
@@ -62,6 +73,21 @@ export function ServicesEditor() {
   }, [language]);
 
   const set = (key: string) => (v: string) => setData((d: any) => ({ ...d, [key]: v }));
+  const updateCountry = (key: string, value: string | string[]) => setData((current: any) => ({
+    ...current,
+    origin_countries: (Array.isArray(current.origin_countries) ? current.origin_countries : []).map((country: any, index: number) =>
+      index === selectedCountryIndex ? { ...country, [key]: value } : country),
+  }));
+  const updateCategory = (index: number, key: 'title' | 'count', value: string) => setData((current: any) => ({
+    ...current,
+    product_categories: (Array.isArray(current.product_categories) ? current.product_categories : []).map((category: any, itemIndex: number) =>
+      itemIndex === index ? { ...category, [key]: value } : category),
+  }));
+  const updateBenefit = (index: number, key: 'title' | 'desc', value: string) => setData((current: any) => ({
+    ...current,
+    product_benefits: (Array.isArray(current.product_benefits) ? current.product_benefits : []).map((benefit: any, itemIndex: number) =>
+      itemIndex === index ? { ...benefit, [key]: value } : benefit),
+  }));
 
   const handleSave = async () => {
     if (!token) return;
@@ -103,14 +129,75 @@ export function ServicesEditor() {
       )}
 
       {activeTab === 'Product Sales' && (
-        <Card><div className="space-y-4">
-          <SectionDivider label="Service 01 — Product Sales" />
-          <Field label="Badge" value={data.product_badge} onChange={set('product_badge')} />
-          <Field label="Title" value={data.product_title} onChange={set('product_title')} />
-          <Field label="Highlighted Title" value={data.product_highlight} onChange={set('product_highlight')} />
-          <Field label="Description" value={data.product_desc} onChange={set('product_desc')} multiline rows={4} />
-          <Field label="CTA Button" value={data.product_cta} onChange={set('product_cta')} />
-        </div></Card>
+        <div className="space-y-6">
+          <Card><div className="space-y-4">
+            <SectionDivider label="Service 01 — Product Sales" />
+            <Field label="Badge" value={data.product_badge ?? ''} onChange={set('product_badge')} />
+            <Field label="Title" value={data.product_title ?? ''} onChange={set('product_title')} />
+            <Field label="Highlighted Title" value={data.product_highlight ?? ''} onChange={set('product_highlight')} />
+            <Field label="Description" value={data.product_desc ?? ''} onChange={set('product_desc')} multiline rows={4} />
+            <Field label="CTA Button" value={data.product_cta ?? ''} onChange={set('product_cta')} />
+          </div></Card>
+
+          <Card><div className="space-y-5">
+            <SectionDivider label="Origin Country Labels" />
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+              <Field label="Selector Label" value={data.origin_selector_label ?? ''} onChange={set('origin_selector_label')} />
+              <Field label="Source Button Prefix" value={data.source_from_label ?? ''} onChange={set('source_from_label')} />
+              <Field label="Corridor Overview Label" value={data.corridor_overview_label ?? ''} onChange={set('corridor_overview_label')} />
+              <Field label="Compliance Label" value={data.compliance_standards_label ?? ''} onChange={set('compliance_standards_label')} />
+              <Field label="Top Products Label" value={data.top_products_label ?? ''} onChange={set('top_products_label')} />
+              <Field label="Stock Categories Label" value={data.stock_categories_label ?? ''} onChange={set('stock_categories_label')} />
+            </div>
+          </div></Card>
+
+          <Card><div className="space-y-5">
+            <SectionDivider label="Country Corridors" />
+            <div className="flex flex-wrap gap-2">
+              {(Array.isArray(data.origin_countries) ? data.origin_countries : []).map((country: any, index: number) => (
+                <button key={`${country.code}-${index}`} type="button" onClick={() => setSelectedCountryIndex(index)} className={`px-4 py-2 rounded-xl text-xs font-bold border ${selectedCountryIndex === index ? 'bg-emerald-600 border-emerald-600 text-white' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'}`}>{country.name || country.code || `Country ${index + 1}`}</button>
+              ))}
+            </div>
+            {(() => {
+              const country = (Array.isArray(data.origin_countries) ? data.origin_countries : [])[selectedCountryIndex];
+              if (!country) return <p className="text-sm text-slate-500">No country content is available for this language.</p>;
+              return <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Field label="Country Name" value={country.name ?? ''} onChange={(v) => updateCountry('name', v)} />
+                <Field label="Country Code" value={country.code ?? ''} onChange={(v) => updateCountry('code', v.toUpperCase())} />
+                <div className="md:col-span-2"><Field label="Specialty / Niche" value={country.niche ?? ''} onChange={(v) => updateCountry('niche', v)} /></div>
+                <Field label="Sea / Land Transit" value={country.seaTransit ?? ''} onChange={(v) => updateCountry('seaTransit', v)} />
+                <Field label="Air Transit" value={country.airTransit ?? ''} onChange={(v) => updateCountry('airTransit', v)} />
+                <div className="md:col-span-2"><Field label="Corridor Description" value={country.desc ?? ''} onChange={(v) => updateCountry('desc', v)} multiline rows={4} /></div>
+                <Field label="Compliance Standards (one per line)" value={(country.standards ?? []).join('\n')} onChange={(v) => updateCountry('standards', v.split('\n').map((item) => item.trim()).filter(Boolean))} multiline rows={5} />
+                <Field label="Top Sourced Products (one per line)" value={(country.topProducts ?? []).join('\n')} onChange={(v) => updateCountry('topProducts', v.split('\n').map((item) => item.trim()).filter(Boolean))} multiline rows={5} />
+              </div>;
+            })()}
+          </div></Card>
+
+          <Card><div className="space-y-5">
+            <SectionDivider label="Product Categories in Stock" />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {(Array.isArray(data.product_categories) ? data.product_categories : []).map((category: any, index: number) => (
+                <div key={index} className="grid grid-cols-2 gap-3 rounded-xl border border-slate-200 dark:border-slate-700 p-3">
+                  <Field label="Category" value={category.title ?? ''} onChange={(v) => updateCategory(index, 'title', v)} />
+                  <Field label="Product Count" value={category.count ?? ''} onChange={(v) => updateCategory(index, 'count', v)} />
+                </div>
+              ))}
+            </div>
+          </div></Card>
+
+          <Card><div className="space-y-5">
+            <SectionDivider label="Product Sales Benefits" />
+            <div className="space-y-4">
+              {(Array.isArray(data.product_benefits) ? data.product_benefits : []).map((benefit: any, index: number) => (
+                <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-3 rounded-xl border border-slate-200 dark:border-slate-700 p-4">
+                  <Field label={`Benefit ${index + 1} Title`} value={benefit.title ?? ''} onChange={(v) => updateBenefit(index, 'title', v)} />
+                  <Field label="Description" value={benefit.desc ?? ''} onChange={(v) => updateBenefit(index, 'desc', v)} multiline rows={3} />
+                </div>
+              ))}
+            </div>
+          </div></Card>
+        </div>
       )}
 
       {activeTab === 'Sourcing' && (

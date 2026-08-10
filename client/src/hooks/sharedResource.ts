@@ -5,13 +5,17 @@ interface Resource<T> {
   subscribers: Set<() => void>;
   load: () => Promise<T | null>;
   inFlight: Promise<void> | null;
+  refreshPending: boolean;
   lastLoadedAt: number;
 }
 
 const resources = new Map<string, Resource<unknown>>();
 
-function refresh<T>(resource: Resource<T>) {
-  if (resource.inFlight) return resource.inFlight;
+function refresh<T>(resource: Resource<T>, forceAfterCurrent = false) {
+  if (resource.inFlight) {
+    if (forceAfterCurrent) resource.refreshPending = true;
+    return resource.inFlight;
+  }
   resource.inFlight = resource.load()
     .then((value) => {
       resource.lastLoadedAt = Date.now();
@@ -20,7 +24,13 @@ function refresh<T>(resource: Resource<T>) {
         resource.subscribers.forEach((notify) => notify());
       }
     })
-    .finally(() => { resource.inFlight = null; });
+    .finally(() => {
+      resource.inFlight = null;
+      if (resource.refreshPending) {
+        resource.refreshPending = false;
+        void refresh(resource);
+      }
+    });
   return resource.inFlight;
 }
 
@@ -29,7 +39,7 @@ function getResource<T>(key: string, load: () => Promise<T | null>, initialValue
   if (existing) return existing;
   const resource: Resource<T> = {
     value: initialValue, subscribers: new Set(), load, inFlight: null,
-    lastLoadedAt: 0,
+    lastLoadedAt: 0, refreshPending: false,
   };
   resources.set(key, resource as Resource<unknown>);
   return resource;
@@ -49,15 +59,18 @@ export function useSharedResource<T>(key: string, load: () => Promise<T | null>,
         if (document.visibilityState === 'visible') void refresh(resource);
       };
       const refreshAfterAdminUpdate = (event: StorageEvent) => {
-        if (event.key === 'unt-content-updated') void refresh(resource);
+        if (event.key === 'unt-content-updated') void refresh(resource, true);
       };
+      const refreshInCurrentTab = () => { void refresh(resource, true); };
       window.addEventListener('focus', refreshWhenVisible);
       window.addEventListener('storage', refreshAfterAdminUpdate);
+      window.addEventListener('unt-content-updated', refreshInCurrentTab);
       document.addEventListener('visibilitychange', refreshWhenVisible);
       return () => {
         resource.subscribers.delete(notify);
         window.removeEventListener('focus', refreshWhenVisible);
         window.removeEventListener('storage', refreshAfterAdminUpdate);
+        window.removeEventListener('unt-content-updated', refreshInCurrentTab);
         document.removeEventListener('visibilitychange', refreshWhenVisible);
       };
     }, [resource]);

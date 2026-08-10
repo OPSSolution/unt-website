@@ -12,6 +12,7 @@ const envSchema = z.object({
   RESEND_API_KEY: z.string().min(1).optional(),
   QUOTE_EMAIL_TO: z.string().email().optional(),
   EMAIL_FROM: z.string().min(1).optional(),
+  PUBLIC_SITE_URL: z.string().url().default("https://unt-website.onrender.com"),
   CORS_ORIGIN: z.string().min(1).default("*"),
 }).superRefine((value, context) => {
   const configured = [value.IMAGEKIT_PUBLIC_KEY, value.IMAGEKIT_PRIVATE_KEY].filter(Boolean).length;

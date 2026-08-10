@@ -44,6 +44,32 @@ test("training activity media remains available when Khmer text is empty", () =>
   assert.deepEqual(localizedSection(data, "km"), { heading: "", activities: [activity] });
 });
 
+test("blank Khmer activity media cannot hide shared images and videos", () => {
+  const localized = localizedSection({
+    en: {
+      activities: [{
+        id: "activity-1", title: "Workshop", category: "video", type: "video",
+        mediaUrl: "https://ik.imagekit.io/unt/poster.jpg",
+        videoUrl: "https://ik.imagekit.io/unt/session.mp4",
+        galleryImages: ["https://ik.imagekit.io/unt/photo.jpg"],
+      }],
+    },
+    km: {
+      activities: [{
+        id: "activity-1", title: "សិក្ខាសាលា", category: "", type: "",
+        mediaUrl: "", videoUrl: "", galleryImages: [],
+      }],
+    },
+  }, "km") as { activities: Array<Record<string, unknown>> };
+
+  assert.equal(localized.activities[0].mediaUrl, "https://ik.imagekit.io/unt/poster.jpg");
+  assert.equal(localized.activities[0].videoUrl, "https://ik.imagekit.io/unt/session.mp4");
+  assert.deepEqual(localized.activities[0].galleryImages, ["https://ik.imagekit.io/unt/photo.jpg"]);
+  assert.equal(localized.activities[0].category, "video");
+  assert.equal(localized.activities[0].type, "video");
+  assert.equal(localized.activities[0].title, "សិក្ខាសាលា");
+});
+
 test("new Khmer training activities survive localization and refresh", () => {
   const englishActivity = { id: "activity-1", title: "Workshop", mediaUrl: "https://example.com/one.jpg" };
   const khmerActivity = { id: "activity-2", title: "Khmer workshop", mediaUrl: "https://ik.imagekit.io/example/two.jpg" };

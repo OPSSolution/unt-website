@@ -195,7 +195,7 @@ export const TrainingActivityGallery: React.FC<Props> = ({ content, onOpenQuoteM
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 py-6">
               {paginatedActivities.map((activity) => (
-<TrainingActivityCard activity={activity} onOpen={openActivityViewer} />
+                <TrainingActivityCard key={activity.id} activity={activity} onOpen={openActivityViewer} />
               ))}
             </div>
           )}

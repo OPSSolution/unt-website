@@ -91,6 +91,14 @@ export const productCategories = [
   { title: 'Household Essentials', count: '75+ Products' },
 ];
 
+export const productBenefits = [
+  { title: '100% Quality Guaranteed', desc: 'Every batch undergoes lab stability checks and ministry registration before hitting Cambodian shelves.' },
+  { title: 'Factory-Direct Pricing', desc: 'High volume importing lets us pass down competitive bulk pricing to Cambodian business owners.' },
+  { title: 'Same-Day Local Dispatch', desc: 'No 30-day ocean freight wait time. Pick up locally in Phnom Penh or request fast nationwide transport.' },
+];
+
+export const countryContentDefaults = Object.values(countryDetails).map(({ FlagComponent: _flag, ...country }) => country);
+
 export const sourcingSteps = [
   { num: '01', title: 'Product Spec & Request', subtitle: 'You tell us what you need', desc: 'Share your exact product specifications, desired volume, target pricing, and custom packaging requirements.' },
   { num: '02', title: 'Overseas Factory Audit', subtitle: 'We vet global suppliers', desc: 'Our regional teams in Japan, Korea, Vietnam, and China inspect factories for ISO/GMP standards.' },

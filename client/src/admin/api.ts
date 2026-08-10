@@ -51,6 +51,9 @@ async function request<T>(
   const result = await res.json();
   if (options.method && options.method !== 'GET') {
     localStorage.setItem('unt-content-updated', String(Date.now()));
+    // The native storage event is only delivered to other tabs. Notify this
+    // tab as well so a public preview does not retain stale training media.
+    window.dispatchEvent(new Event('unt-content-updated'));
   }
   return result;
 }

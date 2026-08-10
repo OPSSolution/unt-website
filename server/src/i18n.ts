@@ -52,9 +52,16 @@ function mergeSharedActivities(english: unknown, khmer: unknown) {
         ? positional
         : undefined
     );
-    return translated && typeof translated === "object" && !Array.isArray(translated)
-      ? { ...base, ...translated }
-      : base;
+    if (!translated || typeof translated !== "object" || Array.isArray(translated)) return base;
+
+    const merged = { ...base, ...translated };
+    // Activity media and behavior are shared between languages. Older Khmer
+    // records can contain blank copies of these fields; allowing those copies
+    // to win makes thumbnails/videos disappear when the language changes.
+    for (const key of ["id", "category", "type", "mediaUrl", "thumbnailUrl", "videoUrl", "galleryImages"] as const) {
+      if (base[key] !== undefined) merged[key] = base[key];
+    }
+    return merged;
   });
   // Activities created while editing Khmer have no English counterpart yet.
   // Keep them instead of silently dropping them on the next read/refresh.
@@ -80,6 +87,21 @@ function mergeLocalizedSessions(english: unknown, khmer: unknown) {
     const translated = localizedById.get(base.id) ?? localizedItems[index];
     return translated && typeof translated === "object" && !Array.isArray(translated)
       ? { ...blank, ...translated }
+      : blank;
+  });
+}
+
+function mergeLocalizedList(english: unknown, khmer: unknown, sharedKeys: string[] = []) {
+  if (!Array.isArray(english)) return Array.isArray(khmer) ? khmer : [];
+  const translated = Array.isArray(khmer) ? khmer : [];
+  return english.map((item, index) => {
+    if (!item || typeof item !== "object" || Array.isArray(item)) return item;
+    const base = item as Record<string, unknown>;
+    const blank = blankLocalizedFields(base);
+    sharedKeys.forEach((key) => { if (base[key] !== undefined) blank[key] = base[key]; });
+    const localizedItem = translated[index];
+    return localizedItem && typeof localizedItem === "object" && !Array.isArray(localizedItem)
+      ? { ...blank, ...localizedItem, ...Object.fromEntries(sharedKeys.filter((key) => base[key] !== undefined).map((key) => [key, base[key]])) }
       : blank;
   });
 }
@@ -145,6 +167,25 @@ export function localizedSection(data: unknown, language: ContentLanguage) {
     localized.upcoming_sessions = mergeLocalizedSessions(
       (english as Record<string, unknown>).upcoming_sessions,
       (khmer as Record<string, unknown>).upcoming_sessions,
+    );
+  }
+  if ("origin_countries" in english) {
+    localized.origin_countries = mergeLocalizedList(
+      (english as Record<string, unknown>).origin_countries,
+      (khmer as Record<string, unknown>).origin_countries,
+      ["code"],
+    );
+  }
+  if ("product_categories" in english) {
+    localized.product_categories = mergeLocalizedList(
+      (english as Record<string, unknown>).product_categories,
+      (khmer as Record<string, unknown>).product_categories,
+    );
+  }
+  if ("product_benefits" in english) {
+    localized.product_benefits = mergeLocalizedList(
+      (english as Record<string, unknown>).product_benefits,
+      (khmer as Record<string, unknown>).product_benefits,
     );
   }
   return replaceLegacyCompanyName(localized);
