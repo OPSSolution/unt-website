@@ -1,24 +1,26 @@
 import nodemailer from "nodemailer";
+import type SMTPTransport from "nodemailer/lib/smtp-transport/index.js";
 import { env } from "./config/env.js";
 
 export const emailConfigured = Boolean(
   env.SMTP_HOST && env.SMTP_USER && env.SMTP_PASS && env.QUOTE_EMAIL_TO,
 );
 
-const transporter = emailConfigured
-  ? nodemailer.createTransport({
-      host: env.SMTP_HOST,
-      port: env.SMTP_PORT,
-      secure: env.SMTP_SECURE,
-      auth: { user: env.SMTP_USER!, pass: env.SMTP_PASS! },
-      connectionTimeout: 10_000,
-      greetingTimeout: 10_000,
-      socketTimeout: 15_000,
-      pool: true,
-      maxConnections: 3,
-      maxMessages: 100,
-    })
-  : null;
+const smtpOptions = {
+  host: env.SMTP_HOST,
+  port: env.SMTP_PORT,
+  secure: env.SMTP_SECURE,
+  auth: { user: env.SMTP_USER!, pass: env.SMTP_PASS! },
+  connectionTimeout: 10_000,
+  greetingTimeout: 10_000,
+  socketTimeout: 10_000,
+  pool: true,
+  maxConnections: 3,
+  // @types/nodemailer doesn't declare `family`, but nodemailer forwards it to net.connect at runtime.
+  family: 4,
+} as SMTPTransport.Options;
+
+const transporter = emailConfigured ? nodemailer.createTransport(smtpOptions) : null;
 
 function text(value: unknown, fallback = "") {
   return typeof value === "string" && value.trim() ? value.trim() : fallback;
