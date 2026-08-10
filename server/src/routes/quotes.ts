@@ -15,18 +15,12 @@ router.post("/", validateBody(quoteSubmissionSchema), async (req, res) => {
     .select()
     .single();
   if (error) return res.status(500).json({ error: error.message });
-  let emailSent = false;
-  let emailError: string | undefined;
   if (emailConfigured) {
-    try {
-      await sendQuoteEmail(data, language);
-      emailSent = true;
-    } catch (error) {
-      emailError = error instanceof Error ? error.message : "Email delivery failed";
+    sendQuoteEmail(data, language).catch((error) => {
       console.error("Quote email delivery failed:", error);
-    }
+    });
   }
-  return res.status(201).json({ ...inserted, email_sent: emailSent, ...(emailError ? { email_error: emailError } : {}) });
+  return res.status(201).json({ ...inserted });
 });
 
 export default router;
