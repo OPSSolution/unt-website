@@ -2,16 +2,22 @@ import { useState, type FormEvent } from 'react';
 import { 
   CheckCircle2, Send, Clock, MessageSquare, Zap, RefreshCw, User, Building2, Mail, Phone, MessageCircle, Package, Tag, Truck, GraduationCap 
 } from 'lucide-react';
-import { INITIAL_FORM, type ContactFormData } from './types';
+import { INITIAL_FORM, type ContactContent, type ContactFormData } from './types';
 
 const TELEGRAM_BOT_TOKEN = '8687782746:AAGGOIhorkQnBT7gaD2xJkxOwF4hB39hVQs';
 const TELEGRAM_CHAT_ID = '-1004424588112';
 
-const QUICK_TOPICS = [
+const DEFAULT_TOPICS = [
   { id: 'Product Sourcing', label: 'Product Sourcing', icon: Package },
   { id: 'OEM / Private Label', label: 'OEM / Private Label', icon: Tag },
   { id: 'Wholesale Distribution', label: 'Wholesale', icon: Truck },
   { id: 'Sales Training', label: 'Sales Training', icon: GraduationCap },
+];
+
+const DEFAULT_CHANNELS = [
+  { id: 'Telegram / WhatsApp', label: 'Telegram / WhatsApp Message (Fastest)' },
+  { id: 'Email', label: 'Official Business Email' },
+  { id: 'Direct Phone Call', label: 'Direct Phone Call from Trade Director' },
 ];
 
 const INPUT_CLASS = 'w-full bg-slate-50/90 dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/80 rounded-2xl px-4.5 py-3.5 sm:px-5 sm:py-3.5 text-sm sm:text-base text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15 hover:border-slate-300 dark:hover:border-slate-600 transition-all shadow-sm font-medium';
@@ -61,12 +67,14 @@ ${escapeHtml(data.message)}
   }
 };
 
-export function ContactForm() {
+export function ContactForm({ content }: { content: ContactContent }) {
   const [form, setForm] = useState<ContactFormData>(INITIAL_FORM);
   const [activeTopic, setActiveTopic] = useState('Product Sourcing');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [ticketId, setTicketId] = useState('');
+  const topics = content.form_topics?.length ? content.form_topics : DEFAULT_TOPICS;
+  const channels = content.response_channels?.length ? content.response_channels : DEFAULT_CHANNELS;
 
   const updateField = (field: keyof ContactFormData, value: string) => 
     setForm((current) => ({ ...current, [field]: value }));
@@ -110,13 +118,13 @@ export function ContactForm() {
         <div className="space-y-2 border-b border-slate-100 dark:border-slate-800/80 pb-4">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-700/50 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider rounded-full">
             <Zap className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-            <span>Direct B2B Communication Desk</span>
+            <span>{content.form_badge ?? 'Direct B2B Communication Desk'}</span>
           </div>
           <h3 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-slate-900 dark:text-white">
-            Send Us a Direct Message
+            {content.form_heading ?? 'Send Us a Direct Message'}
           </h3>
           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-            Submit your commercial inquiry below. Our Phnom Penh directors respond within 4 business hours.
+            {content.form_description ?? 'Submit your commercial inquiry below. Our Phnom Penh directors respond within 4 business hours.'}
           </p>
         </div>
 
@@ -138,11 +146,11 @@ export function ContactForm() {
               {/* Quick Inquiry Subject Pills */}
               <div className="space-y-2">
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                  Select Inquiry Subject
+                  {content.form_subject_label ?? 'Select Inquiry Subject'}
                 </label>
                 <div className="flex flex-wrap gap-2">
-                  {QUICK_TOPICS.map((topic) => {
-                    const Icon = topic.icon;
+                  {topics.map((topic, index) => {
+                    const Icon = DEFAULT_TOPICS.find((item) => item.id === topic.id)?.icon ?? DEFAULT_TOPICS[index]?.icon ?? Package;
                     const isSelected = activeTopic === topic.id;
                     return (
                       <button
@@ -168,12 +176,12 @@ export function ContactForm() {
                 <div>
                   <label className="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-2">
                     <User className="w-4 h-4 text-emerald-500" />
-                    <span>Full Name *</span>
+                    <span>{content.full_name_label ?? 'Full Name *'}</span>
                   </label>
                   <input 
                     type="text" 
                     required 
-                    placeholder="e.g. Sokha Heng" 
+                    placeholder={content.full_name_placeholder ?? 'e.g. Sokha Heng'}
                     value={form.contactName} 
                     onChange={(e) => updateField('contactName', e.target.value)} 
                     className={INPUT_CLASS} 
@@ -183,12 +191,12 @@ export function ContactForm() {
                 <div>
                   <label className="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-2">
                     <Building2 className="w-4 h-4 text-emerald-500" />
-                    <span>Company / Organization *</span>
+                    <span>{content.company_label ?? 'Company / Organization *'}</span>
                   </label>
                   <input 
                     type="text" 
                     required 
-                    placeholder="e.g. Cambodia FMCG Wholesale Ltd" 
+                    placeholder={content.company_placeholder ?? 'e.g. Cambodia FMCG Wholesale Ltd'}
                     value={form.company} 
                     onChange={(e) => updateField('company', e.target.value)} 
                     className={INPUT_CLASS} 
@@ -198,12 +206,12 @@ export function ContactForm() {
                 <div>
                   <label className="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-2">
                     <Mail className="w-4 h-4 text-emerald-500" />
-                    <span>Business Email *</span>
+                    <span>{content.business_email_label ?? 'Business Email *'}</span>
                   </label>
                   <input 
                     type="email" 
                     required 
-                    placeholder="name@company.com" 
+                    placeholder={content.business_email_placeholder ?? 'name@company.com'}
                     value={form.email} 
                     onChange={(e) => updateField('email', e.target.value)} 
                     className={INPUT_CLASS} 
@@ -213,12 +221,12 @@ export function ContactForm() {
                 <div>
                   <label className="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-2">
                     <Phone className="w-4 h-4 text-emerald-500" />
-                    <span>Phone / Telegram Number *</span>
+                    <span>{content.phone_label ?? 'Phone / Telegram Number *'}</span>
                   </label>
                   <input 
                     type="text" 
                     required 
-                    placeholder="e.g. 012 345 678 or @username" 
+                    placeholder={content.phone_placeholder ?? 'e.g. 012 345 678 or @username'}
                     value={form.phone} 
                     onChange={(e) => updateField('phone', e.target.value)} 
                     className={INPUT_CLASS} 
@@ -230,16 +238,14 @@ export function ContactForm() {
               <div>
                 <label className="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-2">
                   <MessageCircle className="w-4 h-4 text-emerald-500" />
-                  <span>Preferred Channel for Response</span>
+                  <span>{content.response_channel_label ?? 'Preferred Channel for Response'}</span>
                 </label>
                 <select 
                   value={form.preferredChannel} 
                   onChange={(event) => updateField('preferredChannel', event.target.value)} 
                   className={INPUT_CLASS}
                 >
-                  <option value="Telegram / WhatsApp">Telegram / WhatsApp Message (Fastest)</option>
-                  <option value="Email">Official Business Email</option>
-                  <option value="Direct Phone Call">Direct Phone Call from Trade Director</option>
+                  {channels.map((channel) => <option key={channel.id} value={channel.id}>{channel.label}</option>)}
                 </select>
               </div>
 
@@ -247,12 +253,12 @@ export function ContactForm() {
               <div>
                 <label className="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-2">
                   <MessageSquare className="w-4 h-4 text-emerald-500" />
-                  <span>Project Scope / Sourcing Details *</span>
+                  <span>{content.project_scope_label ?? 'Project Scope / Sourcing Details *'}</span>
                 </label>
                 <textarea 
                   rows={4} 
                   required 
-                  placeholder="Describe target products, target volumes, factory origins, or compliance questions..." 
+                  placeholder={content.project_scope_placeholder ?? 'Describe target products, target volumes, factory origins, or compliance questions...'}
                   value={form.message} 
                   onChange={(event) => updateField('message', event.target.value)} 
                   className={`${INPUT_CLASS} leading-relaxed`} 
@@ -269,11 +275,11 @@ export function ContactForm() {
               {isSubmitting ? (
                 <>
                   <RefreshCw className="w-5 h-5 animate-spin" />
-                  <span>Transmitting to Telegram & UNT HQ...</span>
+                  <span>{content.submitting_label ?? 'Transmitting to Telegram & UNT HQ...'}</span>
                 </>
               ) : (
                 <>
-                  <span>Transmit Message to UNT Headquarters</span>
+                  <span>{content.submit_label ?? 'Transmit Message to UNT Headquarters'}</span>
                   <Send className="w-5 h-5 ml-1" />
                 </>
               )}

@@ -19,12 +19,12 @@ export const ContactPage: React.FC = () => {
       {/* 2. Main Twin-Card B2B Communication Section (100% Symmetric Heights) */}
       <section className="relative z-10 max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 text-left items-stretch">
         <ContactInfo content={content} />
-        <ContactForm />
+        <ContactForm content={content} />
       </section>
 
       {/* 3. Full-Width Frequently Asked Enterprise Questions */}
       <section className="relative z-10 max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 text-left">
-        <ContactFaq />
+        <ContactFaq content={content} />
       </section>
 
     </div>

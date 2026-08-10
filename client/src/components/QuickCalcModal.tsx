@@ -33,6 +33,7 @@ export const QuickCalcModal: React.FC<QuickCalcModalProps> = ({
         </button>
 
         <SourcingCalculator 
+          content={{}}
           onOpenQuoteModal={() => {
             onClose();
             onOpenQuoteModal();

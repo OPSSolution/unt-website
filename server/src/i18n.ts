@@ -215,6 +215,9 @@ export function localizedSection(data: unknown, language: ContentLanguage) {
     ["builder_addons", ["id"]],
     ["matrix_rows", []],
     ["faq_items", ["category"]],
+    ["form_topics", ["id"]],
+    ["response_channels", ["id"]],
+    ["contact_faqs", ["id"]],
   ] as Array<[string, string[]]>) {
     if (key in english) {
       localized[key] = mergeLocalizedList(

@@ -4,16 +4,19 @@ import {
 } from 'lucide-react';
 import type { ContactContent } from './types';
 
-const FAQS = [
+const DEFAULT_FAQS = [
   {
+    id: 'response-time',
     question: 'How fast is UNT\'s response time for B2B sourcing inquiries?',
     answer: 'Our Phnom Penh trade directors review and respond to all qualified enterprise inquiries within 4 business hours during working hours (Mon - Sat).'
   },
   {
+    id: 'sample-delivery',
     question: 'Do you offer OEM private label sample delivery to Cambodian factories?',
     answer: 'Yes, we facilitate factory sample procurement, quality inspection, and courier delivery within 3-5 business days across Cambodia and ASEAN.'
   },
   {
+    id: 'licenses',
     question: 'What MoC tax & customs licenses does UNT hold?',
     answer: 'UNT holds official Ministry of Commerce (MoC) General Trading License, GDT VAT Registration Certificate, and Customs Import-Export Declaration permits.'
   }
@@ -165,8 +168,9 @@ export function ContactInfo({ content }: { content: ContactContent }) {
   );
 }
 
-export function ContactFaq() {
+export function ContactFaq({ content }: { content: ContactContent }) {
   const [openFaqIdx, setOpenFaqIdx] = useState<number | null>(0);
+  const faqs = content.contact_faqs?.length ? content.contact_faqs : DEFAULT_FAQS;
 
   return (
     <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
@@ -175,18 +179,18 @@ export function ContactFaq() {
           <HelpCircle className="w-5 h-5" />
         </div>
         <div>
-          <h3 className="font-display font-bold text-lg sm:text-xl">Frequently Asked Enterprise Questions</h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400">Quick answers for Cambodian B2B clients, factory importers, and trade partners.</p>
+          <h3 className="font-display font-bold text-lg sm:text-xl">{content.faq_heading ?? 'Frequently Asked Enterprise Questions'}</h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400">{content.faq_description ?? 'Quick answers for Cambodian B2B clients, factory importers, and trade partners.'}</p>
         </div>
       </div>
 
       {/* Vertical Stacked Card Accordion */}
       <div className="space-y-3 pt-1">
-        {FAQS.map((faq, idx) => {
+        {faqs.map((faq, idx) => {
           const isOpen = openFaqIdx === idx;
           return (
             <div 
-              key={idx} 
+              key={faq.id ?? idx} 
               className={`rounded-2xl border transition-all shadow-sm overflow-hidden ${
                 isOpen 
                   ? 'bg-slate-50/90 dark:bg-slate-800/80 border-emerald-500/60 dark:border-emerald-500/50' 
