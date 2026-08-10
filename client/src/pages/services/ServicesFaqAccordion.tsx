@@ -6,22 +6,24 @@ import { faqList } from './servicesData';
 
 interface ServicesFaqAccordionProps {
   delay?: number;
+  content: Record<string, any>;
 }
 
-export const ServicesFaqAccordion: React.FC<ServicesFaqAccordionProps> = ({ delay = 0 }) => {
+export const ServicesFaqAccordion: React.FC<ServicesFaqAccordionProps> = ({ delay = 0, content }) => {
   const [faqCategory, setFaqCategory] = useState<'all' | 'sourcing' | 'customs' | 'training' | 'delivery'>('all');
   const [faqSearch, setFaqSearch] = useState<string>('');
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
+  const faqs = Array.isArray(content.faq_items) && content.faq_items.length ? content.faq_items : faqList;
   const filteredFaqs = useMemo(() => {
-    return faqList.filter(item => {
+    return faqs.filter((item: any) => {
       const matchCat = faqCategory === 'all' || item.category === faqCategory;
       const matchSearch = faqSearch === '' ||
         item.q.toLowerCase().includes(faqSearch.toLowerCase()) ||
         item.a.toLowerCase().includes(faqSearch.toLowerCase());
       return matchCat && matchSearch;
     });
-  }, [faqCategory, faqSearch]);
+  }, [faqs, faqCategory, faqSearch]);
 
   return (
     <section className="space-y-6">
@@ -31,13 +33,13 @@ export const ServicesFaqAccordion: React.FC<ServicesFaqAccordionProps> = ({ dela
         <div className="space-y-2">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/20 border border-emerald-300 dark:border-emerald-400/40 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider shadow-sm">
             <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 animate-spin" />
-            Frequently Asked Questions
+            {content.faq_badge ?? 'Frequently Asked Questions'}
           </div>
           <h2 className="text-2xl sm:text-4xl font-display font-black tracking-tight text-slate-900 dark:text-white leading-[1.1]">
-            Got Questions About <span className="text-emerald-600 dark:text-emerald-400">UNT Services?</span>
+            {content.faq_title ?? 'Got Questions About'} <span className="text-emerald-600 dark:text-emerald-400">{content.faq_highlight ?? 'UNT Services?'}</span>
           </h2>
           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-2xl">
-            Search or select a category below for instant answers regarding custom sourcing, GDCE customs clearance, local stock delivery, and sales workshops.
+            {content.faq_desc ?? 'Search or select a category below for instant answers regarding custom sourcing, GDCE customs clearance, local stock delivery, and sales workshops.'}
           </p>
         </div>
       </ScrollReveal>
@@ -51,7 +53,7 @@ export const ServicesFaqAccordion: React.FC<ServicesFaqAccordionProps> = ({ dela
               type="text"
               value={faqSearch}
               onChange={(e) => setFaqSearch(e.target.value)}
-              placeholder="Search FAQs (e.g. GDCE, MOQ, delivery, training)..."
+              placeholder={content.faq_search_placeholder ?? 'Search FAQs (e.g. GDCE, MOQ, delivery, training)...'}
               className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500 shadow-sm"
             />
             {faqSearch && (
@@ -63,11 +65,11 @@ export const ServicesFaqAccordion: React.FC<ServicesFaqAccordionProps> = ({ dela
 
           <div className="flex flex-wrap items-center gap-2">
             {[
-              { id: 'all', label: 'All FAQs' },
-              { id: 'customs', label: 'GDCE & Customs' },
-              { id: 'sourcing', label: 'Sourcing & MOQs' },
-              { id: 'delivery', label: 'Local Delivery' },
-              { id: 'training', label: 'Sales Training' },
+              { id: 'all', label: content.faq_tab_all ?? 'All FAQs' },
+              { id: 'customs', label: content.faq_tab_customs ?? 'GDCE & Customs' },
+              { id: 'sourcing', label: content.faq_tab_sourcing ?? 'Sourcing & MOQs' },
+              { id: 'delivery', label: content.faq_tab_delivery ?? 'Local Delivery' },
+              { id: 'training', label: content.faq_tab_training ?? 'Sales Training' },
             ].map((cat) => (
               <button
                 key={cat.id}

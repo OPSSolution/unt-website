@@ -4,7 +4,7 @@ import { useAdminAuth } from '../hooks/useAdminAuth';
 import { useAutoSave } from '../hooks/useAutoSave';
 import { EditorShell, Field, Card, SectionDivider } from '../components/EditorShell';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { countryContentDefaults, productBenefits, productCategories } from '../../pages/services/servicesData';
+import { builderAddons, builderFreightOptions, builderServices, countryContentDefaults, faqList, productBenefits, productCategories, sourcingMatrixRows, sourcingSteps, trainingCurriculum, trainingEcosystemItems, trainingFormats } from '../../pages/services/servicesData';
 
 const DEFAULTS = {
   badge: 'End-to-End Procurement Infrastructure',
@@ -34,15 +34,82 @@ const DEFAULTS = {
   sourcing_highlight: '(Factory Procurement)',
   sourcing_desc: 'Need a custom product made abroad? UNT acts as your external procurement team — handling factory audits, price negotiation, sample inspection, freight, and GDCE customs clearance.',
   sourcing_cta: 'Request Custom B2B Sourcing',
+  sourcing_roadmap_title: '5-Phase Procurement Roadmap',
+  sourcing_roadmap_hint: 'Click any step',
+  sourcing_phase_label: 'Phase',
+  sourcing_details_label: 'Details',
+  sourcing_start_phase_label: 'Start Phase',
+  sourcing_steps: sourcingSteps,
+  sourcing_manage_title: 'What We Manage For You',
+  sourcing_manage_items_text: 'Supplier research & factory background vetting\nWholesale price negotiation & contract terms\nPhysical sample inspection & lab testing\nGDCE customs clearance & Ministry certificates',
+  sourcing_terms_title: 'Key Terms & MOQs',
+  sourcing_moq_label: 'Minimum Order Quantity:',
+  sourcing_moq_value: 'Flexible and negotiated with our specialists based on product type.',
+  sourcing_countries_label: 'Countries Covered:',
+  sourcing_countries_value: 'Japan, South Korea, Malaysia, Vietnam, Laos, China.',
+  sourcing_scope_label: 'Product Scope:',
+  sourcing_scope_value: 'Food, Supplements, Skincare, Hair Care, Wellness, Household.',
   training_badge: 'Service 03 — Sales Academy & Ecosystem',
   training_title: 'Sales Training &',
   training_highlight: 'Ecosystem Enablement',
   training_desc: "Transform your sales team into high-revenue closer teams. We teach real-world customer psychology, objection handling, and negotiation — backed by UNT's complete sourcing and digital branding ecosystem.",
   training_cta: 'Book Team Consultation',
+  training_format_heading: 'Choose Your Delivery Format',
+  training_active_label: 'Active',
+  training_formats: trainingFormats,
+  training_curriculum_heading: 'Curriculum & Training Modules',
+  training_curriculum: trainingCurriculum,
+  training_ecosystem_heading: 'The UNT Ecosystem Advantage',
+  training_ecosystem_desc: 'Unlike generic training courses, UNT provides an active commercial ecosystem so your sales team learns with real products, real supply chains, and digital branding assets:',
+  training_ecosystem_items: trainingEcosystemItems,
+  training_director_cta: 'Consult With Our Sales Director',
+  builder_badge: 'Interactive Custom Solution Builder', builder_title: 'Build Your Custom', builder_highlight: 'UNT Service Package',
+  builder_desc: 'Configure your desired procurement scope, origin country, logistics speed, and ecosystem add-ons to preview instant timeline & compliance metrics.',
+  builder_core_label: '1. Select Core Business Need', builder_services: builderServices,
+  builder_origin_label: '2. Origin Country', builder_countries_text: 'Japan\nSouth Korea\nMalaysia\nVietnam\nLaos\nChina',
+  builder_freight_label: '3. Freight Speed', builder_freight_options: builderFreightOptions,
+  builder_addons_label: '4. Ecosystem Add-ons', builder_addons: builderAddons,
+  matrix_badge: 'Comparative Sourcing Matrix', matrix_title: 'Why Businesses Choose', matrix_highlight: 'UNT Sourcing',
+  matrix_unt_tab: 'UNT Ecosystem', matrix_traditional_tab: 'Traditional / Self-Import', matrix_rows: sourcingMatrixRows,
+  faq_badge: 'Frequently Asked Questions', faq_title: 'Got Questions About', faq_highlight: 'UNT Services?',
+  faq_desc: 'Search or select a category below for instant answers regarding custom sourcing, GDCE customs clearance, local stock delivery, and sales workshops.',
+  faq_search_placeholder: 'Search FAQs (e.g. GDCE, MOQ, delivery, training)...', faq_tab_all: 'All FAQs',
+  faq_tab_customs: 'GDCE & Customs', faq_tab_sourcing: 'Sourcing & MOQs', faq_tab_delivery: 'Local Delivery', faq_tab_training: 'Sales Training', faq_items: faqList,
+  estimator_title: 'Interactive Sourcing Estimator', estimator_desc: 'Calculate lead times, logistics, & Cambodian import permit requirements',
+  estimator_badge: 'B2B Sourcing Tool', estimator_category_label: '1. Product Category', estimator_origin_label: '2. Manufacturing Origin',
+  estimator_volume_label: '3. Estimated Lot Volume', estimator_oem_label: 'Requires Turnkey OEM / Custom Brand Re-packaging (+14 Days R&D)',
+  estimator_lead_label: 'Est. Delivery Lead Time', estimator_route_label: 'Logistics Shipping Route', estimator_clearance_label: 'Ministry Clearances Secured',
+  estimator_note: "Estimates based on Unique Noble Trading Co., Ltd.'s established trade lane frequencies.", estimator_cta: 'Lock In Formal Quotation',
 };
 const EMPTY_TRANSLATIONS = Object.fromEntries(Object.entries(DEFAULTS).map(([key, value]) => [key, Array.isArray(value) ? [] : '']));
 
-const TABS = ['Header', 'Product Sales', 'Sourcing', 'Sales Training'] as const;
+const KHMER_STRUCTURE_DEFAULTS = {
+  origin_countries: countryContentDefaults.map((country) => ({
+    code: country.code, name: '', niche: '', seaTransit: '', airTransit: '', standards: [], topProducts: [], desc: '',
+  })),
+  product_categories: productCategories.map(() => ({ title: '', count: '' })),
+  product_benefits: productBenefits.map(() => ({ title: '', desc: '' })),
+  sourcing_steps: sourcingSteps.map((step) => ({ num: step.num, title: '', subtitle: '', desc: '' })),
+  training_formats: trainingFormats.map((item) => ({ id: item.id, title: '', desc: '' })),
+  training_curriculum: trainingCurriculum.map(() => ''),
+  training_ecosystem_items: trainingEcosystemItems.map(() => ''),
+  builder_services: builderServices.map((item) => ({ id: item.id, label: '', desc: '' })),
+  builder_freight_options: builderFreightOptions.map((item) => ({ id: item.id, label: '', sub: '' })),
+  builder_addons: builderAddons.map((item) => ({ id: item.id, label: '', tag: '' })),
+  matrix_rows: sourcingMatrixRows.map(() => ({ feature: '', unt: '', traditional: '' })),
+  faq_items: faqList.map((item) => ({ category: item.category, q: '', a: '' })),
+};
+
+function servicesEditorData(language: 'en' | 'km', saved: Record<string, any> | null | undefined) {
+  if (language === 'en') return { ...DEFAULTS, ...(saved ?? {}) };
+  const merged = { ...EMPTY_TRANSLATIONS, ...KHMER_STRUCTURE_DEFAULTS, ...(saved ?? {}) } as any;
+  for (const key of Object.keys(KHMER_STRUCTURE_DEFAULTS) as Array<keyof typeof KHMER_STRUCTURE_DEFAULTS>) {
+    if (!Array.isArray(merged[key]) || merged[key].length === 0) merged[key] = KHMER_STRUCTURE_DEFAULTS[key];
+  }
+  return merged;
+}
+
+const TABS = ['Header', 'Product Sales', 'Sourcing', 'Sales Training', 'Advanced Content'] as const;
 type Tab = typeof TABS[number];
 
 export function ServicesEditor() {
@@ -52,13 +119,14 @@ export function ServicesEditor() {
   const [activeTab, setActiveTab] = useState<Tab>('Header');
   const [loading, setLoading] = useState(true);
   const [selectedCountryIndex, setSelectedCountryIndex] = useState(0);
+  const [selectedSourcingStepIndex, setSelectedSourcingStepIndex] = useState(0);
 
   const { saving, saved, error, dirty, autoSaving, autoSaved, autoSaveError } = useAutoSave(
-    'services_page',
+    `services_page-${language}`,
     data,
     async (d) => {
       if (!token) return;
-      await api.updateHomepageSection('services_page', d, token);
+      await api.updateHomepageSection('services_page', d, token, language);
     },
     1500,
     !loading
@@ -67,7 +135,11 @@ export function ServicesEditor() {
   useEffect(() => {
     setLoading(true);
     api.getHomepageSection('services_page')
-      .then((r) => setData({ ...(language === 'km' ? EMPTY_TRANSLATIONS : DEFAULTS), ...(r.data ?? {}) }))
+      .then((r) => {
+        setSelectedCountryIndex(0);
+        setSelectedSourcingStepIndex(0);
+        setData(servicesEditorData(language, r.data));
+      })
       .catch(() => { })
       .finally(() => setLoading(false));
   }, [language]);
@@ -88,11 +160,22 @@ export function ServicesEditor() {
     product_benefits: (Array.isArray(current.product_benefits) ? current.product_benefits : []).map((benefit: any, itemIndex: number) =>
       itemIndex === index ? { ...benefit, [key]: value } : benefit),
   }));
+  const updateSourcingStep = (key: string, value: string) => setData((current: any) => ({
+    ...current,
+    sourcing_steps: (Array.isArray(current.sourcing_steps) ? current.sourcing_steps : []).map((step: any, index: number) =>
+      index === selectedSourcingStepIndex ? { ...step, [key]: value } : step),
+  }));
+  const updateArrayItem = (arrayKey: string, index: number, key: string, value: string) => setData((current: any) => ({
+    ...current,
+    [arrayKey]: (Array.isArray(current[arrayKey]) ? current[arrayKey] : []).map((item: any, itemIndex: number) =>
+      itemIndex === index ? { ...item, [key]: value } : item),
+  }));
+  const setLineList = (key: string) => (value: string) => setData((current: any) => ({ ...current, [key]: value.split('\n') }));
 
   const handleSave = async () => {
     if (!token) return;
     try {
-      await api.updateHomepageSection('services_page', data, token);
+      await api.updateHomepageSection('services_page', data, token, language);
     } catch (e: any) { /* auto-save will show errors */ }
   };
 
@@ -201,25 +284,93 @@ export function ServicesEditor() {
       )}
 
       {activeTab === 'Sourcing' && (
-        <Card><div className="space-y-4">
-          <SectionDivider label="Service 02 — Custom Sourcing" />
-          <Field label="Badge" value={data.sourcing_badge} onChange={set('sourcing_badge')} />
-          <Field label="Title" value={data.sourcing_title} onChange={set('sourcing_title')} />
-          <Field label="Highlighted Title" value={data.sourcing_highlight} onChange={set('sourcing_highlight')} />
-          <Field label="Description" value={data.sourcing_desc} onChange={set('sourcing_desc')} multiline rows={4} />
-          <Field label="CTA Button" value={data.sourcing_cta} onChange={set('sourcing_cta')} />
-        </div></Card>
+        <div className="space-y-6">
+          <Card><div className="space-y-4">
+            <SectionDivider label="Service 02 — Custom Sourcing" />
+            <Field label="Badge" value={data.sourcing_badge ?? ''} onChange={set('sourcing_badge')} />
+            <Field label="Title" value={data.sourcing_title ?? ''} onChange={set('sourcing_title')} />
+            <Field label="Highlighted Title" value={data.sourcing_highlight ?? ''} onChange={set('sourcing_highlight')} />
+            <Field label="Description" value={data.sourcing_desc ?? ''} onChange={set('sourcing_desc')} multiline rows={4} />
+            <Field label="CTA Button" value={data.sourcing_cta ?? ''} onChange={set('sourcing_cta')} />
+          </div></Card>
+
+          <Card><div className="space-y-5">
+            <SectionDivider label="Procurement Roadmap Labels" />
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+              <Field label="Roadmap Title" value={data.sourcing_roadmap_title ?? ''} onChange={set('sourcing_roadmap_title')} />
+              <Field label="Instruction" value={data.sourcing_roadmap_hint ?? ''} onChange={set('sourcing_roadmap_hint')} />
+              <Field label="Phase Label" value={data.sourcing_phase_label ?? ''} onChange={set('sourcing_phase_label')} />
+              <Field label="Details Label" value={data.sourcing_details_label ?? ''} onChange={set('sourcing_details_label')} />
+              <Field label="Start Phase Button" value={data.sourcing_start_phase_label ?? ''} onChange={set('sourcing_start_phase_label')} />
+            </div>
+          </div></Card>
+
+          <Card><div className="space-y-5">
+            <SectionDivider label="Five Procurement Phases" />
+            <div className="flex flex-wrap gap-2">
+              {(Array.isArray(data.sourcing_steps) ? data.sourcing_steps : []).map((step: any, index: number) => (
+                <button key={`${step.num}-${index}`} type="button" onClick={() => setSelectedSourcingStepIndex(index)} className={`px-4 py-2 rounded-xl text-xs font-bold border ${selectedSourcingStepIndex === index ? 'bg-emerald-600 border-emerald-600 text-white' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'}`}>Phase {step.num || index + 1}</button>
+              ))}
+            </div>
+            {(() => {
+              const step = (Array.isArray(data.sourcing_steps) ? data.sourcing_steps : [])[selectedSourcingStepIndex];
+              if (!step) return <p className="text-sm text-slate-500">No roadmap phases are available for this language.</p>;
+              return <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Field label="Phase Number" value={step.num ?? ''} onChange={(v) => updateSourcingStep('num', v)} />
+                <Field label="Phase Title" value={step.title ?? ''} onChange={(v) => updateSourcingStep('title', v)} />
+                <div className="md:col-span-2"><Field label="Short Subtitle" value={step.subtitle ?? ''} onChange={(v) => updateSourcingStep('subtitle', v)} /></div>
+                <div className="md:col-span-2"><Field label="Detailed Description" value={step.desc ?? ''} onChange={(v) => updateSourcingStep('desc', v)} multiline rows={4} /></div>
+              </div>;
+            })()}
+          </div></Card>
+
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <Card><div className="space-y-4">
+              <SectionDivider label="What We Manage For You" />
+              <Field label="Section Title" value={data.sourcing_manage_title ?? ''} onChange={set('sourcing_manage_title')} />
+              <Field label="Managed Items (one per line)" value={data.sourcing_manage_items_text ?? ''} onChange={set('sourcing_manage_items_text')} multiline rows={9} />
+            </div></Card>
+            <Card><div className="space-y-4">
+              <SectionDivider label="Key Terms & MOQs" />
+              <Field label="Section Title" value={data.sourcing_terms_title ?? ''} onChange={set('sourcing_terms_title')} />
+              <Field label="MOQ Label" value={data.sourcing_moq_label ?? ''} onChange={set('sourcing_moq_label')} />
+              <Field label="MOQ Description" value={data.sourcing_moq_value ?? ''} onChange={set('sourcing_moq_value')} multiline rows={3} />
+              <Field label="Countries Label" value={data.sourcing_countries_label ?? ''} onChange={set('sourcing_countries_label')} />
+              <Field label="Countries Covered" value={data.sourcing_countries_value ?? ''} onChange={set('sourcing_countries_value')} multiline rows={3} />
+              <Field label="Product Scope Label" value={data.sourcing_scope_label ?? ''} onChange={set('sourcing_scope_label')} />
+              <Field label="Product Scope" value={data.sourcing_scope_value ?? ''} onChange={set('sourcing_scope_value')} multiline rows={3} />
+            </div></Card>
+          </div>
+        </div>
       )}
 
       {activeTab === 'Sales Training' && (
-        <Card><div className="space-y-4">
-          <SectionDivider label="Service 03 — Sales Training" />
-          <Field label="Badge" value={data.training_badge} onChange={set('training_badge')} />
-          <Field label="Title" value={data.training_title} onChange={set('training_title')} />
-          <Field label="Highlighted Title" value={data.training_highlight} onChange={set('training_highlight')} />
-          <Field label="Description" value={data.training_desc} onChange={set('training_desc')} multiline rows={4} />
-          <Field label="CTA Button" value={data.training_cta} onChange={set('training_cta')} />
-        </div></Card>
+        <div className="space-y-6">
+          <Card><div className="space-y-4"><SectionDivider label="Service 03 — Sales Training" /><Field label="Badge" value={data.training_badge ?? ''} onChange={set('training_badge')} /><Field label="Title" value={data.training_title ?? ''} onChange={set('training_title')} /><Field label="Highlighted Title" value={data.training_highlight ?? ''} onChange={set('training_highlight')} /><Field label="Description" value={data.training_desc ?? ''} onChange={set('training_desc')} multiline rows={4} /><Field label="CTA Button" value={data.training_cta ?? ''} onChange={set('training_cta')} /></div></Card>
+          <Card><div className="space-y-4"><SectionDivider label="Delivery Formats" /><Field label="Section Heading" value={data.training_format_heading ?? ''} onChange={set('training_format_heading')} /><Field label="Active Badge" value={data.training_active_label ?? ''} onChange={set('training_active_label')} />{(data.training_formats ?? []).map((item: any, index: number) => <div key={item.id} className="grid grid-cols-1 md:grid-cols-2 gap-3 rounded-xl border border-slate-200 dark:border-slate-700 p-4"><Field label={`Format ${index + 1}`} value={item.title ?? ''} onChange={(v) => updateArrayItem('training_formats', index, 'title', v)} /><Field label="Description" value={item.desc ?? ''} onChange={(v) => updateArrayItem('training_formats', index, 'desc', v)} multiline rows={3} /></div>)}</div></Card>
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <Card><div className="space-y-4"><SectionDivider label="Curriculum" /><Field label="Section Heading" value={data.training_curriculum_heading ?? ''} onChange={set('training_curriculum_heading')} /><Field label="Modules (one per line)" value={(data.training_curriculum ?? []).join('\n')} onChange={setLineList('training_curriculum')} multiline rows={10} /></div></Card>
+            <Card><div className="space-y-4"><SectionDivider label="UNT Ecosystem Advantage" /><Field label="Heading" value={data.training_ecosystem_heading ?? ''} onChange={set('training_ecosystem_heading')} /><Field label="Description" value={data.training_ecosystem_desc ?? ''} onChange={set('training_ecosystem_desc')} multiline rows={4} /><Field label="Advantages (one per line)" value={(data.training_ecosystem_items ?? []).join('\n')} onChange={setLineList('training_ecosystem_items')} multiline rows={7} /><Field label="Director CTA" value={data.training_director_cta ?? ''} onChange={set('training_director_cta')} /></div></Card>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'Advanced Content' && (
+        <div className="space-y-6">
+          <Card><div className="space-y-4"><SectionDivider label="Interactive Package Builder" /><div className="grid grid-cols-1 md:grid-cols-2 gap-3"><Field label="Badge" value={data.builder_badge ?? ''} onChange={set('builder_badge')} /><Field label="Title" value={data.builder_title ?? ''} onChange={set('builder_title')} /><Field label="Highlighted Title" value={data.builder_highlight ?? ''} onChange={set('builder_highlight')} /><Field label="Description" value={data.builder_desc ?? ''} onChange={set('builder_desc')} multiline rows={3} /><Field label="Core Business Label" value={data.builder_core_label ?? ''} onChange={set('builder_core_label')} /><Field label="Origin Label" value={data.builder_origin_label ?? ''} onChange={set('builder_origin_label')} /><Field label="Countries (one per line)" value={data.builder_countries_text ?? ''} onChange={set('builder_countries_text')} multiline rows={6} /><Field label="Freight Label" value={data.builder_freight_label ?? ''} onChange={set('builder_freight_label')} /><Field label="Add-ons Label" value={data.builder_addons_label ?? ''} onChange={set('builder_addons_label')} /></div>
+            <SectionDivider label="Core Service Options" />{(data.builder_services ?? []).map((item: any, index: number) => <div key={item.id} className="grid grid-cols-2 gap-3"><Field label="Option" value={item.label ?? ''} onChange={(v) => updateArrayItem('builder_services', index, 'label', v)} /><Field label="Description" value={item.desc ?? ''} onChange={(v) => updateArrayItem('builder_services', index, 'desc', v)} /></div>)}
+            <SectionDivider label="Freight Options" /><div className="grid grid-cols-1 md:grid-cols-3 gap-3">{(data.builder_freight_options ?? []).map((item: any, index: number) => <div key={item.id} className="space-y-2 rounded-xl border p-3 dark:border-slate-700"><Field label="Name" value={item.label ?? ''} onChange={(v) => updateArrayItem('builder_freight_options', index, 'label', v)} /><Field label="Subtitle" value={item.sub ?? ''} onChange={(v) => updateArrayItem('builder_freight_options', index, 'sub', v)} /></div>)}</div>
+            <SectionDivider label="Add-on Options" />{(data.builder_addons ?? []).map((item: any, index: number) => <div key={item.id} className="grid grid-cols-2 gap-3"><Field label="Add-on" value={item.label ?? ''} onChange={(v) => updateArrayItem('builder_addons', index, 'label', v)} /><Field label="Tag" value={item.tag ?? ''} onChange={(v) => updateArrayItem('builder_addons', index, 'tag', v)} /></div>)}
+          </div></Card>
+
+          <Card><div className="space-y-4"><SectionDivider label="Comparative Sourcing Matrix" /><div className="grid grid-cols-1 md:grid-cols-2 gap-3"><Field label="Badge" value={data.matrix_badge ?? ''} onChange={set('matrix_badge')} /><Field label="Title" value={data.matrix_title ?? ''} onChange={set('matrix_title')} /><Field label="Highlighted Title" value={data.matrix_highlight ?? ''} onChange={set('matrix_highlight')} /><Field label="UNT Tab" value={data.matrix_unt_tab ?? ''} onChange={set('matrix_unt_tab')} /><Field label="Traditional Tab" value={data.matrix_traditional_tab ?? ''} onChange={set('matrix_traditional_tab')} /></div>{(data.matrix_rows ?? []).map((row: any, index: number) => <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-3 rounded-xl border p-4 dark:border-slate-700"><Field label="Feature" value={row.feature ?? ''} onChange={(v) => updateArrayItem('matrix_rows', index, 'feature', v)} /><Field label="UNT" value={row.unt ?? ''} onChange={(v) => updateArrayItem('matrix_rows', index, 'unt', v)} multiline rows={3} /><Field label="Traditional" value={row.traditional ?? ''} onChange={(v) => updateArrayItem('matrix_rows', index, 'traditional', v)} multiline rows={3} /></div>)}</div></Card>
+
+          <Card><div className="space-y-4"><SectionDivider label="Frequently Asked Questions" /><div className="grid grid-cols-1 md:grid-cols-2 gap-3"><Field label="Badge" value={data.faq_badge ?? ''} onChange={set('faq_badge')} /><Field label="Title" value={data.faq_title ?? ''} onChange={set('faq_title')} /><Field label="Highlighted Title" value={data.faq_highlight ?? ''} onChange={set('faq_highlight')} /><Field label="Description" value={data.faq_desc ?? ''} onChange={set('faq_desc')} multiline rows={3} /><Field label="Search Placeholder" value={data.faq_search_placeholder ?? ''} onChange={set('faq_search_placeholder')} /><Field label="All FAQs Tab" value={data.faq_tab_all ?? ''} onChange={set('faq_tab_all')} /><Field label="Customs Tab" value={data.faq_tab_customs ?? ''} onChange={set('faq_tab_customs')} /><Field label="Sourcing Tab" value={data.faq_tab_sourcing ?? ''} onChange={set('faq_tab_sourcing')} /><Field label="Delivery Tab" value={data.faq_tab_delivery ?? ''} onChange={set('faq_tab_delivery')} /><Field label="Training Tab" value={data.faq_tab_training ?? ''} onChange={set('faq_tab_training')} /></div>{(data.faq_items ?? []).map((faq: any, index: number) => <div key={index} className="grid grid-cols-1 md:grid-cols-[160px_1fr_1fr] gap-3 rounded-xl border p-4 dark:border-slate-700"><Field label="Category" value={faq.category ?? ''} onChange={(v) => updateArrayItem('faq_items', index, 'category', v)} /><Field label={`Question ${index + 1}`} value={faq.q ?? ''} onChange={(v) => updateArrayItem('faq_items', index, 'q', v)} multiline rows={3} /><Field label="Answer" value={faq.a ?? ''} onChange={(v) => updateArrayItem('faq_items', index, 'a', v)} multiline rows={5} /></div>)}</div></Card>
+
+          <Card><div className="space-y-4"><SectionDivider label="Interactive Sourcing Estimator" /><div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">{[
+            ['estimator_title','Title'],['estimator_desc','Description'],['estimator_badge','Badge'],['estimator_category_label','Category Label'],['estimator_origin_label','Origin Label'],['estimator_volume_label','Volume Label'],['estimator_oem_label','OEM Label'],['estimator_lead_label','Lead Time Label'],['estimator_route_label','Route Label'],['estimator_clearance_label','Clearance Label'],['estimator_note','Footer Note'],['estimator_cta','CTA Button'],
+          ].map(([key,label]) => <Field key={key} label={label} value={data[key] ?? ''} onChange={set(key)} multiline={key === 'estimator_desc' || key === 'estimator_note'} rows={3} />)}</div></div></Card>
+        </div>
       )}
 
     </EditorShell>

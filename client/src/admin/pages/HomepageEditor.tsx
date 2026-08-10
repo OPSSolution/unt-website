@@ -3,6 +3,7 @@ import { api } from '../api';
 import { useAdminAuth } from '../hooks/useAdminAuth';
 import { useAutoSave } from '../hooks/useAutoSave';
 import { EditorShell, Field, Card, SectionDivider } from '../components/EditorShell';
+import { ImageField } from '../components/ImageField';
 import { HeroTab } from './homepage-editor/HeroTab';
 import { HOMEPAGE_TABS, HomepageSection, HomepageTab, HeroStat } from './homepage-editor/types';
 
@@ -189,6 +190,16 @@ export function HomepageEditor() {
                       <SectionDivider label={`Feature Row ${n}`} />
                       <Field label="Title" value={heritage[`feature${n}_title`] ?? ''} onChange={she(`feature${n}_title`)} />
                       <Field label="Description" value={heritage[`feature${n}_desc`] ?? ''} onChange={she(`feature${n}_desc`)} multiline />
+                      <ImageField label="Feature Image" value={heritage[`feature${n}_image`] ?? ''} onChange={she(`feature${n}_image`)} folder="homepage/heritage" />
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <Field label="Metric" value={heritage[`feature${n}_metric`] ?? ''} onChange={she(`feature${n}_metric`)} />
+                        <Field label="Image Badge" value={heritage[`feature${n}_badge`] ?? ''} onChange={she(`feature${n}_badge`)} />
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        {[1, 2, 3].map((tag) => (
+                          <Field key={tag} label={`Tag ${tag}`} value={heritage[`feature${n}_tag${tag}`] ?? ''} onChange={she(`feature${n}_tag${tag}`)} />
+                        ))}
+                      </div>
                     </div>
                   </Card>
                 ))}

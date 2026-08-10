@@ -4,13 +4,15 @@ import {
 } from 'lucide-react';
 import { ScrollReveal } from '../../components/ScrollReveal';
 import { Card3D } from '../../components/Card3D';
+import { builderAddons as defaultAddons, builderFreightOptions, builderServices } from './servicesData';
 
 interface ServicePackageBuilderProps {
   onOpenQuoteModal: () => void;
   delay?: number;
+  content: Record<string, any>;
 }
 
-export const ServicePackageBuilder: React.FC<ServicePackageBuilderProps> = ({ onOpenQuoteModal, delay = 0 }) => {
+export const ServicePackageBuilder: React.FC<ServicePackageBuilderProps> = ({ onOpenQuoteModal, delay = 0, content }) => {
   const [builderService, setBuilderService] = useState<'sourcing' | 'distribution' | 'training'>('sourcing');
   const [builderCountry, setBuilderCountry] = useState<string>('South Korea');
   const [builderFreight, setBuilderFreight] = useState<'sea' | 'air' | 'land'>('sea');
@@ -32,6 +34,10 @@ export const ServicePackageBuilder: React.FC<ServicePackageBuilderProps> = ({ on
   }, [builderFreight, builderCountry]);
 
   const activeAddonCount = Object.values(builderAddons).filter(Boolean).length;
+  const serviceOptions = Array.isArray(content.builder_services) && content.builder_services.length ? content.builder_services : builderServices;
+  const countries = typeof content.builder_countries_text === 'string' && content.builder_countries_text.trim() ? content.builder_countries_text.split('\n').map((item: string) => item.trim()).filter(Boolean) : ['Japan', 'South Korea', 'Malaysia', 'Vietnam', 'Laos', 'China'];
+  const freightOptions = Array.isArray(content.builder_freight_options) && content.builder_freight_options.length ? content.builder_freight_options : builderFreightOptions;
+  const addonOptions = Array.isArray(content.builder_addons) && content.builder_addons.length ? content.builder_addons : defaultAddons;
 
   const toggleAddon = (key: string) => {
     setBuilderAddons(prev => ({ ...prev, [key]: !prev[key] }));
@@ -45,13 +51,13 @@ export const ServicePackageBuilder: React.FC<ServicePackageBuilderProps> = ({ on
         <div className="space-y-2">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/20 border border-emerald-300 dark:border-emerald-400/40 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider shadow-sm">
             <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 animate-spin" />
-            Interactive Custom Solution Builder
+            {content.builder_badge ?? 'Interactive Custom Solution Builder'}
           </div>
           <h2 className="text-2xl sm:text-4xl font-display font-black tracking-tight text-slate-900 dark:text-white leading-[1.1]">
-            Build Your Custom <span className="text-emerald-600 dark:text-emerald-400">UNT Service Package</span>
+            {content.builder_title ?? 'Build Your Custom'} <span className="text-emerald-600 dark:text-emerald-400">{content.builder_highlight ?? 'UNT Service Package'}</span>
           </h2>
           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-2xl">
-            Configure your desired procurement scope, origin country, logistics speed, and ecosystem add-ons to preview instant timeline & compliance metrics.
+            {content.builder_desc ?? 'Configure your desired procurement scope, origin country, logistics speed, and ecosystem add-ons to preview instant timeline & compliance metrics.'}
           </p>
         </div>
       </ScrollReveal>
@@ -64,13 +70,9 @@ export const ServicePackageBuilder: React.FC<ServicePackageBuilderProps> = ({ on
           <Card3D intensity={4}>
             <div className="p-6 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 space-y-6 h-full">
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase text-slate-400 dark:text-emerald-400 tracking-wider block">1. Select Core Business Need</label>
+                <label className="text-[10px] font-bold uppercase text-slate-400 dark:text-emerald-400 tracking-wider block">{content.builder_core_label ?? '1. Select Core Business Need'}</label>
                 <div className="space-y-2">
-                  {[
-                    { id: 'sourcing', label: 'Custom Factory Sourcing', desc: 'Manufacturing & import' },
-                    { id: 'distribution', label: 'Local Wholesale Order', desc: 'Phnom Penh inventory' },
-                    { id: 'training', label: 'Sales Team Coaching', desc: 'B2B closer training' }
-                  ].map((item) => (
+                  {serviceOptions.map((item: any) => (
                     <button
                       key={item.id}
                       onClick={() => setBuilderService(item.id as any)}
@@ -90,9 +92,9 @@ export const ServicePackageBuilder: React.FC<ServicePackageBuilderProps> = ({ on
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase text-slate-400 dark:text-emerald-400 tracking-wider block">2. Origin Country</label>
+                <label className="text-[10px] font-bold uppercase text-slate-400 dark:text-emerald-400 tracking-wider block">{content.builder_origin_label ?? '2. Origin Country'}</label>
                 <div className="grid grid-cols-3 gap-2">
-                  {['Japan', 'South Korea', 'Malaysia', 'Vietnam', 'Laos', 'China'].map((c) => (
+                  {countries.map((c: string) => (
                     <button
                       key={c}
                       onClick={() => setBuilderCountry(c)}
@@ -113,14 +115,10 @@ export const ServicePackageBuilder: React.FC<ServicePackageBuilderProps> = ({ on
           <Card3D intensity={4}>
             <div className="p-6 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 space-y-6 h-full">
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase text-slate-400 dark:text-emerald-400 tracking-wider block">3. Freight Speed</label>
+                <label className="text-[10px] font-bold uppercase text-slate-400 dark:text-emerald-400 tracking-wider block">{content.builder_freight_label ?? '3. Freight Speed'}</label>
                 <div className="grid grid-cols-3 gap-2">
-                  {[
-                    { id: 'sea', label: 'Sea', sub: 'Savings', icon: Ship },
-                    { id: 'air', label: 'Air', sub: 'Fastest', icon: Plane },
-                    { id: 'land', label: 'Truck', sub: 'Regional', icon: Truck }
-                  ].map((fm) => {
-                    const FmIcon = fm.icon;
+                  {freightOptions.map((fm: any, index: number) => {
+                    const FmIcon = [Ship, Plane, Truck][index] ?? Truck;
                     const isSel = builderFreight === fm.id;
                     return (
                       <button
@@ -141,19 +139,15 @@ export const ServicePackageBuilder: React.FC<ServicePackageBuilderProps> = ({ on
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase text-slate-400 dark:text-emerald-400 tracking-wider block">4. Ecosystem Add-ons</label>
+                <label className="text-[10px] font-bold uppercase text-slate-400 dark:text-emerald-400 tracking-wider block">{content.builder_addons_label ?? '4. Ecosystem Add-ons'}</label>
                 <div className="space-y-1.5">
-                  {[
-                    { key: 'gdce', label: 'GDCE Customs & Ministry Clearance', tag: 'Recommended' },
-                    { key: 'privatelabel', label: 'OEM Private Label Packaging', tag: 'Branding' },
-                    { key: 'labtesting', label: 'Lab Analysis & Quality Certificate', tag: 'Verification' },
-                    { key: 'trainingBootcamp', label: 'Sales Execution Bootcamp', tag: 'Training' },
-                  ].map((addon) => {
-                    const isChecked = !!builderAddons[addon.key];
+                  {addonOptions.map((addon: any) => {
+                    const addonKey = addon.id ?? addon.key;
+                    const isChecked = !!builderAddons[addonKey];
                     return (
                       <button
-                        key={addon.key}
-                        onClick={() => toggleAddon(addon.key)}
+                        key={addonKey}
+                        onClick={() => toggleAddon(addonKey)}
                         className={`w-full p-2.5 rounded-lg border text-left flex items-center justify-between text-[11px] transition-all ${isChecked
                             ? 'bg-emerald-50 dark:bg-emerald-500/15 border-emerald-400 dark:border-emerald-400/40 text-emerald-900 dark:text-emerald-300 font-semibold'
                             : 'bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:border-slate-400 active:scale-[0.98]'

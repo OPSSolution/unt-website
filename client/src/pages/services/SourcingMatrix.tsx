@@ -2,41 +2,15 @@ import React, { useState } from 'react';
 import { CheckCircle2, Sparkles } from 'lucide-react';
 import { ScrollReveal } from '../../components/ScrollReveal';
 import { Card3D } from '../../components/Card3D';
+import { sourcingMatrixRows } from './servicesData';
 
 interface SourcingMatrixProps {
   delay?: number;
+  content: Record<string, any>;
 }
-
-const matrixRows = [
-  {
-    feature: 'Factory Vetting & Inspection',
-    unt: 'On-site regional teams inspect factory ISO/GMP credentials',
-    traditional: 'Unverified online listings with high risk of counterfeits',
-  },
-  {
-    feature: 'GDCE & Ministry Clearance',
-    unt: '100% managed legal customs clearance, permits & certificates',
-    traditional: 'Full legal burden falls on client; risk of customs holds',
-  },
-  {
-    feature: 'MOQ Flexibility',
-    unt: 'Aggregated volume lets clients order from 500 units',
-    traditional: 'Strict factory MOQs (5,000+ units) locking capital',
-  },
-  {
-    feature: 'Sample Validation',
-    unt: 'Physical sample delivered to Phnom Penh before mass production',
-    traditional: 'No pre-shipment check; risk of defective bulk shipment',
-  },
-  {
-    feature: 'Commercial Support',
-    unt: 'Includes sales team training & digital branding ecosystem',
-    traditional: 'Freight only; zero sales or marketing support',
-  },
-];
-
-export const SourcingMatrix: React.FC<SourcingMatrixProps> = ({ delay = 0 }) => {
+export const SourcingMatrix: React.FC<SourcingMatrixProps> = ({ delay = 0, content }) => {
   const [matrixView, setMatrixView] = useState<'unt' | 'traditional'>('unt');
+  const matrixRows = Array.isArray(content.matrix_rows) && content.matrix_rows.length ? content.matrix_rows : sourcingMatrixRows;
 
   return (
     <section className="space-y-6">
@@ -47,10 +21,10 @@ export const SourcingMatrix: React.FC<SourcingMatrixProps> = ({ delay = 0 }) => 
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/20 border border-emerald-300 dark:border-emerald-400/40 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider shadow-sm">
               <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 animate-spin" />
-              Comparative Sourcing Matrix
+              {content.matrix_badge ?? 'Comparative Sourcing Matrix'}
             </div>
             <h2 className="text-2xl sm:text-4xl font-display font-black tracking-tight text-slate-900 dark:text-white leading-[1.1]">
-              Why Businesses Choose <span className="text-emerald-600 dark:text-emerald-400">UNT Sourcing</span>
+              {content.matrix_title ?? 'Why Businesses Choose'} <span className="text-emerald-600 dark:text-emerald-400">{content.matrix_highlight ?? 'UNT Sourcing'}</span>
             </h2>
           </div>
 
@@ -62,7 +36,7 @@ export const SourcingMatrix: React.FC<SourcingMatrixProps> = ({ delay = 0 }) => 
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
             >
-              UNT Ecosystem
+              {content.matrix_unt_tab ?? 'UNT Ecosystem'}
             </button>
             <button
               onClick={() => setMatrixView('traditional')}
@@ -71,7 +45,7 @@ export const SourcingMatrix: React.FC<SourcingMatrixProps> = ({ delay = 0 }) => 
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
             >
-              Traditional / Self-Import
+              {content.matrix_traditional_tab ?? 'Traditional / Self-Import'}
             </button>
           </div>
         </div>
@@ -80,7 +54,7 @@ export const SourcingMatrix: React.FC<SourcingMatrixProps> = ({ delay = 0 }) => 
       {/* ─── Matrix Cards (one per row instead of table) ─── */}
       <ScrollReveal animation="up" delay={delay + 80}>
         <div className="space-y-3">
-          {matrixRows.map((row, idx) => (
+          {matrixRows.map((row: any, idx: number) => (
             <Card3D key={idx} intensity={6}>
               <div
                 style={{ animationDelay: `${idx * 60}ms` }}

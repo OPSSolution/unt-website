@@ -24,6 +24,7 @@ export function HomeHeritage() {
     description: content[`feature${index + 1}_desc`] ?? englishOnly(feature.description),
     metric: content[`feature${index + 1}_metric`] ?? englishOnly(feature.metric),
     badge: content[`feature${index + 1}_badge`] ?? englishOnly(feature.badge),
+    image: content[`feature${index + 1}_image`] || feature.image,
     tags: feature.tags.map((tag, tagIndex) => content[`feature${index + 1}_tag${tagIndex + 1}`] ?? englishOnly(tag)).filter(Boolean),
   }));
   const active = features[activeFeature];

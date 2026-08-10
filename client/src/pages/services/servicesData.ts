@@ -107,6 +107,53 @@ export const sourcingSteps = [
   { num: '05', title: 'Doorstep Delivery', subtitle: 'Delivered in Cambodia', desc: 'Receive your verified cargo directly at your Phnom Penh or provincial warehouse ready for market.' },
 ];
 
+export const trainingFormats = [
+  { id: 'in_person', title: 'In-Person Workshops', desc: 'Interactive hands-on roleplay sessions at your Phnom Penh office or UNT venue.' },
+  { id: 'online', title: 'Live Interactive Online', desc: 'Flexible remote modules for distributed sales teams across Cambodian provinces.' },
+  { id: 'hybrid', title: 'Hybrid Mentorship', desc: 'Combines intensive 1-day live bootcamp with 3 months of ongoing coaching.' },
+];
+
+export const trainingCurriculum = [
+  'Sales Fundamentals & High-Impact Mindset',
+  'Customer Psychology & Communication Scripts',
+  'Overcoming Tough Customer Objections',
+  'Strategic Negotiation & Closing Techniques',
+  'Client Retention & Re-order Follow-up',
+];
+
+export const trainingEcosystemItems = [
+  'Direct Access to Overseas Sourcing & Freight',
+  'Production House for Digital Branding & Ads',
+  'Active B2B & Retail Sales Team Frameworks',
+];
+
+export const builderServices = [
+  { id: 'sourcing', label: 'Custom Factory Sourcing', desc: 'Manufacturing & import' },
+  { id: 'distribution', label: 'Local Wholesale Order', desc: 'Phnom Penh inventory' },
+  { id: 'training', label: 'Sales Team Coaching', desc: 'B2B closer training' },
+];
+
+export const builderFreightOptions = [
+  { id: 'sea', label: 'Sea', sub: 'Savings' },
+  { id: 'air', label: 'Air', sub: 'Fastest' },
+  { id: 'land', label: 'Truck', sub: 'Regional' },
+];
+
+export const builderAddons = [
+  { id: 'gdce', label: 'GDCE Customs & Ministry Clearance', tag: 'Recommended' },
+  { id: 'privatelabel', label: 'OEM Private Label Packaging', tag: 'Branding' },
+  { id: 'labtesting', label: 'Lab Analysis & Quality Certificate', tag: 'Verification' },
+  { id: 'trainingBootcamp', label: 'Sales Execution Bootcamp', tag: 'Training' },
+];
+
+export const sourcingMatrixRows = [
+  { feature: 'Factory Vetting & Inspection', unt: 'On-site regional teams inspect factory ISO/GMP credentials', traditional: 'Unverified online listings with high risk of counterfeits' },
+  { feature: 'GDCE & Ministry Clearance', unt: '100% managed legal customs clearance, permits & certificates', traditional: 'Full legal burden falls on client; risk of customs holds' },
+  { feature: 'MOQ Flexibility', unt: 'Aggregated volume lets clients order from 500 units', traditional: 'Strict factory MOQs (5,000+ units) locking capital' },
+  { feature: 'Sample Validation', unt: 'Physical sample delivered to Phnom Penh before mass production', traditional: 'No pre-shipment check; risk of defective bulk shipment' },
+  { feature: 'Commercial Support', unt: 'Includes sales team training & digital branding ecosystem', traditional: 'Freight only; zero sales or marketing support' },
+];
+
 export const faqList = [
   {
     category: 'customs',

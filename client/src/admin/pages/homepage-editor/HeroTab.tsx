@@ -1,4 +1,3 @@
-import { ImageField } from '../../components/ImageField';
 import { Card, Field, SectionDivider } from '../../components/EditorShell';
 import { HeroStat, HomepageSection, SetField } from './types';
 
@@ -48,12 +47,6 @@ export function HeroTab({ hero, heroGlobe, stats, setHeroField, setGlobeField, u
                 </div>
               ))}
             </div>
-          </div>
-        </Card>
-        <Card>
-          <div className="space-y-4">
-            <SectionDivider label="Feature Image (Heritage section)" />
-            <ImageField label="Image" value={hero.feature_image ?? ''} onChange={setHeroField('feature_image')} />
           </div>
         </Card>
       </div>

@@ -30,6 +30,9 @@ const initialSaveState: SaveState = {
 };
 
 interface AdminStore {
+  /** Global admin preference. Persisted locally for the current browser. */
+  autoSaveEnabled: boolean;
+  setAutoSaveEnabled: (enabled: boolean) => void;
   // ── Editor data (keyed by section name) ──────────────────────────────
   /** Stores the latest data snapshot per editor section key */
   data: Record<string, any>;
@@ -65,6 +68,12 @@ export const useAdminStore = create<AdminStore>()(
     (set) => ({
       data: {},
       saveStates: {},
+      autoSaveEnabled: typeof window === 'undefined' ? true : localStorage.getItem('unt-admin-auto-save') !== 'false',
+
+      setAutoSaveEnabled: (enabled) => {
+        if (typeof window !== 'undefined') localStorage.setItem('unt-admin-auto-save', String(enabled));
+        set({ autoSaveEnabled: enabled }, false, `admin:autoSave:${enabled}`);
+      },
 
       setData: (key, data) =>
         set(

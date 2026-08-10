@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { api } from '../api';
 import { useAdminAuth } from '../hooks/useAdminAuth';
 import { useAutoSave } from '../hooks/useAutoSave';
-import { ImageField } from '../components/ImageField';
 import { EditorShell, Field, Card, SectionDivider } from '../components/EditorShell';
 
 export function HeroEditor() {
@@ -63,13 +62,6 @@ export function HeroEditor() {
               </div>
             </Card>
 
-            <Card>
-              <div className="space-y-4">
-                <SectionDivider label="Feature Image" />
-                <p className="text-xs text-slate-500">Used in the "Heritage & Efficiency" section on the homepage.</p>
-                <ImageField label="Image" value={content.feature_image ?? ''} onChange={set('feature_image')} />
-              </div>
-            </Card>
           </div>
 
           {/* Right column */}

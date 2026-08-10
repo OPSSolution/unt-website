@@ -106,6 +106,12 @@ function mergeLocalizedList(english: unknown, khmer: unknown, sharedKeys: string
   });
 }
 
+function mergeLocalizedStrings(english: unknown, khmer: unknown) {
+  if (!Array.isArray(english)) return Array.isArray(khmer) ? khmer : [];
+  const translated = Array.isArray(khmer) ? khmer : [];
+  return english.map((_, index) => typeof translated[index] === "string" ? translated[index] : "");
+}
+
 export function requestLanguage(req: Request): ContentLanguage {
   const value = req.headers["x-content-language"] ?? req.query.lang;
   return value === "km" ? "km" : "en";
@@ -187,6 +193,44 @@ export function localizedSection(data: unknown, language: ContentLanguage) {
       (english as Record<string, unknown>).product_benefits,
       (khmer as Record<string, unknown>).product_benefits,
     );
+  }
+  if ("sourcing_steps" in english) {
+    localized.sourcing_steps = mergeLocalizedList(
+      (english as Record<string, unknown>).sourcing_steps,
+      (khmer as Record<string, unknown>).sourcing_steps,
+      ["num"],
+    );
+  }
+  if ("hubs" in english) {
+    localized.hubs = mergeLocalizedList(
+      (english as Record<string, unknown>).hubs,
+      (khmer as Record<string, unknown>).hubs,
+      ["id", "flag", "flagUrl", "lat", "lon", "type"],
+    );
+  }
+  for (const [key, sharedKeys] of [
+    ["training_formats", ["id"]],
+    ["builder_services", ["id"]],
+    ["builder_freight_options", ["id"]],
+    ["builder_addons", ["id"]],
+    ["matrix_rows", []],
+    ["faq_items", ["category"]],
+  ] as Array<[string, string[]]>) {
+    if (key in english) {
+      localized[key] = mergeLocalizedList(
+        (english as Record<string, unknown>)[key],
+        (khmer as Record<string, unknown>)[key],
+        sharedKeys,
+      );
+    }
+  }
+  for (const key of ["training_curriculum", "training_ecosystem_items"]) {
+    if (key in english) {
+      localized[key] = mergeLocalizedStrings(
+        (english as Record<string, unknown>)[key],
+        (khmer as Record<string, unknown>)[key],
+      );
+    }
   }
   return replaceLegacyCompanyName(localized);
 }

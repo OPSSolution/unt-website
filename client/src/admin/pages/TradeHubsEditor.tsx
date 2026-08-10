@@ -6,6 +6,7 @@ import { useAutoSave } from '../hooks/useAutoSave';
 import { EditorShell, Field, Card, SectionDivider } from '../components/EditorShell';
 import { TRADE_HUBS, TradeHub } from '../../components/ThreeBackground';
 import { uploadToImageKit } from '../imageKitUpload';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 function FlagUpload({ value, onChange }: { value: string; onChange: (url: string) => void }) {
   const [uploading, setUploading] = useState(false);
@@ -57,31 +58,33 @@ function FlagUpload({ value, onChange }: { value: string; onChange: (url: string
 
 export function TradeHubsEditor() {
   const { token } = useAdminAuth();
+  const { language } = useLanguage();
   const [hubs, setHubs] = useState<TradeHub[]>(TRADE_HUBS);
   const [loading, setLoading] = useState(true);
 
   const { saving, saved, error, dirty, autoSaving, autoSaved, autoSaveError } = useAutoSave(
-    'trade_hubs',
+    `trade_hubs-${language}`,
     hubs,
     async (h) => {
       if (!token) return;
-      await api.updateHomepageSection('trade_hubs', { hubs: h }, token);
+      await api.updateHomepageSection('trade_hubs', { hubs: h }, token, language);
     },
     1500,
     !loading
   );
 
   useEffect(() => {
-    api.getHomepageSection('trade_hubs')
+    setLoading(true);
+    api.getHomepageSection('trade_hubs', language)
       .then((r) => { if (r?.data?.hubs) setHubs(r.data.hubs); })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
+  }, [language]);
 
   const handleSave = async () => {
     if (!token) return;
     try {
-      await api.updateHomepageSection('trade_hubs', { hubs }, token);
+      await api.updateHomepageSection('trade_hubs', { hubs }, token, language);
     } catch (e: any) { /* auto-save will show errors */ }
   };
 

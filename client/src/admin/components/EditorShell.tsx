@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Save, Loader, CheckCircle, CloudUpload, Cloud } from 'lucide-react';
+import { useAdminStore } from '../store/useAdminStore';
 
 export function Field({
   label, value, onChange, multiline = false, rows = 3,
@@ -61,6 +62,8 @@ export function EditorShell({
   const [manualSaving, setManualSaving] = useState(false);
   const [manualSaved, setManualSaved] = useState(false);
   const [manualError, setManualError] = useState('');
+  const autoSaveEnabled = useAdminStore((state) => state.autoSaveEnabled);
+  const setAutoSaveEnabled = useAdminStore((state) => state.setAutoSaveEnabled);
 
   const saveNow = async () => {
     setManualSaving(true);
@@ -68,6 +71,7 @@ export function EditorShell({
     setManualError('');
     try {
       await onSave();
+      window.dispatchEvent(new Event('unt-admin-manual-save-success'));
       setManualSaved(true);
       window.setTimeout(() => setManualSaved(false), 2000);
     } catch (saveError) {
@@ -88,45 +92,53 @@ export function EditorShell({
   return (
     <div className="w-full pb-8">
       {/* Header row */}
-      <div className="flex items-start justify-between gap-4 mb-2">
-        <div className="min-w-0">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 mb-2">
+        <div className="min-w-0 flex-1">
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">{title}</h1>
           <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-1">{description}</p>
-        </div>
-        <div className="flex items-center gap-3 shrink-0">
-          {/* Auto-save status indicator */}
           {(autoSaving || autoSaved || dirty || autoSaveError) && (
-            <div className="hidden sm:flex items-center gap-1.5 text-xs font-medium">
+            <div className="mt-2 flex min-h-5 items-center text-xs font-medium">
               {autoSaving ? (
-                <span className="flex items-center gap-1.5 text-sky-500">
-                  <CloudUpload className="w-4 h-4 animate-pulse" />
-                  Saving...
-                </span>
-              ) : autoSaved ? (
-                <span className="flex items-center gap-1.5 text-emerald-500">
-                  <CheckCircle className="w-4 h-4" />
-                  Auto-saved
-                </span>
+                <span className="flex items-center gap-1.5 text-sky-600 dark:text-sky-400"><CloudUpload className="w-3.5 h-3.5 animate-pulse" />Saving your changes...</span>
+              ) : autoSaved && autoSaveEnabled ? (
+                <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400"><CheckCircle className="w-3.5 h-3.5" />All changes saved automatically</span>
               ) : dirty ? (
-                <span className="flex items-center gap-1.5 text-slate-400">
-                  <Cloud className="w-4 h-4" />
-                  Unsaved changes
-                </span>
+                <span className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400"><Cloud className="w-3.5 h-3.5" />{autoSaveEnabled ? 'Changes will save shortly' : 'You have unsaved changes'}</span>
               ) : null}
             </div>
           )}
+        </div>
+        <div className="flex w-full sm:w-auto items-center gap-1.5 rounded-2xl border bg-white p-1.5 shadow-sm dark:border-white/10 dark:bg-slate-900/80 shrink-0">
+          <button
+            type="button"
+            role="switch"
+            aria-checked={autoSaveEnabled}
+            onClick={() => setAutoSaveEnabled(!autoSaveEnabled)}
+            className="flex flex-1 sm:flex-none items-center justify-between sm:justify-start gap-2.5 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-white/5"
+            title={autoSaveEnabled ? 'Changes save automatically after typing' : 'Changes save only when you click Save Changes'}
+          >
+            <span>Auto save</span>
+            <span className={`relative h-8 w-16 shrink-0 overflow-hidden rounded-full transition-colors duration-200 ${autoSaveEnabled
+              ? 'bg-emerald-600 shadow-sm shadow-emerald-600/25'
+              : 'bg-slate-200 dark:bg-slate-700'}`}>
+              <span className={`absolute inset-y-0 flex items-center text-[10px] font-black tracking-wide transition-all duration-200 ${autoSaveEnabled ? 'left-2.5 text-white' : 'right-2 text-slate-500 dark:text-slate-300'}`}>
+                {autoSaveEnabled ? 'ON' : 'OFF'}
+              </span>
+              <span className={`absolute left-0.5 top-0.5 h-7 w-7 rounded-full bg-white shadow-sm ring-1 ring-black/5 transition-transform duration-200 ease-out ${autoSaveEnabled ? 'translate-x-8' : 'translate-x-0'}`} />
+            </span>
+          </button>
+          <div className="h-7 w-px bg-slate-200 dark:bg-slate-700" />
           <button
             onClick={saveNow}
             disabled={saving || manualSaving}
-            className={`btn-shine flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-full font-bold text-sm transition-all shrink-0 shadow-lg disabled:opacity-60 ${
+            className={`btn-shine flex items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all shrink-0 disabled:opacity-60 ${
               saved || manualSaved
-                ? 'bg-emerald-500 text-white shadow-emerald-500/30'
-                : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/30'
+                ? 'bg-emerald-500 text-white'
+                : 'bg-slate-900 hover:bg-slate-800 text-white dark:bg-emerald-500 dark:hover:bg-emerald-400 dark:text-slate-950'
             }`}
           >
             {saved || manualSaved ? <CheckCircle className="w-4 h-4" /> : <Save className="w-4 h-4" />}
-            <span className="hidden sm:inline">{saving ? 'Saving...' : saved ? 'Saved ✓' : 'Save Changes'}</span>
-            <span className="sm:hidden">{saving ? '...' : saved ? '✓' : 'Save'}</span>
+            <span>{saving || manualSaving ? 'Saving...' : saved || manualSaved ? 'Saved' : 'Save changes'}</span>
           </button>
         </div>
       </div>

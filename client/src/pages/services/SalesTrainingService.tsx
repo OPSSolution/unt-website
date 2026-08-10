@@ -4,15 +4,19 @@ import {
 } from 'lucide-react';
 import { ScrollReveal } from '../../components/ScrollReveal';
 import { Card3D } from '../../components/Card3D';
+import { trainingCurriculum, trainingEcosystemItems, trainingFormats } from './servicesData';
 
 interface SalesTrainingServiceProps {
   onOpenQuoteModal: () => void;
   delay?: number;
-  content: Record<string, string>;
+  content: Record<string, any>;
 }
 
 export const SalesTrainingService: React.FC<SalesTrainingServiceProps> = ({ onOpenQuoteModal, delay = 0, content }) => {
-  const [selectedFormat, setSelectedFormat] = useState<string>('In-Person Workshops');
+  const [selectedFormat, setSelectedFormat] = useState<string>('in_person');
+  const formats = Array.isArray(content.training_formats) && content.training_formats.length ? content.training_formats : trainingFormats;
+  const curriculum = Array.isArray(content.training_curriculum) && content.training_curriculum.length ? content.training_curriculum : trainingCurriculum;
+  const ecosystemItems = Array.isArray(content.training_ecosystem_items) && content.training_ecosystem_items.length ? content.training_ecosystem_items : trainingEcosystemItems;
 
   return (
     <section className="space-y-6">
@@ -48,21 +52,17 @@ export const SalesTrainingService: React.FC<SalesTrainingServiceProps> = ({ onOp
         <div className="space-y-3">
           <h3 className="text-sm font-display font-bold text-slate-500 dark:text-emerald-300/70 flex items-center gap-2 uppercase tracking-wider">
             <Video className="w-3.5 h-3.5" />
-            Choose Your Delivery Format
+            {content.training_format_heading ?? 'Choose Your Delivery Format'}
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {[
-              { title: 'In-Person Workshops', icon: Users, desc: 'Interactive hands-on roleplay sessions at your Phnom Penh office or UNT venue.' },
-              { title: 'Live Interactive Online', icon: Video, desc: 'Flexible remote modules for distributed sales teams across Cambodian provinces.' },
-              { title: 'Hybrid Mentorship', icon: GraduationCap, desc: 'Combines intensive 1-day live bootcamp with 3 months of ongoing coaching.' },
-            ].map((fmt, idx) => {
-              const FmtIcon = fmt.icon;
-              const isSel = selectedFormat === fmt.title;
+            {formats.map((fmt: any, idx: number) => {
+              const FmtIcon = [Users, Video, GraduationCap][idx] ?? GraduationCap;
+              const isSel = selectedFormat === fmt.id;
               return (
                 <Card3D key={fmt.title} intensity={8}>
                   <button
-                    onClick={() => setSelectedFormat(fmt.title)}
+                    onClick={() => setSelectedFormat(fmt.id)}
                     style={{ animationDelay: `${idx * 80}ms` }}
                     className={`w-full p-5 rounded-2xl text-left border transition-all space-y-3 animate-fade-in ${isSel
                         ? 'bg-emerald-600 text-white dark:bg-emerald-500 dark:text-slate-950 border-emerald-500 shadow-lg scale-[1.02] font-bold'
@@ -73,7 +73,7 @@ export const SalesTrainingService: React.FC<SalesTrainingServiceProps> = ({ onOp
                       <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isSel ? 'bg-white/20 dark:bg-slate-950/20' : 'bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-300'}`}>
                         <FmtIcon className="w-4 h-4" />
                       </div>
-                      {isSel && <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-white/90 dark:bg-slate-950/80 text-emerald-900 dark:text-emerald-300">Active</span>}
+                      {isSel && <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-white/90 dark:bg-slate-950/80 text-emerald-900 dark:text-emerald-300">{content.training_active_label ?? 'Active'}</span>}
                     </div>
                     <h4 className="font-bold text-sm">{fmt.title}</h4>
                     <p className={`text-xs leading-relaxed ${isSel ? 'text-emerald-100 dark:text-slate-900/80' : 'text-slate-500 dark:text-slate-400'}`}>{fmt.desc}</p>
@@ -91,14 +91,10 @@ export const SalesTrainingService: React.FC<SalesTrainingServiceProps> = ({ onOp
           <Card3D intensity={5}>
             <div className="p-6 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 space-y-4 h-full">
               <h4 className="font-bold text-sm text-emerald-700 dark:text-emerald-300 flex items-center gap-2">
-                <Target className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Curriculum & Training Modules
+                <Target className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> {content.training_curriculum_heading ?? 'Curriculum & Training Modules'}
               </h4>
               <ul className="space-y-2.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium">
-                <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" /> Sales Fundamentals & High-Impact Mindset</li>
-                <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" /> Customer Psychology & Communication Scripts</li>
-                <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" /> Overcoming Tough Customer Objections</li>
-                <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" /> Strategic Negotiation & Closing Techniques</li>
-                <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" /> Client Retention & Re-order Follow-up</li>
+                {curriculum.map((item: string) => <li key={item} className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" /> {item}</li>)}
               </ul>
             </div>
           </Card3D>
@@ -107,15 +103,13 @@ export const SalesTrainingService: React.FC<SalesTrainingServiceProps> = ({ onOp
             <div className="p-6 rounded-2xl bg-emerald-50/80 dark:bg-slate-900/60 border border-emerald-200 dark:border-emerald-500/30 space-y-4 flex flex-col justify-between h-full">
               <div className="space-y-3">
                 <h4 className="font-bold text-sm text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
-                  <Building2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> The UNT Ecosystem Advantage
+                  <Building2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> {content.training_ecosystem_heading ?? 'The UNT Ecosystem Advantage'}
                 </h4>
                 <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-                  Unlike generic training courses, UNT provides an active commercial ecosystem so your sales team learns with real products, real supply chains, and digital branding assets:
+                  {content.training_ecosystem_desc ?? 'Unlike generic training courses, UNT provides an active commercial ecosystem so your sales team learns with real products, real supply chains, and digital branding assets:'}
                 </p>
                 <div className="space-y-2 text-xs font-semibold text-emerald-800 dark:text-emerald-300 pt-1">
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" /> Direct Access to Overseas Sourcing & Freight</div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" /> Production House for Digital Branding & Ads</div>
-                  <div className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" /> Active B2B & Retail Sales Team Frameworks</div>
+                  {ecosystemItems.map((item: string) => <div key={item} className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" /> {item}</div>)}
                 </div>
               </div>
 
@@ -123,7 +117,7 @@ export const SalesTrainingService: React.FC<SalesTrainingServiceProps> = ({ onOp
                 onClick={onOpenQuoteModal}
                 className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white dark:bg-gradient-to-r dark:from-emerald-400 dark:to-teal-400 dark:text-slate-950 font-black text-xs transition-all shadow-md hover:scale-[1.02] active:scale-95"
               >
-                Consult With Our Sales Director
+                {content.training_director_cta ?? 'Consult With Our Sales Director'}
               </button>
             </div>
           </Card3D>

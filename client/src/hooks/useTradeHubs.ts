@@ -8,6 +8,11 @@ const KHMER_DIGITS: Record<string, string> = {
   '៥': '5', '៦': '6', '៧': '7', '៨': '8', '៩': '9',
 };
 
+const KHMER_COUNTRY_NAMES: Record<string, string> = {
+  cambodia: 'កម្ពុជា', korea: 'កូរ៉េខាងត្បូង', japan: 'ជប៉ុន', china: 'ចិន',
+  vietnam: 'វៀតណាម', laos: 'ឡាវ', malaysia: 'ម៉ាឡេស៊ី',
+};
+
 function localizedNumber(value: unknown) {
   const normalized = String(value ?? '')
     .replace(/[០-៩]/g, (digit) => KHMER_DIGITS[digit] ?? digit)
@@ -24,6 +29,7 @@ export function useTradeHubs(): TradeHub[] {
     if (!Array.isArray(hubs) || hubs.length === 0) return language === 'en' ? TRADE_HUBS : [];
     return hubs.map((hub: any) => ({
       ...hub,
+      name: hub.name || (language === 'km' ? KHMER_COUNTRY_NAMES[hub.id] ?? '' : ''),
       lat: localizedNumber(hub.lat),
       lon: localizedNumber(hub.lon),
     })) as TradeHub[];

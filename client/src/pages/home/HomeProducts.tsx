@@ -21,9 +21,28 @@ export function HomeProducts({ hubs, products, content, onSelectOrigin, onNaviga
   const [animationKey, setAnimationKey] = useState(0);
   const allOrigins = countryId === 'all';
   const hubsKey = hubs.map((hub) => hub.id).join('|');
+  const normalizeOrigin = (value: string) => value
+    .normalize('NFKC')
+    .trim()
+    .toLowerCase()
+    .replace(/[-_]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .replace(/^republic of korea$|^korea,? south$|^korea$/g, 'south korea')
+    .replace(/^កូរ៉េខាងត្បូង$/g, 'south korea')
+    .replace(/^កម្ពុជា$/g, 'cambodia')
+    .replace(/^ជប៉ុន$/g, 'japan')
+    .replace(/^ចិន$/g, 'china')
+    .replace(/^វៀតណាម$/g, 'vietnam')
+    .replace(/^ឡាវ$/g, 'laos')
+    .replace(/^ម៉ាឡេស៊ី$/g, 'malaysia');
   const productsByCountry = useMemo(() => {
     const grouped: Record<string, Product[]> = { all: products.slice(0, 4) };
-    hubs.forEach((hub) => { grouped[hub.id] = products.filter((product) => product.origin.toLowerCase() === hub.name.toLowerCase()).slice(0, 4); });
+    hubs.forEach((hub) => {
+      const hubOrigins = new Set([normalizeOrigin(hub.name), normalizeOrigin(hub.id)]);
+      grouped[hub.id] = products
+        .filter((product) => hubOrigins.has(normalizeOrigin(product.origin)))
+        .slice(0, 4);
+    });
     return grouped;
   }, [products, hubsKey]);
 
@@ -33,16 +52,23 @@ export function HomeProducts({ hubs, products, content, onSelectOrigin, onNaviga
     onSelectOrigin(id);
   };
   const activeHub = hubs.find((hub) => hub.id === countryId);
-  const countryProducts = productsByCountry[countryId];
-  const displayedProducts = countryProducts?.length ? countryProducts : productsByCountry.all;
-  const visibleProducts = displayedProducts;
+  // Never substitute products from another country. An empty selected origin
+  // should show an empty state instead of a misleading all-origin result.
+  const visibleProducts = allOrigins ? productsByCountry.all : (productsByCountry[countryId] ?? []);
 
   return (
     <section className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 space-y-8">
       <ScrollReveal animation="up"><div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4"><div className="text-left"><span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase rounded-full">{content.badge ?? 'Wholesale & OEM Catalog'}</span><h2 className="text-3xl font-display font-bold text-slate-900 dark:text-white mt-2"><ScrollTextReveal text={content.heading ?? 'Featured Import Catalog Items'} mode="codepen-title" /></h2><p className="text-slate-600 dark:text-slate-300 text-sm mt-1">{content.subheading ?? 'Verified quality products ready for Cambodian distribution or private label rebranding.'}</p></div><button onClick={() => onNavigate('products')} className="px-5 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-bold flex items-center gap-2"><span>{content.cta ?? 'View Full Catalog'}</span><ArrowRight className="w-4 h-4" /></button></div></ScrollReveal>
       <div className="flex flex-wrap gap-2">{hubs.map((hub) => <button key={hub.id} onClick={() => selectCountry(hub.id)} className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold border ${!allOrigins && countryId === hub.id ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white dark:bg-slate-900 text-slate-500 border-slate-200 dark:border-slate-700'}`}><img src={hub.flagUrl} alt="" className="w-4 h-3 object-cover" />{hub.name}</button>)}<button onClick={() => selectCountry('all')} className={`px-3 py-1.5 rounded-full text-xs font-bold border ${allOrigins ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white dark:bg-slate-900 text-slate-500 border-slate-200 dark:border-slate-700'}`}>All Origins</button></div>
       <div key={`banner-${animationKey}`} className="flex items-center gap-3 p-4 rounded-2xl bg-gradient-to-r from-emerald-900/90 to-slate-900/90 border border-emerald-500/30 text-white">{activeHub ? <img src={activeHub.flagUrl} alt={`${activeHub.name} flag`} className="w-8 h-6 object-cover rounded" /> : <Globe className="w-8 h-8 text-emerald-400" />}<div><span className="text-emerald-400 font-bold text-xs">{allOrigins ? 'ALL ORIGINS — ASEAN Network' : `${activeHub?.name ?? 'Global'} ➜ Phnom Penh, Cambodia`}</span><div className="text-sm font-semibold">{allOrigins ? 'Full multi-origin product catalog' : `Featured: ${activeHub?.categories ?? 'All Categories'}`}</div></div></div>
-      <div key={`cards-${animationKey}`} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">{visibleProducts.map((product) => { const flagUrl = countryFlagUrl(product.origin, product.originFlag); return <Card3D key={product.id} intensity={12} onClick={() => onOpenProduct(product)}><article className="group cursor-pointer rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-md h-full"><div className="relative aspect-video bg-white dark:bg-slate-800"><img src={product.image} alt={product.name} className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform" /><div className="absolute top-3 left-3 px-2.5 py-1 bg-white/95 dark:bg-slate-900/95 text-xs font-bold rounded-lg flex items-center gap-1.5">{flagUrl ? <img src={flagUrl} alt={`${product.origin} flag`} className="w-5 h-3.5 object-cover rounded-sm" onError={(event) => { event.currentTarget.style.display = 'none'; }} /> : <span>{product.originFlag}</span>}<span>{product.origin}</span></div></div><div className="p-6 space-y-3 text-left"><div className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase">{product.category}</div><h3 className="text-lg font-display font-bold text-slate-900 dark:text-white">{product.name}</h3><p className="text-slate-600 dark:text-slate-300 text-xs line-clamp-2">{product.description}</p><div className="pt-2 flex justify-between text-xs border-t border-slate-100 dark:border-slate-800"><span>MOQ: <b>{product.moq}</b></span><span>{product.leadTime}</span></div></div></article></Card3D>; })}</div>
+      {visibleProducts.length > 0 ? (
+        <div key={`cards-${animationKey}`} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">{visibleProducts.map((product) => { const flagUrl = countryFlagUrl(product.origin, product.originFlag); return <Card3D key={product.id} intensity={12} onClick={() => onOpenProduct(product)}><article className="group cursor-pointer rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-md h-full"><div className="relative aspect-video bg-white dark:bg-slate-800"><img src={product.image} alt={product.name} className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform" /><div className="absolute top-3 left-3 px-2.5 py-1 bg-white/95 dark:bg-slate-900/95 text-xs font-bold rounded-lg flex items-center gap-1.5">{flagUrl ? <img src={flagUrl} alt={`${product.origin} flag`} className="w-5 h-3.5 object-cover rounded-sm" onError={(event) => { event.currentTarget.style.display = 'none'; }} /> : <span>{product.originFlag}</span>}<span>{product.origin}</span></div></div><div className="p-6 space-y-3 text-left"><div className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase">{product.category}</div><h3 className="text-lg font-display font-bold text-slate-900 dark:text-white">{product.name}</h3><p className="text-slate-600 dark:text-slate-300 text-xs line-clamp-2">{product.description}</p><div className="pt-2 flex justify-between text-xs border-t border-slate-100 dark:border-slate-800"><span>MOQ: <b>{product.moq}</b></span><span>{product.leadTime}</span></div></div></article></Card3D>; })}</div>
+      ) : (
+        <div key={`empty-${animationKey}`} className="rounded-3xl border border-dashed border-slate-300 bg-white/60 px-6 py-12 text-center dark:border-slate-700 dark:bg-slate-900/50">
+          <p className="text-sm font-bold text-slate-700 dark:text-slate-200">No products are currently listed for {activeHub?.name ?? 'this origin'}.</p>
+          <p className="mt-1 text-xs text-slate-500">Choose another origin or view the full wholesale catalog.</p>
+        </div>
+      )}
     </section>
   );
 }

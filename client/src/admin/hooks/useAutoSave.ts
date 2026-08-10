@@ -23,6 +23,7 @@ export function useAutoSave<T>(
 ) {
   // Zustand store integration
   const storeSaveStates = useAdminStore((s) => s.saveStates[sectionKey]);
+  const autoSaveEnabled = useAdminStore((s) => s.autoSaveEnabled);
   const setData = useAdminStore((s) => s.setData);
   const markDirty = useAdminStore((s) => s.markDirty);
   const setSaving = useAdminStore((s) => s.setSaving);
@@ -52,6 +53,15 @@ export function useAutoSave<T>(
   // Keep refs in sync
   useEffect(() => { saveFnRef.current = saveFn; }, [saveFn]);
   useEffect(() => { dataRef.current = data; }, [data]);
+
+  // Manual saves happen in EditorShell. Only the currently mounted editor
+  // receives this event, so its dirty state can be cleared without coupling
+  // every page's save handler to the store implementation.
+  useEffect(() => {
+    const acknowledgeManualSave = () => markSaved(sectionKey);
+    window.addEventListener('unt-admin-manual-save-success', acknowledgeManualSave);
+    return () => window.removeEventListener('unt-admin-manual-save-success', acknowledgeManualSave);
+  }, [sectionKey, markSaved]);
 
   // Mark as loaded once data is first provided (non-null) AND enabled is true.
   // Syncing data into the zustand store makes it visible in Redux DevTools.
@@ -107,10 +117,16 @@ export function useAutoSave<T>(
       prevSaveDataStrRef.current = dataStr;
       return;
     }
-    if (dataStr === prevSaveDataStrRef.current) return; // No actual change
-    prevSaveDataStrRef.current = dataStr;
+    const changed = dataStr !== prevSaveDataStrRef.current;
+    if (changed) {
+      prevSaveDataStrRef.current = dataStr;
+      markDirty(sectionKey, true);
+    }
 
-    markDirty(sectionKey, true);
+    // Keep tracking edits while disabled, but never send them until the user
+    // clicks Save Changes or turns auto-save back on.
+    if (!autoSaveEnabled) return;
+    if (!changed && !storeSaveStates?.dirty) return;
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
       doSave(data);
@@ -119,7 +135,7 @@ export function useAutoSave<T>(
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [data, enabled, delay, doSave, sectionKey, markDirty]);
+  }, [data, enabled, autoSaveEnabled, storeSaveStates?.dirty, delay, doSave, sectionKey, markDirty]);
 
   // Cancel pending work on unmount. Do not save here: a language switch
   // updates the global language before the old editor unmounts, which could
@@ -135,5 +151,5 @@ export function useAutoSave<T>(
   const error = storeSaveStates?.error ?? '';
   const dirty = storeSaveStates?.dirty ?? false;
 
-  return { saving, saved, error, dirty, autoSaving: saving, autoSaved: saved, autoSaveError: error };
+  return { saving, saved, error, dirty, autoSaving: saving, autoSaved: saved, autoSaveError: error, autoSaveEnabled };
 }

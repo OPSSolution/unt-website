@@ -62,18 +62,18 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ onOpenQuoteModal }) 
         )}
 
         {/* Custom Package Builder Configurator */}
-        <ServicePackageBuilder onOpenQuoteModal={onOpenQuoteModal} delay={320} />
+        <ServicePackageBuilder onOpenQuoteModal={onOpenQuoteModal} delay={320} content={content} />
 
         {/* Comparative Sourcing Matrix */}
-        <SourcingMatrix delay={400} />
+        <SourcingMatrix delay={400} content={content} />
 
         {/* Searchable FAQ Accordion */}
-        <ServicesFaqAccordion delay={480} />
+        <ServicesFaqAccordion delay={480} content={content} />
 
         {/* Sourcing Calculator */}
         <section className="pt-0">
           <ScrollReveal animation="scale" delay={560}>
-            <SourcingCalculator onOpenQuoteModal={onOpenQuoteModal} />
+            <SourcingCalculator onOpenQuoteModal={onOpenQuoteModal} content={content} />
           </ScrollReveal>
         </section>
 
