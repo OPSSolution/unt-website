@@ -44,6 +44,18 @@ test("training activity media remains available when Khmer text is empty", () =>
   assert.deepEqual(localizedSection(data, "km"), { heading: "", activities: [activity] });
 });
 
+test("new Khmer training activities survive localization and refresh", () => {
+  const englishActivity = { id: "activity-1", title: "Workshop", mediaUrl: "https://example.com/one.jpg" };
+  const khmerActivity = { id: "activity-2", title: "Khmer workshop", mediaUrl: "https://ik.imagekit.io/example/two.jpg" };
+  const data = {
+    en: { activities: [englishActivity] },
+    km: { activities: [khmerActivity] },
+  };
+  assert.deepEqual(localizedSection(data, "km"), {
+    activities: [englishActivity, khmerActivity],
+  });
+});
+
 test("upcoming training session structure is shared without leaking English into Khmer", () => {
   const session = { id: "session-1", title: "English title", format: "Hybrid", seatsLeft: 4, totalSeats: 25 };
   const data = { en: { upcoming_sessions: [session] }, km: { upcoming_sessions: [] } };

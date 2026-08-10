@@ -22,8 +22,10 @@ export const CodePenTitleReveal: React.FC<Props> = ({
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        // Bi-directional scroll animation (re-animates when scrolling up or down into view)
-        setIsRevealed(entry.isIntersecting);
+        if (entry.isIntersecting) {
+          setIsRevealed(true);
+          observer.unobserve(el);
+        }
       },
       { threshold: 0.12, rootMargin: '0px 0px -30px 0px' }
     );
@@ -38,15 +40,15 @@ export const CodePenTitleReveal: React.FC<Props> = ({
   return (
     <Component
       ref={containerRef as any}
-      className={`relative inline-flex flex-wrap justify-center gap-x-[0.25em] gap-y-1 overflow-hidden py-1 ${className}`}
+      className={`relative inline-flex flex-wrap justify-center gap-x-[0.25em] gap-y-1 py-1 ${className}`}
     >
       {words.map((word, i) => (
-        <span key={i} className="inline-block overflow-hidden py-0.5">
+        <span key={i} className="inline-block py-0.5">
           <span
-            className="inline-block transition-all duration-700 cubic-bezier(0.16, 1, 0.3, 1) transform-gpu will-change-transform"
+            className="inline-block transition-[transform,opacity] duration-500 ease-out transform-gpu"
             style={{
-              transitionDelay: `${isRevealed ? i * staggerMs : (words.length - 1 - i) * (staggerMs * 0.5)}ms`,
-              transform: isRevealed ? 'translateY(0%) rotateX(0deg)' : 'translateY(115%) rotateX(-20deg)',
+              transitionDelay: `${isRevealed ? i * Math.min(staggerMs, 35) : 0}ms`,
+              transform: isRevealed ? 'translateY(0)' : 'translateY(8px)',
               opacity: isRevealed ? 1 : 0,
             }}
           >
