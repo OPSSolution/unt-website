@@ -1,3 +1,4 @@
+import dns from "node:dns/promises";
 import nodemailer from "nodemailer";
 import type SMTPTransport from "nodemailer/lib/smtp-transport/index.js";
 import { env } from "./config/env.js";
@@ -6,8 +7,30 @@ export const emailConfigured = Boolean(
   env.SMTP_HOST && env.SMTP_USER && env.SMTP_PASS && env.QUOTE_EMAIL_TO,
 );
 
+// Nodemailer decides whether to even attempt IPv4 DNS resolution based on
+// whether the host machine *appears* to have an IPv4 network interface
+// (see nodemailer/lib/shared isFamilySupported). On some containerized hosts
+// (e.g. Render) that check comes back false even though IPv4 egress works
+// fine, so it resolves only AAAA records and tries to connect over IPv6,
+// which then fails with ENETUNREACH. Resolving the A record ourselves and
+// connecting to that literal IP sidesteps nodemailer's broken heuristic
+// entirely (it skips its own resolver whenever `host` is already an IP).
+async function resolveIPv4(hostname: string): Promise<string> {
+  try {
+    const [address] = await dns.resolve4(hostname);
+    return address ?? hostname;
+  } catch {
+    return hostname;
+  }
+}
+
+const smtpHost = env.SMTP_HOST ? await resolveIPv4(env.SMTP_HOST) : undefined;
+
 const smtpOptions = {
-  host: env.SMTP_HOST,
+  host: smtpHost,
+  // Required for TLS certificate validation and SNI since `host` above is a
+  // literal IP: nodemailer only sends the servername if told to explicitly.
+  servername: env.SMTP_HOST,
   port: env.SMTP_PORT,
   secure: env.SMTP_SECURE,
   auth: { user: env.SMTP_USER!, pass: env.SMTP_PASS! },
@@ -16,8 +39,6 @@ const smtpOptions = {
   socketTimeout: 10_000,
   pool: true,
   maxConnections: 3,
-  // @types/nodemailer doesn't declare `family`, but nodemailer forwards it to net.connect at runtime.
-  family: 4,
 } as SMTPTransport.Options;
 
 const transporter = emailConfigured ? nodemailer.createTransport(smtpOptions) : null;
