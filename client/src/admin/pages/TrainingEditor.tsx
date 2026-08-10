@@ -217,9 +217,10 @@ const EMPTY_ACTIVITY: ActivityItem = {
   location: '', date: '', participants: '', description: '', highlights: [], badge: '',
 };
 
-function ActivityManager({ value, onChange }: {
+function ActivityManager({ value, onChange, onCommit }: {
   value: ActivityItem[];
   onChange: (value: ActivityItem[]) => void;
+  onCommit: (value: ActivityItem[]) => void;
 }) {
   const activities = Array.isArray(value) ? value : [];
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
@@ -254,13 +255,18 @@ function ActivityManager({ value, onChange }: {
   };
   const saveActivity = () => {
     if (!draft.title.trim() || !draft.mediaUrl.trim()) return;
-    if (editingIndex === null) onChange([...activities, draft]);
-    else onChange(activities.map((activity, index) => index === editingIndex ? draft : activity));
+    const updatedActivities = editingIndex === null
+      ? [...activities, draft]
+      : activities.map((activity, index) => index === editingIndex ? draft : activity);
+    onChange(updatedActivities);
+    onCommit(updatedActivities);
     cancel();
   };
   const removeActivity = (index: number) => {
     if (!window.confirm(`Delete “${activities[index].title}”?`)) return;
-    onChange(activities.filter((_, itemIndex) => itemIndex !== index));
+    const updatedActivities = activities.filter((_, itemIndex) => itemIndex !== index);
+    onChange(updatedActivities);
+    onCommit(updatedActivities);
     cancel();
   };
 
@@ -432,6 +438,8 @@ export function TrainingEditor() {
   const [loading, setLoading] = useState(true);
   const [loadedLanguage, setLoadedLanguage] = useState<'en' | 'km' | null>(null);
   const [galleryRestoreMessage, setGalleryRestoreMessage] = useState('');
+  const [gallerySaveMessage, setGallerySaveMessage] = useState('');
+  const [gallerySaveError, setGallerySaveError] = useState('');
   const [scheduleSaveMessage, setScheduleSaveMessage] = useState('');
   const [scheduleSaveError, setScheduleSaveError] = useState('');
 
@@ -498,6 +506,37 @@ export function TrainingEditor() {
       setScheduleSaveMessage(language === 'km' ? 'វគ្គបណ្តុះបណ្តាលត្រូវបានរក្សាទុកដោយជោគជ័យ។' : 'Training session saved successfully.');
     } catch (error) {
       setScheduleSaveError(error instanceof Error ? error.message : 'Failed to save training session.');
+    }
+  };
+
+  const persistActivities = async (activities: ActivityItem[]) => {
+    const nextData = { ...data, activities };
+    setData(nextData);
+    setGallerySaveMessage('');
+    setGallerySaveError('');
+    if (!token) {
+      setGallerySaveError('Your admin session is unavailable. Please sign in again.');
+      return;
+    }
+
+    try {
+      await api.updateHomepageSection('training_page', nextData, token, language);
+      const verified = await api.getHomepageSection('training_page', language);
+      const verifiedActivities = restoreClientActivities(verified.data?.activities);
+      const savedById = new Map(verifiedActivities.map((activity) => [activity.id, activity]));
+      const missing = activities.find((activity) => {
+        const saved = savedById.get(activity.id);
+        return !saved || saved.title !== activity.title || saved.mediaUrl !== activity.mediaUrl;
+      });
+      if (missing || verifiedActivities.length !== activities.length) {
+        throw new Error(missing
+          ? `Activity "${missing.title}" was not confirmed by Supabase.`
+          : 'The saved Gallery activity count did not match Supabase.');
+      }
+      setData((current: any) => ({ ...current, activities: verifiedActivities }));
+      setGallerySaveMessage('Gallery activity saved and verified in Supabase. Media URL confirmed from ImageKit.');
+    } catch (saveError) {
+      setGallerySaveError(saveError instanceof Error ? saveError.message : 'Failed to save gallery activity.');
     }
   };
 
@@ -669,7 +708,13 @@ export function TrainingEditor() {
             <div className="mb-4 rounded-xl bg-sky-50 dark:bg-sky-500/10 border border-sky-200 dark:border-sky-500/20 px-4 py-3 text-xs text-sky-700 dark:text-sky-300">
               Gallery media comes only from activities added through Admin and saved in Supabase/ImageKit. <strong>Restore Gallery Text</strong> resets labels without deleting your uploaded activities.
             </div>
-            <ActivityManager value={data.activities ?? []} onChange={(activities) => setData((current: any) => ({ ...current, activities }))} />
+            {gallerySaveMessage && <div className="rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-3 text-xs font-medium text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300">{gallerySaveMessage}</div>}
+            {gallerySaveError && <div className="rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-xs font-medium text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300">{gallerySaveError}</div>}
+            <ActivityManager
+              value={data.activities ?? []}
+              onChange={(activities) => setData((current: any) => ({ ...current, activities }))}
+              onCommit={persistActivities}
+            />
           </Card>
         </div>
       )}

@@ -37,17 +37,31 @@ function blankLocalizedFields(value: Record<string, unknown>) {
 function mergeSharedActivities(english: unknown, khmer: unknown) {
   if (!Array.isArray(english)) return Array.isArray(khmer) ? khmer : [];
   if (!Array.isArray(khmer) || khmer.length === 0) return english;
-  const khmerById = new Map(khmer
+  const localizedItems = khmer.filter((item): item is Record<string, unknown> =>
+    !!item && typeof item === "object" && !Array.isArray(item));
+  const khmerById = new Map(localizedItems.map((item) => [item.id, item]));
+  const englishIds = new Set(english
     .filter((item): item is Record<string, unknown> => !!item && typeof item === "object" && !Array.isArray(item))
-    .map((item) => [item.id, item]));
-  return english.map((item, index) => {
+    .map((item) => item.id));
+  const merged = english.map((item, index) => {
     if (!item || typeof item !== "object" || Array.isArray(item)) return item;
     const base = item as Record<string, unknown>;
-    const translated = khmerById.get(base.id) ?? khmer[index];
+    const positional = khmer[index];
+    const translated = khmerById.get(base.id) ?? (
+      positional && typeof positional === "object" && !Array.isArray(positional) && !("id" in positional)
+        ? positional
+        : undefined
+    );
     return translated && typeof translated === "object" && !Array.isArray(translated)
       ? { ...base, ...translated }
       : base;
   });
+  // Activities created while editing Khmer have no English counterpart yet.
+  // Keep them instead of silently dropping them on the next read/refresh.
+  return [
+    ...merged,
+    ...localizedItems.filter((item) => !englishIds.has(item.id)),
+  ];
 }
 
 function mergeLocalizedSessions(english: unknown, khmer: unknown) {
