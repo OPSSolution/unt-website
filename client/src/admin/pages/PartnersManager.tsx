@@ -3,14 +3,16 @@ import { api } from '../api';
 import { useAdminAuth } from '../hooks/useAdminAuth';
 import { Plus, Pencil, Trash2, X, Save, Loader } from 'lucide-react';
 import { Field } from '../components/EditorShell';
+import { ImageField } from '../components/ImageField';
 
-const EMPTY = { name: '', category: '', country: '', logo_text: '' };
+const EMPTY = { name: '', category: '', country: '', logo_text: '', image: '' };
 
 const partnerDraft = (partner: any) => ({
   name: partner.name ?? '',
   category: partner.category ?? '',
   country: partner.country ?? '',
   logo_text: partner.logo_text ?? '',
+  image: partner.image ?? '',
 });
 
 function PartnerForm({ initial, onSave, onCancel, saving }: {
@@ -35,6 +37,12 @@ function PartnerForm({ initial, onSave, onCancel, saving }: {
         <Field label="Category" value={form.category} onChange={(v) => set('category', v)} />
         <Field label="Country" value={form.country} onChange={(v) => set('country', v)} />
       </div>
+      <ImageField
+        label="Partner Logo"
+        value={form.image}
+        onChange={(value) => set('image', value)}
+        folder="partner-logos"
+      />
       <div className="flex items-center gap-3 pt-1">
         <button onClick={() => onSave(form)} disabled={saving} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-sm font-bold transition-colors">
           <Save className="w-4 h-4" /><span>{saving ? 'Saving...' : 'Save Partner'}</span>
@@ -123,7 +131,7 @@ export function PartnersManager() {
                 <div className={`flex items-center gap-3 p-4 ${editingId === p.id ? 'ring-2 ring-inset ring-emerald-500/70' : ''}`}>
                   <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0 overflow-hidden">
                     {p.image
-                      ? <img src={p.image} alt={p.name} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                      ? <img src={p.image} alt={`${p.name} logo`} className="w-full h-full object-contain p-1" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                       : <span className="text-[10px] font-black text-slate-600 dark:text-slate-300 text-center leading-tight px-1">{p.logo_text}</span>
                     }
                   </div>

@@ -40,7 +40,7 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
     <div onClick={onClose} className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 lg:p-10 bg-slate-950/75 backdrop-blur-md animate-fade-in">
       <div 
         role="dialog" aria-modal="true" aria-label={article.title}
-        className="relative w-full max-w-5xl bg-white dark:bg-slate-900 border border-white/20 dark:border-slate-700 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden h-auto max-h-[94vh] sm:max-h-[88vh] flex flex-col text-slate-800 dark:text-slate-100 transition-colors duration-300"
+        className="relative w-full max-w-6xl bg-white dark:bg-slate-900 border border-white/20 dark:border-slate-700 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden h-auto max-h-[94vh] sm:max-h-[90vh] flex flex-col text-slate-800 dark:text-slate-100 transition-colors duration-300"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Bar */}
@@ -71,16 +71,16 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
         {/* Content Body */}
         <div className="overflow-y-auto flex-1 text-slate-800 dark:text-slate-100 text-left">
           {/* Editorial hero */}
-          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)] bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800">
-            <div className="relative min-h-60 sm:min-h-80 lg:min-h-[400px] lg:max-h-[460px] overflow-hidden bg-slate-200 dark:bg-black flex items-center justify-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 p-5 sm:p-7 lg:p-8 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 items-start">
+            <div className="relative aspect-square max-h-[500px] w-full overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex items-center justify-center">
               {article.image ? (
-                <img src={article.image} alt={article.title} className="absolute inset-0 w-full h-full object-contain" />
+                <img src={article.image} alt={article.title} className="absolute inset-0 w-full h-full object-contain p-5 sm:p-8" />
               ) : (
                 <span className="px-6 text-center text-sm font-medium text-slate-500 dark:text-slate-500">No cover image</span>
               )}
             </div>
 
-            <div className="p-6 sm:p-8 lg:p-10 flex flex-col justify-center bg-white dark:bg-slate-900">
+            <div className="flex flex-col justify-start bg-white dark:bg-slate-900 py-1 lg:py-2">
               <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
                 <span>{article.category}</span>
                 <span className="text-slate-300 dark:text-slate-600">•</span>
@@ -89,13 +89,19 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
                 </span>
               </div>
 
-              <h2 className="mt-4 text-2xl sm:text-3xl xl:text-4xl font-display font-black leading-[1.12] text-slate-900 dark:text-white">
+              <h2 className="mt-4 text-2xl sm:text-3xl font-display font-black leading-tight text-slate-900 dark:text-white">
                 {article.title}
               </h2>
 
               <p className="mt-5 text-sm sm:text-base leading-7 text-slate-600 dark:text-slate-300">
                 {article.excerpt}
               </p>
+
+              {article.content[0] && (
+                <p className="mt-4 text-sm sm:text-base leading-7 text-slate-600 dark:text-slate-300">
+                  {article.content[0]}
+                </p>
+              )}
 
               <div className="mt-7 pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
                 <div className="flex items-center space-x-3">
@@ -124,11 +130,11 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
           </div>
           </div>
 
-          <div className="max-w-3xl mx-auto p-6 sm:px-10 sm:py-12 space-y-9">
+          <div className="max-w-5xl mx-auto p-6 sm:px-10 sm:py-10 space-y-9">
           {/* Article Paragraphs */}
           <div className="space-y-6 text-slate-700 dark:text-slate-300 text-base sm:text-lg leading-8">
-            {article.content.map((paragraph, idx) => (
-              <p key={idx} className={idx === 0 ? 'text-lg sm:text-xl leading-8 text-slate-800 dark:text-slate-200 font-medium' : 'leading-8'}>{paragraph}</p>
+            {article.content.slice(1).map((paragraph, idx) => (
+              <p key={idx} className="leading-8">{paragraph}</p>
             ))}
           </div>
 

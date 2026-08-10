@@ -18,9 +18,10 @@ export default function App() {
 
   const { darkMode, setDarkMode } = useTheme();
 
-  // Scroll to top & trigger ScrollReveal when tab changes
+  // Reset immediately when the rendered page changes. Smooth scrolling here
+  // briefly exposes the new page at the previous page's scroll position.
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'auto' });
   }, [activeTab]);
 
   const handleOpenQuoteModal = (productName?: string) => {

@@ -67,6 +67,7 @@ export const homepageSectionSchema = z.record(z.string(), z.unknown());
 
 export const quoteSubmissionSchema = z.object({
   serviceType: z.string().trim().min(1).max(200),
+  productName: z.string().trim().min(1).max(300).optional(),
   productCategory: z.string().trim().min(1).max(300),
   originPreference: z.string().trim().min(1).max(200),
   estimatedVolume: z.string().trim().min(1).max(300),

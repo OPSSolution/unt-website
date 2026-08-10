@@ -160,6 +160,8 @@
 
 .marquee-track {
   animation: marquee 36s linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 .marquee-track:hover {
@@ -169,6 +171,12 @@
 .marquee-mask {
   mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
 }
 
 /* Hide scrollbars inside SwiperDeck track */
