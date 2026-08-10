@@ -21,6 +21,7 @@ export async function sendQuoteEmail(data: Record<string, unknown>, language: st
   const lines = [
     `Submitted language: ${language === "km" ? "Khmer" : "English"}`,
     `Service: ${data.serviceType ?? ""}`,
+    `Product: ${data.productName ?? "Not specified"}`,
     `Product category: ${data.productCategory ?? ""}`,
     `Preferred origin: ${data.originPreference ?? ""}`,
     `Estimated volume: ${data.estimatedVolume ?? ""}`,
@@ -32,7 +33,7 @@ export async function sendQuoteEmail(data: Record<string, unknown>, language: st
     "Requirements:",
     String(data.notes ?? ""),
   ];
-  await transporter.sendMail({
+  const adminEmail = transporter.sendMail({
     from: env.EMAIL_FROM ?? env.SMTP_USER,
     to: env.QUOTE_EMAIL_TO,
     replyTo: customerEmail,
@@ -65,13 +66,17 @@ export async function sendQuoteEmail(data: Record<string, unknown>, language: st
         "Thank you for contacting Unique Noble Trading Co., Ltd.",
       ];
 
-  await transporter.sendMail({
+  customerLines.splice(5, 0, `Product: ${String(data.productName ?? "Not specified")}`);
+
+  const customerConfirmation = transporter.sendMail({
     from: env.EMAIL_FROM ?? env.SMTP_USER,
     to: customerEmail,
     replyTo: env.QUOTE_EMAIL_TO,
     subject: isKhmer ? "យើងបានទទួលសំណើសុំតម្លៃរបស់អ្នក" : "We received your B2B quote request",
     text: customerLines.join("\n"),
   });
+
+  await Promise.all([adminEmail, customerConfirmation]);
 }
 
 export async function sendQuoteTestEmail() {

@@ -18,7 +18,7 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
   duration = 750,
   className = '',
   threshold = 0.1,
-  once = false, // Bi-directional scroll animations (scrolling UP & DOWN)
+  once = true,
   style = {},
 }) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -32,8 +32,6 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
         if (entry.isIntersecting) {
           el.classList.add('is-revealed');
           if (once) observer.unobserve(el);
-        } else if (!once) {
-          el.classList.remove('is-revealed');
         }
       },
       {
@@ -67,7 +65,7 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
   );
 };
 
-// Custom Hook to auto-observe elements with bi-directional scrolling
+// Custom hook for one-time viewport reveal animations.
 export const useScrollReveal = (dep?: any) => {
   useEffect(() => {
     const elements = document.querySelectorAll('.reveal-on-scroll');
@@ -78,8 +76,7 @@ export const useScrollReveal = (dep?: any) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('is-revealed');
-          } else {
-            entry.target.classList.remove('is-revealed');
+            observer.unobserve(entry.target);
           }
         });
       },

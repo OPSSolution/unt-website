@@ -20,6 +20,7 @@ interface QuoteModalProps {
 
 const initialFormData = (preselectedProduct?: string): QuoteRequestState => ({
   serviceType: preselectedProduct ? 'Wholesale Purchase' : 'Product Sourcing',
+  productName: preselectedProduct || undefined,
   productCategory: 'Food & Beverage',
   originPreference: 'Vietnam',
   estimatedVolume: '1,000 - 5,000 units',

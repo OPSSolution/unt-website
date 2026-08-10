@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, CheckCircle2, ShieldCheck, PackageCheck, Send } from 'lucide-react';
 import { Product } from '../types';
+import { countryFlagUrl } from '../pages/products/data';
 
 interface ProductDetailModalProps {
   product: Product | null;
@@ -16,6 +17,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   const [sampleRequested, setSampleRequested] = useState(false);
 
   if (!product) return null;
+  const flagUrl = countryFlagUrl(product.origin, product.originFlag);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-fade-in">
@@ -26,7 +28,9 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
         {/* Header */}
         <div className="bg-white dark:bg-slate-900 p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 text-slate-900 dark:text-white text-left">
           <div className="flex items-center space-x-3">
-            <span className="text-2xl">{product.originFlag}</span>
+            <span className="w-9 h-7 flex items-center justify-center overflow-hidden rounded border border-slate-200 dark:border-slate-700">
+              {flagUrl ? <img src={flagUrl} alt={`${product.origin} flag`} className="w-full h-full object-cover" /> : product.originFlag}
+            </span>
             <div>
               <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider block">
                 {product.origin} • {product.category}
@@ -50,7 +54,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               <img
                 src={product.image}
                 alt={product.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain p-4 bg-white dark:bg-slate-800"
               />
               {product.oemAvailable && (
                 <div className="absolute top-3 left-3 px-3 py-1 bg-emerald-600 text-white font-bold text-xs rounded-full shadow-md flex items-center space-x-1">

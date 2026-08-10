@@ -77,7 +77,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     setActiveTab(tab);
     setMobileMenuOpen(false);
     setActiveMegaMenu(null);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'auto' });
   };
   const openSearch = () => {
     setMobileMenuOpen(false);

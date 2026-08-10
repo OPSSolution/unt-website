@@ -65,7 +65,7 @@ function ProductCard({ product, isKm, onOpen, onQuote }: { product: Product; isK
       <article className="group rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-md hover:shadow-2xl hover:border-emerald-400 dark:hover:border-emerald-500 transition-all flex flex-col justify-between text-left h-full">
         <div>
           <button type="button" onClick={onOpen} className="relative aspect-video overflow-hidden bg-slate-100 dark:bg-slate-800 cursor-pointer w-full text-left">
-            <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            <img src={product.image} alt={product.name} className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-500" />
             {product.originFlag && <div className="absolute top-3 left-3 w-10 h-8 p-1 bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm flex items-center justify-center text-base leading-none overflow-hidden" title={product.origin}>
               <span aria-hidden="true">{product.originFlag}</span>
               {flagUrl && <img src={flagUrl} alt="" className="absolute inset-1 w-8 h-6 object-cover rounded" onError={(event) => { event.currentTarget.style.display = 'none'; }} />}

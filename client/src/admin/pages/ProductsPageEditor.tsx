@@ -50,8 +50,8 @@ export function ProductsPageEditor() {
       loading={loading}
       autoSaving={autoSaving} autoSaved={autoSaved} autoSaveError={autoSaveError} dirty={dirty}
     >
-      <Card className="max-w-2xl">
-        <div className="space-y-4">
+      <Card className="w-full min-h-[calc(100vh-14rem)]">
+        <div className="space-y-5 w-full">
           <SectionDivider label="Page Header" />
           <Field label="Badge" value={data.badge} onChange={set('badge')} />
           <Field label="Headline" value={data.headline} onChange={set('headline')} multiline />

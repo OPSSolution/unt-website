@@ -59,6 +59,7 @@ export interface PartnerLogo {
 
 export interface QuoteRequestState {
   serviceType: string;
+  productName?: string;
   productCategory: string;
   originPreference: string;
   estimatedVolume: string;
