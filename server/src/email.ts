@@ -15,6 +15,8 @@ const transporter = emailConfigured
       greetingTimeout: 10_000,
       socketTimeout: 10_000,
       family: 4,
+      pool: true,
+      maxConnections: 3,
     })
   : null;
 
@@ -36,14 +38,6 @@ export async function sendQuoteEmail(data: Record<string, unknown>, language: st
     "Requirements:",
     String(data.notes ?? ""),
   ];
-  await transporter.sendMail({
-    from: env.EMAIL_FROM ?? env.SMTP_USER,
-    to: env.QUOTE_EMAIL_TO,
-    replyTo: customerEmail,
-    subject: `New B2B quote request — ${String(data.companyName ?? data.contactName ?? "Website")}`,
-    text: lines.join("\n"),
-  });
-
   const isKhmer = language === "km";
   const customerLines = isKhmer
     ? [
@@ -69,13 +63,22 @@ export async function sendQuoteEmail(data: Record<string, unknown>, language: st
         "Thank you for contacting Unique Noble Trading Co., Ltd.",
       ];
 
-  await transporter.sendMail({
-    from: env.EMAIL_FROM ?? env.SMTP_USER,
-    to: customerEmail,
-    replyTo: env.QUOTE_EMAIL_TO,
-    subject: isKhmer ? "យើងបានទទួលសំណើសុំតម្លៃរបស់អ្នក" : "We received your B2B quote request",
-    text: customerLines.join("\n"),
-  });
+  await Promise.all([
+    transporter.sendMail({
+      from: env.EMAIL_FROM ?? env.SMTP_USER,
+      to: env.QUOTE_EMAIL_TO,
+      replyTo: customerEmail,
+      subject: `New B2B quote request — ${String(data.companyName ?? data.contactName ?? "Website")}`,
+      text: lines.join("\n"),
+    }),
+    transporter.sendMail({
+      from: env.EMAIL_FROM ?? env.SMTP_USER,
+      to: customerEmail,
+      replyTo: env.QUOTE_EMAIL_TO,
+      subject: isKhmer ? "យើងបានទទួលសំណើសុំតម្លៃរបស់អ្នក" : "We received your B2B quote request",
+      text: customerLines.join("\n"),
+    }),
+  ]);
 }
 
 export async function sendQuoteTestEmail() {
