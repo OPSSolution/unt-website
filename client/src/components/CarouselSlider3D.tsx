@@ -109,11 +109,10 @@ export const CarouselSlider3D: React.FC<CarouselSlider3DProps> = ({
               tabIndex={!isActive && Math.abs(offset) === 1 ? 0 : -1}
               aria-label={!isActive ? `Show slide ${idx + 1}` : undefined}
               aria-hidden={Math.abs(offset) > 1}
-              className={`absolute top-1/2 w-[84%] sm:w-full max-w-[320px] sm:max-w-[440px] md:max-w-[480px] lg:max-w-[500px] transition-all duration-700 ease-out ${
-                isActive
-                  ? 'pointer-events-auto cursor-default opacity-100 z-40'
-                  : 'pointer-events-auto cursor-pointer hover:opacity-100 z-20 opacity-50 hover:scale-95'
-              }`}
+              className={`absolute top-1/2 w-[84%] sm:w-full max-w-[320px] sm:max-w-[440px] md:max-w-[480px] lg:max-w-[500px] transition-all duration-700 ease-out ${isActive
+                ? 'pointer-events-auto cursor-default opacity-100 z-40'
+                : 'pointer-events-auto cursor-pointer hover:opacity-100 z-20 opacity-50 hover:scale-95'
+                }`}
               style={{
                 ...getSlideStyle(offset),
                 transformStyle: 'preserve-3d',
