@@ -59,15 +59,16 @@ export function HomeProducts({ hubs, products, content, onSelectOrigin, onNaviga
   return (
     <section className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 space-y-6 sm:space-y-8">
       <ScrollReveal animation="up"><div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4"><div className="text-left"><span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase rounded-full">{content.badge ?? 'Wholesale & OEM Catalog'}</span><h2 className="text-2xl sm:text-3xl font-display font-bold text-slate-900 dark:text-white mt-2"><ScrollTextReveal text={content.heading ?? 'Featured Import Catalog Items'} mode="codepen-title" /></h2><p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm mt-1">{content.subheading ?? 'Verified quality products ready for Cambodian distribution or private label rebranding.'}</p></div><button onClick={() => onNavigate('products')} className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center justify-center gap-2"><span>{content.cta ?? 'View Full Catalog'}</span><ArrowRight className="w-4 h-4" /></button></div></ScrollReveal>
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none max-w-full">
+      <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-2 scrollbar-none max-w-full">
         <button
           onClick={() => selectCountry('all')}
           title="All Origins — Global ASEAN Network"
           aria-label="All Origins"
-          className={`flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full text-xs font-bold border shrink-0 transition-all ${allOrigins ? 'bg-emerald-600 text-white border-emerald-600 shadow-md scale-105' : 'bg-white dark:bg-slate-900 text-slate-500 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'
+          className={`flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-full text-xs font-bold border whitespace-nowrap shrink-0 transition-all ${allOrigins ? 'bg-emerald-600 text-white border-emerald-600 shadow-md scale-105' : 'bg-white dark:bg-slate-900 text-slate-500 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'
             }`}
         >
           <Globe className={`w-4 h-4 shrink-0 ${allOrigins ? 'text-white' : 'text-emerald-500'}`} />
+          <span className="hidden sm:inline">All Origins</span>
         </button>
         {hubs.map((hub) => (
           <button
@@ -75,10 +76,11 @@ export function HomeProducts({ hubs, products, content, onSelectOrigin, onNaviga
             onClick={() => selectCountry(hub.id)}
             title={hub.name}
             aria-label={hub.name}
-            className={`flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full text-xs font-bold border shrink-0 transition-all ${!allOrigins && countryId === hub.id ? 'bg-emerald-600 text-white border-emerald-600 shadow-md scale-105' : 'bg-white dark:bg-slate-900 text-slate-500 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'
+            className={`flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-full text-xs font-bold border whitespace-nowrap shrink-0 transition-all ${!allOrigins && countryId === hub.id ? 'bg-emerald-600 text-white border-emerald-600 shadow-md scale-105' : 'bg-white dark:bg-slate-900 text-slate-500 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
           >
-            <img src={hub.flagUrl} alt={hub.name} className="w-5 h-3.5 object-cover rounded-sm shrink-0" />
+            <img src={hub.flagUrl} alt={hub.name} className="w-4.5 h-3 sm:w-4 sm:h-3 object-cover rounded-sm shrink-0" />
+            <span className="hidden sm:inline">{hub.name}</span>
           </button>
         ))}
       </div>

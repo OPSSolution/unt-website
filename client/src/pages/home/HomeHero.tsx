@@ -45,10 +45,12 @@ export function HomeHero({ hero, stats, hubs, selectedOrigin, globeLabel, globeA
             <div className="inline-flex items-center justify-center gap-1.5 sm:gap-2 p-1.5 sm:p-2 rounded-full bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-lg max-w-full overflow-x-auto scrollbar-none">
               <OriginButton active={selectedOrigin === 'all'} onClick={() => onSelectOrigin('all')} title={globeAllLabel || (language === 'km' ? 'បណ្តាញអាស៊ានសកល' : 'Global ASEAN Network')}>
                 <Globe className={`w-4 h-4 shrink-0 ${selectedOrigin === 'all' ? 'text-white' : 'text-emerald-500'}`} />
+                <span className="hidden sm:inline whitespace-nowrap">{globeAllLabel || (language === 'km' ? 'បណ្តាញអាស៊ានសកល' : 'Global ASEAN Network')}</span>
               </OriginButton>
               {hubs.map((hub) => (
                 <OriginButton key={hub.id} active={selectedOrigin === hub.id} onClick={() => onSelectOrigin(hub.id)} title={hub.name}>
-                  <img src={hub.flagUrl} alt={hub.name} className="w-5 h-3.5 object-cover rounded-sm shrink-0" />
+                  <img src={hub.flagUrl} alt={hub.name} className="w-4.5 h-3 sm:w-4 sm:h-3 object-cover rounded-sm shrink-0" />
+                  <span className="hidden sm:inline whitespace-nowrap">{hub.name}</span>
                 </OriginButton>
               ))}
             </div>
@@ -68,8 +70,8 @@ function OriginButton({ active, onClick, title, children }: { active: boolean; o
       onClick={onClick}
       title={title}
       aria-label={title}
-      className={`h-9 w-9 sm:h-10 sm:w-10 rounded-full text-xs font-bold transition-all flex items-center justify-center shrink-0 ${active
-          ? 'bg-emerald-600 text-white shadow-md scale-110 ring-2 ring-emerald-400/50'
+      className={`h-8 sm:h-10 px-2.5 sm:px-4 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 ${active
+          ? 'bg-emerald-600 text-white shadow-md scale-105 ring-2 ring-emerald-400/50'
           : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
         }`}
     >
