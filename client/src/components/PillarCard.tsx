@@ -98,11 +98,10 @@ export const PillarCard: React.FC<PillarCardProps> = ({
                   e.stopPropagation();
                   setActiveTab('overview');
                 }}
-                className={`px-2.5 sm:px-3 py-1 rounded-full transition-all duration-300 flex items-center space-x-1 cursor-pointer ${
-                  activeTab === 'overview'
+                className={`px-2.5 sm:px-3 py-1 rounded-full transition-all duration-300 flex items-center space-x-1 cursor-pointer ${activeTab === 'overview'
                     ? 'bg-emerald-600 text-white shadow-sm'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
+                  }`}
               >
                 <Info className="w-3 h-3" />
                 <span>{isKm ? 'ទិដ្ឋភាពទូទៅ' : 'Overview'}</span>
@@ -113,11 +112,10 @@ export const PillarCard: React.FC<PillarCardProps> = ({
                   e.stopPropagation();
                   setActiveTab('metrics');
                 }}
-                className={`px-2.5 sm:px-3 py-1 rounded-full transition-all duration-300 flex items-center space-x-1 cursor-pointer ${
-                  activeTab === 'metrics'
+                className={`px-2.5 sm:px-3 py-1 rounded-full transition-all duration-300 flex items-center space-x-1 cursor-pointer ${activeTab === 'metrics'
                     ? 'bg-emerald-600 text-white shadow-sm'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
+                  }`}
               >
                 <BarChart3 className="w-3 h-3" />
                 <span>{isKm ? 'បច្ចេកទេស' : 'Specs'}</span>
@@ -129,11 +127,10 @@ export const PillarCard: React.FC<PillarCardProps> = ({
           <div className="min-h-[140px] sm:min-h-[160px] relative">
             {/* Overview Tab Content */}
             <div
-              className={`transition-all duration-400 space-y-3 sm:space-y-4 ${
-                activeTab === 'overview'
+              className={`transition-all duration-400 space-y-3 sm:space-y-4 ${activeTab === 'overview'
                   ? 'opacity-100 translate-y-0 relative z-10'
                   : 'opacity-0 translate-y-2 absolute inset-0 pointer-events-none'
-              }`}
+                }`}
             >
               <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed">
                 {description}
@@ -150,11 +147,10 @@ export const PillarCard: React.FC<PillarCardProps> = ({
 
             {/* Specs / Metrics Tab Content */}
             <div
-              className={`transition-all duration-400 space-y-3 ${
-                activeTab === 'metrics'
+              className={`transition-all duration-400 space-y-3 ${activeTab === 'metrics'
                   ? 'opacity-100 translate-y-0 relative z-10'
                   : 'opacity-0 translate-y-2 absolute inset-0 pointer-events-none'
-              }`}
+                }`}
             >
               <div className="text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
                 {isKm ? 'ចំណុចលេចធ្លោនៃការប្រតិបត្តិការ' : 'Operational Highlights'}
