@@ -132,7 +132,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </svg>
           </div>
 
-          <div className="relative z-10 flex items-center justify-between gap-1 sm:gap-2.5 pl-2 sm:pl-5 pr-2 sm:pr-4">
+          <div className="relative z-10 flex items-center justify-between gap-1.5 sm:gap-2.5 pl-4 sm:pl-7 xl:pl-8 pr-4 sm:pr-7 xl:pr-8">
             {/* ─── 2. Logo & Brand Tagline ─── */}
             <button
               onClick={() => handleNavigate('home')}
@@ -163,7 +163,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <button
                       key={link.id}
                       onClick={() => handleNavigate(link.id)}
-                      className={`relative px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-300 flex items-center gap-1.5 group select-none ${isActive
+                      className={`relative px-3.5 py-1.5 rounded-full text-xs 2xl:text-sm font-bold transition-all duration-300 flex items-center gap-1.5 group select-none ${isActive
                         ? 'text-white dark:text-slate-950 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 shadow-md shadow-emerald-500/30 scale-[1.02]'
                         : 'text-slate-700 hover:text-emerald-700 dark:text-slate-300 dark:hover:text-emerald-300 hover:bg-emerald-500/10 hover:scale-105 active:scale-95'
                         }`}
@@ -187,7 +187,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </nav>
 
             {/* ─── 4. Right Quick Tools Cluster & Gradient CTA Button ─── */}
-            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
               {/* Language Switcher */}
               <div className="hidden sm:block shrink-0">
                 <LanguageToggle compact />
@@ -197,22 +197,26 @@ export const Navbar: React.FC<NavbarProps> = ({
               {setDarkMode && (
                 <button
                   onClick={() => setDarkMode((prev) => !prev)}
-                  className="hidden 2xl:flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-emerald-700 border border-slate-200/80 transition-all dark:bg-white/10 dark:hover:bg-white/15 dark:text-slate-200 dark:hover:text-emerald-300 dark:border-white/10 hover:scale-110 active:scale-95 shrink-0"
+                  className="hidden 2xl:flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200/80 transition-all group dark:bg-white/10 dark:hover:bg-white/15 dark:border-white/10 hover:scale-110 active:scale-95 shrink-0"
                   title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
                   aria-label="Toggle theme"
                 >
-                  {darkMode ? <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 animate-spin-slow" /> : <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600" />}
+                  {darkMode ? (
+                    <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 animate-spin-slow" />
+                  ) : (
+                    <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-700 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors" />
+                  )}
                 </button>
               )}
 
               {/* AI Catalog Search Button */}
               <button
                 onClick={openSearch}
-                className="hidden 2xl:flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-emerald-700 border border-slate-200/80 transition-all group relative dark:bg-white/10 dark:hover:bg-white/15 dark:text-slate-200 dark:hover:text-emerald-300 dark:border-white/10 hover:scale-110 active:scale-95 shrink-0"
+                className="hidden 2xl:flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200/80 transition-all group relative dark:bg-white/10 dark:hover:bg-white/15 dark:border-white/10 hover:scale-110 active:scale-95 shrink-0"
                 title="AI Search Catalog (Ctrl+K)"
                 aria-label="AI search catalog"
               >
-                <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:scale-110 transition-transform text-slate-700 dark:text-slate-200" />
+                <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-700 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 group-hover:scale-110 transition-all" />
                 <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-emerald-500 text-white ai-scan-icon">
                   <ScanLine className="w-2 h-2 sm:w-2.5 sm:h-2.5" />
                 </span>
@@ -221,17 +225,17 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* Sourcing Estimator Button */}
               <button
                 onClick={openCalculator}
-                className="hidden 2xl:flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-emerald-700 border border-slate-200/80 transition-all group dark:bg-white/10 dark:hover:bg-white/15 dark:text-slate-200 dark:hover:text-emerald-300 dark:border-white/10 hover:scale-110 active:scale-95 shrink-0"
+                className="hidden 2xl:flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200/80 transition-all group dark:bg-white/10 dark:hover:bg-white/15 dark:border-white/10 hover:scale-110 active:scale-95 shrink-0"
                 title="Sourcing Estimator"
                 aria-label="Open sourcing estimator"
               >
-                <Calculator className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:rotate-12 transition-transform text-slate-700 dark:text-slate-200" />
+                <Calculator className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-700 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 group-hover:rotate-12 transition-all" />
               </button>
 
               {/* Primary Emerald Gradient Pill CTA Button ("Get a Quote") */}
               <button
                 onClick={onOpenQuoteModal}
-                className="btn-shine inline-flex items-center gap-1 sm:gap-1.5 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-500 text-white text-xs sm:text-sm font-extrabold shadow-md shadow-emerald-600/25 hover:shadow-emerald-600/40 transition-all hover:scale-[1.04] active:scale-[0.98] whitespace-nowrap shrink-0 group"
+                className="btn-shine inline-flex items-center gap-1 sm:gap-1.5 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-500 text-white text-xs 2xl:text-sm font-bold shadow-md shadow-emerald-600/25 hover:shadow-emerald-600/40 transition-all hover:scale-[1.04] active:scale-[0.98] whitespace-nowrap shrink-0 group mr-0.5 sm:mr-1"
               >
                 <span>{navbarContent.navbar_cta || (isKm ? 'ស្នើសុំតម្លៃ' : 'Get a Quote')}</span>
                 <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 group-hover:translate-x-1 transition-transform" />
