@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { PageTab, Product, Article } from '../types';
 import {
   Menu, X, ArrowRight, Search, Calculator,
   Sun, Moon, ScanLine, Home, Users, Briefcase,
-  Package, GraduationCap, BookOpen, Mail, Sparkles, Globe
+  Package, GraduationCap, BookOpen, Mail, Sparkles, Globe, MoreHorizontal, ChevronDown
 } from 'lucide-react';
 import { QuickSearchModal } from './QuickSearchModal';
 import { QuickCalcModal } from './QuickCalcModal';
@@ -48,14 +48,26 @@ export const Navbar: React.FC<NavbarProps> = ({
   onSelectArticle,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [toolsMenuOpen, setToolsMenuOpen] = useState(false);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [calcModalOpen, setCalcModalOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const toolsMenuRef = useRef<HTMLDivElement>(null);
   const navbarContent = useHomepageSections().navbar_footer ?? {};
   const { language } = useLanguage();
   const isKm = language === 'km';
   const companyName = isKm ? 'Unique Noble Trading Co., Ltd.' : navbarContent.company_name ?? 'Unique Noble Trading Co., Ltd.';
   const companyTagline = isKm ? 'Trusted Global Trading Partner' : navbarContent.company_tagline ?? 'Trusted Global Trading Partner';
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (toolsMenuRef.current && !toolsMenuRef.current.contains(e.target as Node)) {
+        setToolsMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Compress on scroll
   useEffect(() => {
@@ -156,7 +168,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             {/* ─── 3. Interactive Futuristic Navigation Pill System ─── */}
             <nav className="hidden xl:flex items-center">
-              <div className="relative inline-flex items-center gap-0.5 p-1 rounded-full bg-slate-100/90 dark:bg-white/5 border border-slate-200/70 dark:border-white/10 shadow-[inset_0_1px_3px_rgba(0,0,0,0.05)] backdrop-blur-xl">
+              <div className="relative inline-flex items-center gap-1 p-1.5 rounded-full bg-slate-100/90 dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800 shadow-[inset_0_1px_3px_rgba(0,0,0,0.05)] backdrop-blur-xl">
                 {NAV_LINKS.map((link) => {
                   const isActive = activeTab === link.id;
                   const Icon = link.icon;
@@ -165,23 +177,18 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <button
                       key={link.id}
                       onClick={() => handleNavigate(link.id)}
-                      className={`relative px-2.5 py-1.5 rounded-full text-xs font-bold transition-all duration-300 flex items-center gap-1 group select-none ${isActive
-                        ? 'text-white dark:text-slate-950 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 shadow-md shadow-emerald-500/30 scale-[1.02]'
-                        : 'text-slate-700 hover:text-emerald-700 dark:text-slate-300 dark:hover:text-emerald-300 hover:bg-emerald-500/10 hover:scale-105 active:scale-95'
+                      className={`relative px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 flex items-center gap-1.5 group select-none ${isActive
+                        ? 'text-white bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 shadow-md shadow-emerald-600/30 scale-[1.02] border border-emerald-500/50'
+                        : 'text-slate-800 dark:text-slate-100 bg-transparent hover:bg-slate-200/80 dark:hover:bg-slate-800/80 hover:text-emerald-700 dark:hover:text-emerald-300'
                         }`}
                     >
                       <Icon
-                        className={`w-3.5 h-3.5 shrink-0 transition-all duration-300 ${isActive
-                          ? 'text-white dark:text-slate-950 scale-110'
-                          : 'text-slate-400 dark:text-slate-500 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 group-hover:scale-125 group-hover:rotate-6'
+                        className={`w-3.5 h-3.5 shrink-0 transition-all duration-200 ${isActive
+                          ? 'text-white scale-110'
+                          : 'text-emerald-600 dark:text-emerald-400 group-hover:scale-110'
                           }`}
                       />
                       <span className="whitespace-nowrap">{isKm ? link.labelKhmer ?? link.label : link.label}</span>
-
-                      {/* Active Glowing Pulse Indicator */}
-                      {isActive && (
-                        <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-emerald-300 dark:bg-emerald-950 shadow-sm" />
-                      )}
                     </button>
                   );
                 })}
@@ -195,11 +202,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <LanguageToggle compact />
               </div>
 
-              {/* Theme Toggle */}
+              {/* Theme Toggle (Shown on widescreen 2xl:) */}
               {setDarkMode && (
                 <button
                   onClick={() => setDarkMode((prev) => !prev)}
-                  className="hidden 2xl:flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200/80 transition-all group dark:bg-white/10 dark:hover:bg-white/15 dark:border-white/10 hover:scale-110 active:scale-95 shrink-0"
+                  className="hidden 2xl:flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200/80 transition-all group dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 hover:scale-110 active:scale-95 shrink-0"
                   title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
                   aria-label="Toggle theme"
                 >
@@ -211,10 +218,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               )}
 
-              {/* AI Catalog Search Button */}
+              {/* AI Catalog Search Button (Shown on widescreen 2xl:) */}
               <button
                 onClick={openSearch}
-                className="hidden 2xl:flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200/80 transition-all group relative dark:bg-white/10 dark:hover:bg-white/15 dark:border-white/10 hover:scale-110 active:scale-95 shrink-0"
+                className="hidden 2xl:flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200/80 transition-all group relative dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 hover:scale-110 active:scale-95 shrink-0"
                 title="AI Search Catalog (Ctrl+K)"
                 aria-label="AI search catalog"
               >
@@ -224,17 +231,85 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </span>
               </button>
 
-              {/* Sourcing Estimator Button */}
+              {/* Sourcing Estimator Button (Shown on widescreen 2xl:) */}
               <button
                 onClick={openCalculator}
-                className="hidden 2xl:flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200/80 transition-all group dark:bg-white/10 dark:hover:bg-white/15 dark:border-white/10 hover:scale-110 active:scale-95 shrink-0"
+                className="hidden 2xl:flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200/80 transition-all group dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 hover:scale-110 active:scale-95 shrink-0"
                 title="Sourcing Estimator"
                 aria-label="Open sourcing estimator"
               >
                 <Calculator className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-700 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 group-hover:rotate-12 transition-all" />
               </button>
 
-              {/* Primary Emerald Gradient Pill CTA Button ("Get a Quote") */}
+              {/* Quick Tools Dropdown Menu Button (SHOWN AT 150% ZOOM / xl: to 2xl:) */}
+              <div className="hidden xl:flex 2xl:hidden relative" ref={toolsMenuRef}>
+                <button
+                  onClick={() => setToolsMenuOpen(!toolsMenuOpen)}
+                  className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
+                    toolsMenuOpen
+                      ? 'bg-emerald-600 text-white shadow-md scale-105'
+                      : 'bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 border border-slate-200/80 dark:border-slate-700/80 hover:scale-105 active:scale-95'
+                  }`}
+                  title="Quick Tools Menu"
+                  aria-label="Quick tools menu"
+                >
+                  {toolsMenuOpen ? <X className="w-4.5 h-4.5 text-white" /> : <Menu className="w-4.5 h-4.5" />}
+                </button>
+
+                {/* Floating Glass Dropdown Menu */}
+                {toolsMenuOpen && (
+                  <div className="absolute right-0 top-full mt-3.5 w-60 p-2.5 rounded-2xl bg-white/95 dark:bg-[#0c1017]/95 backdrop-blur-2xl border border-slate-200/90 dark:border-slate-800/90 shadow-2xl shadow-slate-900/20 dark:shadow-emerald-950/40 z-50 animate-in fade-in slide-in-from-top-2 duration-200 space-y-1.5">
+                    <div className="px-3 py-1.5 text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+                      <span>{isKm ? 'ឧបករណ៍រហ័ស' : 'Quick Actions'}</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    </div>
+
+                    <button
+                      onClick={() => { openSearch(); setToolsMenuOpen(false); }}
+                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all text-left group"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform shrink-0">
+                        <Search className="w-4 h-4" />
+                      </div>
+                      <span className="truncate">{isKm ? 'ស្វែងរកទំនិញ' : 'AI Catalog Search'}</span>
+                    </button>
+
+                    <button
+                      onClick={() => { openCalculator(); setToolsMenuOpen(false); }}
+                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all text-left group"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform shrink-0">
+                        <Calculator className="w-4 h-4" />
+                      </div>
+                      <span className="truncate">{isKm ? 'ការប៉ាន់ស្មានតម្លៃ' : 'Sourcing Estimator'}</span>
+                    </button>
+
+                    {setDarkMode && (
+                      <button
+                        onClick={() => { setDarkMode((prev) => !prev); setToolsMenuOpen(false); }}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all text-left group"
+                      >
+                        <div className="w-7 h-7 rounded-lg bg-amber-500/10 dark:bg-slate-800 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                          {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-600 dark:text-slate-400" />}
+                        </div>
+                        <span className="truncate">{isKm ? (darkMode ? 'ប្តូរទៅផ្ទៃភ្លឺ' : 'ប្តូរទៅផ្ទៃងងឹត') : (darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode')}</span>
+                      </button>
+                    )}
+
+                    <div className="pt-1.5 border-t border-slate-100 dark:border-slate-800/80">
+                      <button
+                        onClick={() => { onOpenQuoteModal(); setToolsMenuOpen(false); }}
+                        className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-500 text-white shadow-md shadow-emerald-600/25 hover:scale-[1.02] active:scale-[0.98] transition-all group"
+                      >
+                        <span>{navbarContent.navbar_cta || (isKm ? 'ស្នើសុំតម្លៃ' : 'Get a Quote')}</span>
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Primary Emerald Gradient Pill CTA Button ("Get a Quote") (Shown on widescreen 2xl:) */}
               <button
                 onClick={onOpenQuoteModal}
                 className="btn-shine hidden 2xl:inline-flex items-center gap-1 px-3.5 py-2 rounded-full bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-md shadow-emerald-600/25 hover:shadow-emerald-600/40 transition-all hover:scale-[1.04] active:scale-[0.98] whitespace-nowrap shrink-0 group"
@@ -243,13 +318,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 group-hover:translate-x-1 transition-transform" />
               </button>
 
-              {/* Mobile / Tablet Hamburger Button */}
+              {/* Mobile / Tablet Hamburger Button (Shown on screen width < 1280px) */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="xl:hidden flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-white/10 dark:text-white/80 dark:hover:bg-white/15 transition-colors shrink-0"
+                className="xl:hidden flex items-center justify-center w-9 h-9 rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 border border-slate-200/80 dark:border-slate-700/80 transition-colors shrink-0"
                 aria-label="Toggle mobile navigation"
               >
-                {mobileMenuOpen ? <X className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 dark:text-emerald-400" /> : <Menu className="w-4 h-4 sm:w-5 sm:h-5" />}
+                {mobileMenuOpen ? <X className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> : <Menu className="w-5 h-5" />}
               </button>
             </div>
           </div>
