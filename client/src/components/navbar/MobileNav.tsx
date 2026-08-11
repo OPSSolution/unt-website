@@ -19,7 +19,7 @@ export function MobileNav({ activeTab, darkMode, ctaLabel, setDarkMode, onNaviga
   const isKm = language === 'km';
 
   return (
-    <div className="lg:hidden px-4 pt-2 pb-5 space-y-3 animate-in slide-in-from-top duration-200 text-left">
+    <div className="xl:hidden px-4 pt-2 pb-5 space-y-3 animate-in slide-in-from-top duration-200 text-left max-h-[80vh] overflow-y-auto">
       <div className="flex items-center justify-between border-t border-slate-200 dark:border-white/10 pt-3">
         <span className="text-xs font-bold text-slate-500 dark:text-slate-400">{isKm ? 'ភាសា' : 'Language'}</span>
         <LanguageToggle />
