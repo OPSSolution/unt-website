@@ -19,13 +19,13 @@ const getSlideOffset = (index: number, activeIndex: number, total: number) => {
 
 const getSlideStyle = (offset: number): React.CSSProperties => {
   if (offset === 0) {
-    return { transform: 'translate3d(0, -50%, 100px) scale(1.05) rotateY(0deg)', opacity: 1, zIndex: 40 };
+    return { transform: 'translate3d(0, -50%, 100px) scale(1) rotateY(0deg)', opacity: 1, zIndex: 40 };
   }
   if (offset === -1) {
-    return { transform: 'translate3d(-64%, -50%, -40px) scale(0.88) rotateY(15deg)', opacity: 0.9, zIndex: 20, filter: 'contrast(1.05)' };
+    return { transform: 'translate3d(-58%, -50%, -40px) scale(0.85) rotateY(18deg)', opacity: 0.65, zIndex: 20, filter: 'brightness(0.85)' };
   }
   if (offset === 1) {
-    return { transform: 'translate3d(64%, -50%, -40px) scale(0.88) rotateY(-15deg)', opacity: 0.9, zIndex: 20, filter: 'contrast(1.05)' };
+    return { transform: 'translate3d(58%, -50%, -40px) scale(0.85) rotateY(-18deg)', opacity: 0.65, zIndex: 20, filter: 'brightness(0.85)' };
   }
   return { transform: 'translate3d(0, -50%, -200px) scale(0.7) rotateY(0deg)', opacity: 0, zIndex: 0 };
 };
@@ -89,7 +89,7 @@ export const CarouselSlider3D: React.FC<CarouselSlider3DProps> = ({
       <div
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        className="relative min-h-[560px] sm:min-h-[580px] md:min-h-[600px] flex items-center justify-center perspective-1200 overflow-visible py-4 touch-pan-y"
+        className="relative min-h-[500px] sm:min-h-[580px] md:min-h-[600px] flex items-center justify-center perspective-1200 overflow-hidden py-4 touch-pan-y"
       >
         {slides.map((child, idx) => {
           const offset = getSlideOffset(idx, activeIndex, total);
@@ -109,10 +109,11 @@ export const CarouselSlider3D: React.FC<CarouselSlider3DProps> = ({
               tabIndex={!isActive && Math.abs(offset) === 1 ? 0 : -1}
               aria-label={!isActive ? `Show slide ${idx + 1}` : undefined}
               aria-hidden={Math.abs(offset) > 1}
-              className={`absolute top-1/2 w-full max-w-[380px] sm:max-w-[440px] md:max-w-[480px] lg:max-w-[500px] transition-all duration-700 ease-out ${isActive
-                  ? 'pointer-events-auto cursor-default'
-                  : 'pointer-events-auto cursor-pointer hover:opacity-90'
-                }`}
+              className={`absolute top-1/2 w-[84%] sm:w-full max-w-[320px] sm:max-w-[440px] md:max-w-[480px] lg:max-w-[500px] transition-all duration-700 ease-out ${
+                isActive
+                  ? 'pointer-events-auto cursor-default opacity-100 z-40'
+                  : 'pointer-events-auto cursor-pointer hover:opacity-100 z-20 opacity-50 hover:scale-95'
+              }`}
               style={{
                 ...getSlideStyle(offset),
                 transformStyle: 'preserve-3d',
