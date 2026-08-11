@@ -56,7 +56,7 @@ export const CodePenScrollReveal: React.FC<Props> = ({
     };
   }, []);
 
-  const words = text.split(' ');
+  const words = (text || '').split(' ');
 
   return (
     <Component

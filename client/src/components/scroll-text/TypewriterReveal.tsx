@@ -20,12 +20,14 @@ export const TypewriterReveal: React.FC<Props> = ({
   const [typedIndex, setTypedIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const safeText = text || '';
+
   useEffect(() => {
     if (!autoRun) return;
 
     const timer = setInterval(() => {
       if (!isDeleting) {
-        if (typedIndex < text.length) {
+        if (typedIndex < safeText.length) {
           setTypedIndex((prev) => prev + 1);
         } else if (loop) {
           setTimeout(() => setIsDeleting(true), 2500);

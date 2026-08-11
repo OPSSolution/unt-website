@@ -68,7 +68,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }
                 <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">{nb.company_legal ?? 'Unique Noble Trading Co., Ltd.'}</span>
               </div>
             </div>
-            
+
             <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed max-w-sm">
               {nb.footer_desc ?? 'Empowering Asian commerce by bridging world-class manufacturers with retail networks, wholesale distributors, and emerging brands in Cambodia and ASEAN.'}
             </p>

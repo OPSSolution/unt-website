@@ -16,7 +16,7 @@ export const WaveReveal: React.FC<Props> = ({
   as: Component = 'div',
 }) => {
   const [activeWordIdx, setActiveWordIdx] = useState(0);
-  const words = text.split(' ');
+  const words = (text || '').split(' ');
 
   useEffect(() => {
     if (!autoRun) return;
