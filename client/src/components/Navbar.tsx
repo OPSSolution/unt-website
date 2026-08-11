@@ -136,25 +136,25 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* ─── 2. Logo & Brand Tagline ─── */}
             <button
               onClick={() => handleNavigate('home')}
-              className="flex items-center space-x-2 text-left group focus:outline-none shrink-0"
+              className="flex items-center space-x-1.5 sm:space-x-2.5 text-left group focus:outline-none shrink-0 max-w-[140px] sm:max-w-[220px] lg:max-w-[160px] xl:max-w-[210px] 2xl:max-w-none"
               aria-label="Unique Noble Trading Home"
             >
               <div className="relative w-8 h-8 sm:w-9 sm:h-9 xl:w-10 xl:h-10 rounded-xl bg-white border border-emerald-200/80 shadow-sm p-1 group-hover:scale-105 transition-all duration-300 shrink-0">
                 <img src="/images/logos/image.png" alt="UNT Logo" className="w-full h-full object-contain" />
               </div>
               <div className="hidden sm:block shrink-0 min-w-0">
-                <div className="font-display font-black text-xs xl:text-xs 2xl:text-sm tracking-tight text-slate-900 dark:text-white leading-none whitespace-nowrap">
-                  Unique Noble Trading Co., Ltd.
+                <div className="font-display font-black text-xs xl:text-xs 2xl:text-sm tracking-tight text-slate-900 dark:text-white leading-none truncate">
+                  {navbarContent.company_name ?? 'Unique Noble Trading Co., Ltd.'}
                 </div>
-                <div className="hidden xl:block text-[10px] text-emerald-600 dark:text-emerald-400 font-bold tracking-wide mt-1 leading-none whitespace-nowrap">
-                  Trusted Global Trading Partner
+                <div className="hidden 2xl:block text-[10px] text-emerald-600 dark:text-emerald-400 font-bold tracking-wide mt-1 leading-none truncate">
+                  {navbarContent.company_tagline ?? (isKm ? 'ដៃគូពាណិជ្ជកម្មពិភពលោកដែលលោកអ្នកទុកចិត្ត' : 'Trusted Global Trading Partner')}
                 </div>
               </div>
             </button>
 
             {/* ─── 3. Interactive Futuristic Navigation Pill System ─── */}
-            <nav className="hidden lg:flex items-center min-w-0 shrink">
-              <div className="relative inline-flex items-center gap-0.5 xl:gap-1 2xl:gap-1.5 p-1 2xl:p-1.5 rounded-full bg-slate-100/90 dark:bg-white/5 border border-slate-200/70 dark:border-white/10 shadow-[inset_0_1px_3px_rgba(0,0,0,0.05)] backdrop-blur-xl">
+            <nav className="hidden xl:flex items-center">
+              <div className="relative inline-flex items-center gap-1 xl:gap-1.5 p-1.5 rounded-full bg-slate-100/90 dark:bg-white/5 border border-slate-200/70 dark:border-white/10 shadow-[inset_0_1px_3px_rgba(0,0,0,0.05)] backdrop-blur-xl">
                 {NAV_LINKS.map((link) => {
                   const isActive = activeTab === link.id;
                   const Icon = link.icon;
@@ -163,15 +163,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <button
                       key={link.id}
                       onClick={() => handleNavigate(link.id)}
-                      className={`relative px-2 xl:px-3 2xl:px-3.5 py-1 xl:py-1.5 rounded-full text-[11px] xl:text-xs font-bold transition-all duration-300 flex items-center gap-1 group select-none whitespace-nowrap shrink-0 ${isActive
-                          ? 'text-white dark:text-slate-950 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 shadow-md shadow-emerald-500/30 scale-[1.02]'
-                          : 'text-slate-700 hover:text-emerald-700 dark:text-slate-300 dark:hover:text-emerald-300 hover:bg-emerald-500/10 hover:scale-105 active:scale-95'
+                      className={`relative px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-300 flex items-center gap-1.5 group select-none ${isActive
+                        ? 'text-white dark:text-slate-950 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 shadow-md shadow-emerald-500/30 scale-[1.02]'
+                        : 'text-slate-700 hover:text-emerald-700 dark:text-slate-300 dark:hover:text-emerald-300 hover:bg-emerald-500/10 hover:scale-105 active:scale-95'
                         }`}
                     >
                       <Icon
-                        className={`hidden xl:inline-block w-3 h-3 xl:w-3.5 xl:h-3.5 transition-all duration-300 ${isActive
-                            ? 'text-white dark:text-slate-950 scale-110'
-                            : 'text-slate-400 dark:text-slate-500 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 group-hover:scale-125 group-hover:rotate-6'
+                        className={`w-3.5 h-3.5 transition-all duration-300 ${isActive
+                          ? 'text-white dark:text-slate-950 scale-110'
+                          : 'text-slate-400 dark:text-slate-500 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 group-hover:scale-125 group-hover:rotate-6'
                           }`}
                       />
                       <span className="whitespace-nowrap">{isKm ? link.labelKhmer ?? link.label : link.label}</span>
@@ -187,7 +187,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </nav>
 
             {/* ─── 4. Right Quick Tools Cluster & Gradient CTA Button ─── */}
-            <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
               {/* Language Switcher */}
               <div className="hidden sm:block shrink-0">
                 <LanguageToggle compact />
@@ -231,7 +231,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* Primary Emerald Gradient Pill CTA Button ("Get a Quote") */}
               <button
                 onClick={onOpenQuoteModal}
-                className="btn-shine inline-flex items-center gap-1 sm:gap-1.5 px-3.5 sm:px-4 2xl:px-5 py-1.5 sm:py-2 2xl:py-2.5 rounded-full bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-500 text-white text-xs sm:text-xs 2xl:text-sm font-extrabold shadow-md shadow-emerald-600/25 hover:shadow-emerald-600/40 transition-all hover:scale-[1.04] active:scale-[0.98] whitespace-nowrap shrink-0 group"
+                className="btn-shine inline-flex items-center gap-1 sm:gap-1.5 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-500 text-white text-xs sm:text-sm font-extrabold shadow-md shadow-emerald-600/25 hover:shadow-emerald-600/40 transition-all hover:scale-[1.04] active:scale-[0.98] whitespace-nowrap shrink-0 group"
               >
                 <span>{navbarContent.navbar_cta || (isKm ? 'ស្នើសុំតម្លៃ' : 'Get a Quote')}</span>
                 <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 group-hover:translate-x-1 transition-transform" />
@@ -240,7 +240,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* Mobile / Tablet Hamburger Button */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-white/10 dark:text-white/80 dark:hover:bg-white/15 transition-colors shrink-0"
+                className="xl:hidden flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-white/10 dark:text-white/80 dark:hover:bg-white/15 transition-colors shrink-0"
                 aria-label="Toggle mobile navigation"
               >
                 {mobileMenuOpen ? <X className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 dark:text-emerald-400" /> : <Menu className="w-4 h-4 sm:w-5 sm:h-5" />}
@@ -262,23 +262,23 @@ export const Navbar: React.FC<NavbarProps> = ({
             />
           )}
         </div>
-      </header>
+        </header>
 
-      {/* Modals */}
-      <QuickSearchModal
-        isOpen={searchModalOpen}
-        onClose={() => setSearchModalOpen(false)}
-        onSelectProduct={onSelectProduct}
-        onSelectArticle={onSelectArticle}
-        onOpenQuoteModal={onOpenQuoteModal}
-        onOpenCalcModal={() => setCalcModalOpen(true)}
-        onSelectTab={handleNavigate}
-      />
-      <QuickCalcModal
-        isOpen={calcModalOpen}
-        onClose={() => setCalcModalOpen(false)}
-        onOpenQuoteModal={onOpenQuoteModal}
-      />
-    </>
-  );
+        {/* Modals */}
+        <QuickSearchModal
+          isOpen={searchModalOpen}
+          onClose={() => setSearchModalOpen(false)}
+          onSelectProduct={onSelectProduct}
+          onSelectArticle={onSelectArticle}
+          onOpenQuoteModal={onOpenQuoteModal}
+          onOpenCalcModal={() => setCalcModalOpen(true)}
+          onSelectTab={handleNavigate}
+        />
+        <QuickCalcModal
+          isOpen={calcModalOpen}
+          onClose={() => setCalcModalOpen(false)}
+          onOpenQuoteModal={onOpenQuoteModal}
+        />
+      </>
+      );
 };
