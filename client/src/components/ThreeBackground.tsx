@@ -155,9 +155,8 @@ export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ activeOrigin =
   return (
     <div
       ref={mountRef}
-      className={`absolute inset-0 pointer-events-none z-0 overflow-hidden cursor-grab active:cursor-grabbing transition-opacity duration-700 ${
-        isReady ? 'opacity-100' : 'opacity-0'
-      }`}
+      className={`absolute inset-0 pointer-events-none z-0 overflow-hidden cursor-grab active:cursor-grabbing transition-opacity duration-700 ${isReady ? 'opacity-100' : 'opacity-0'
+        }`}
       aria-hidden="true"
     />
   );

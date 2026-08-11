@@ -117,7 +117,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }
               </div>
               <div className="flex items-center space-x-2">
                 <Phone className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                <span>012 771 774 (+855 12 771 774)</span>
+                <span>+855 12 771 774</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Mail className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
