@@ -171,26 +171,26 @@ function SingleCounterCard({ stat, index, isVisible, onQuote }: { stat: HeroStat
     <div
       key={key}
       onClick={onQuote}
-      className="group relative p-6 rounded-2xl bg-white/85 dark:bg-slate-900/85 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800/90 shadow-lg hover:shadow-2xl hover:border-emerald-500/60 dark:hover:border-emerald-500/60 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden flex flex-col justify-between cursor-pointer"
+      className="group relative p-4 sm:p-6 rounded-2xl bg-white/85 dark:bg-slate-900/85 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800/90 shadow-lg hover:shadow-2xl hover:border-emerald-500/60 dark:hover:border-emerald-500/60 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden flex flex-col justify-between cursor-pointer"
     >
       {/* Top glow beam */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500/0 via-emerald-500/80 to-emerald-500/0 opacity-60 group-hover:opacity-100 transition-opacity" />
       <div className="absolute -right-8 -bottom-8 w-24 h-24 bg-emerald-500/5 rounded-full blur-xl group-hover:bg-emerald-500/15 transition-all duration-500 pointer-events-none" />
 
       {/* Card Header */}
-      <div className="flex items-center justify-between gap-2 mb-3">
-        <div className="p-2.5 rounded-xl bg-slate-100/80 dark:bg-slate-800/80 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-950/60 group-hover:scale-105 transition-all duration-300 border border-slate-200/50 dark:border-slate-700/50">
+      <div className="flex items-center justify-between gap-2 mb-2 sm:mb-3">
+        <div className="p-2 sm:p-2.5 rounded-xl bg-slate-100/80 dark:bg-slate-800/80 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-950/60 group-hover:scale-105 transition-all duration-300 border border-slate-200/50 dark:border-slate-700/50">
           {icon}
         </div>
-        <div className="flex items-center gap-1.5">
-          <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300">
+        <div className="flex items-center gap-1 sm:gap-1.5">
+          <span className="inline-flex items-center gap-1 text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             {badgeText}
           </span>
           <button
             onClick={handleReplay}
             title="Replay counter animation"
-            className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-emerald-500 transition-opacity p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800"
+            className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-emerald-500 transition-opacity p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 hidden sm:block"
           >
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
@@ -199,27 +199,27 @@ function SingleCounterCard({ stat, index, isVisible, onQuote }: { stat: HeroStat
 
       {/* Main Counter Display */}
       <div className="my-1">
-        <div className="text-3xl sm:text-4xl xl:text-4xl font-display font-black text-slate-900 dark:text-white tracking-tight flex items-baseline gap-0.5">
+        <div className="text-2xl sm:text-4xl xl:text-4xl font-display font-black text-slate-900 dark:text-white tracking-tight flex items-baseline gap-0.5">
           {parsed.isNumeric ? (
             <>
-              {parsed.prefix && <span className="text-emerald-600 dark:text-emerald-400 text-2xl sm:text-3xl font-extrabold">{parsed.prefix}</span>}
+              {parsed.prefix && <span className="text-emerald-600 dark:text-emerald-400 text-xl sm:text-3xl font-extrabold">{parsed.prefix}</span>}
               <span className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 dark:from-white dark:via-emerald-100 dark:to-slate-100 bg-clip-text text-transparent">
                 {animatedValueStr}
               </span>
-              {parsed.suffix && <span className="text-emerald-600 dark:text-emerald-400 text-2xl sm:text-3xl font-extrabold ml-0.5">{parsed.suffix}</span>}
+              {parsed.suffix && <span className="text-emerald-600 dark:text-emerald-400 text-xl sm:text-3xl font-extrabold ml-0.5">{parsed.suffix}</span>}
             </>
           ) : (
-            <span className="text-2xl sm:text-3xl font-bold text-emerald-600 dark:text-emerald-400">{stat.value}</span>
+            <span className="text-xl sm:text-3xl font-bold text-emerald-600 dark:text-emerald-400">{stat.value}</span>
           )}
         </div>
       </div>
 
       {/* Stat Footer Label & Quick Action */}
-      <div className="mt-2 flex items-center justify-between">
-        <p className="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 leading-snug">
+      <div className="mt-1 sm:mt-2 flex items-center justify-between gap-1">
+        <p className="text-[11px] sm:text-sm font-semibold text-slate-600 dark:text-slate-300 leading-tight sm:leading-snug line-clamp-2">
           {stat.label}
         </p>
-        <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+        <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 group-hover:text-emerald-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
       </div>
     </div>
   );
@@ -280,12 +280,12 @@ export function HeroAnimatedCounter({ stats, className = '', onQuote }: HeroAnim
   return (
     <div ref={containerRef} className={`w-full ${className}`}>
       {/* Productivity & Sales Control Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-6 bg-slate-100/70 dark:bg-slate-900/70 p-2 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 backdrop-blur-md">
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 mb-6 bg-slate-100/70 dark:bg-slate-900/70 p-2 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 backdrop-blur-md">
         {/* Toggle Mode Buttons */}
-        <div className="flex items-center gap-1.5 bg-white dark:bg-slate-950 p-1 rounded-xl shadow-inner border border-slate-200/50 dark:border-slate-800/50 w-full sm:w-auto overflow-x-auto">
+        <div className="flex items-center gap-1 bg-white dark:bg-slate-950 p-1 rounded-xl shadow-inner border border-slate-200/50 dark:border-slate-800/50 w-full lg:w-auto overflow-x-auto scrollbar-none">
           <button
             onClick={() => setMetricMode('sourcing')}
-            className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${
+            className={`flex-1 lg:flex-initial px-2.5 sm:px-3.5 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${
               metricMode === 'sourcing'
                 ? 'bg-emerald-600 text-white shadow-md'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -297,7 +297,7 @@ export function HeroAnimatedCounter({ stats, className = '', onQuote }: HeroAnim
 
           <button
             onClick={() => setMetricMode('productivity')}
-            className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${
+            className={`flex-1 lg:flex-initial px-2.5 sm:px-3.5 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${
               metricMode === 'productivity'
                 ? 'bg-emerald-600 text-white shadow-md'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -309,7 +309,7 @@ export function HeroAnimatedCounter({ stats, className = '', onQuote }: HeroAnim
 
           <button
             onClick={() => setMetricMode('sales')}
-            className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${
+            className={`flex-1 lg:flex-initial px-2.5 sm:px-3.5 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${
               metricMode === 'sales'
                 ? 'bg-emerald-600 text-white shadow-md'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -321,23 +321,23 @@ export function HeroAnimatedCounter({ stats, className = '', onQuote }: HeroAnim
         </div>
 
         {/* Live Activity Stream Ticker */}
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/80 dark:bg-slate-950/80 border border-emerald-500/20 text-xs font-medium w-full sm:w-auto justify-between sm:justify-start">
-          <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/80 dark:bg-slate-950/80 border border-emerald-500/20 text-xs font-medium w-full lg:w-auto justify-between lg:justify-start overflow-hidden">
+          <div className="flex items-center gap-1.5 shrink-0">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
             </span>
-            <span className="font-bold text-emerald-600 dark:text-emerald-400 text-[11px] uppercase tracking-wider">Live</span>
+            <span className="font-bold text-emerald-600 dark:text-emerald-400 text-[10px] sm:text-[11px] uppercase tracking-wider">Live</span>
           </div>
-          <span className="text-slate-700 dark:text-slate-300 truncate max-w-[260px] sm:max-w-[320px]">
+          <span className="text-slate-700 dark:text-slate-300 truncate max-w-[200px] sm:max-w-[320px] text-[11px] sm:text-xs">
             {currentActivity.text}
           </span>
-          <span className="text-[10px] text-slate-400 font-mono ml-1">{currentActivity.time}</span>
+          <span className="text-[10px] text-slate-400 font-mono shrink-0">{currentActivity.time}</span>
         </div>
       </div>
 
       {/* Stats Counter Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
         {activeStats.map((stat, idx) => (
           <SingleCounterCard key={stat.id || idx} stat={stat} index={idx} isVisible={isVisible} onQuote={onQuote} />
         ))}

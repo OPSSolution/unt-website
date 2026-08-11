@@ -268,23 +268,23 @@ export const Navbar: React.FC<NavbarProps> = ({
             />
           )}
         </div>
-        </header>
+      </header>
 
-        {/* Modals */}
-        <QuickSearchModal
-          isOpen={searchModalOpen}
-          onClose={() => setSearchModalOpen(false)}
-          onSelectProduct={onSelectProduct}
-          onSelectArticle={onSelectArticle}
-          onOpenQuoteModal={onOpenQuoteModal}
-          onOpenCalcModal={() => setCalcModalOpen(true)}
-          onSelectTab={handleNavigate}
-        />
-        <QuickCalcModal
-          isOpen={calcModalOpen}
-          onClose={() => setCalcModalOpen(false)}
-          onOpenQuoteModal={onOpenQuoteModal}
-        />
-      </>
-      );
+      {/* Modals */}
+      <QuickSearchModal
+        isOpen={searchModalOpen}
+        onClose={() => setSearchModalOpen(false)}
+        onSelectProduct={onSelectProduct}
+        onSelectArticle={onSelectArticle}
+        onOpenQuoteModal={onOpenQuoteModal}
+        onOpenCalcModal={() => setCalcModalOpen(true)}
+        onSelectTab={handleNavigate}
+      />
+      <QuickCalcModal
+        isOpen={calcModalOpen}
+        onClose={() => setCalcModalOpen(false)}
+        onOpenQuoteModal={onOpenQuoteModal}
+      />
+    </>
+  );
 };

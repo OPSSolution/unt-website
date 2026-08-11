@@ -5,8 +5,10 @@ import { HUBS } from './data';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 export function AboutHubs({ content, onOpenQuoteModal }: { content: Record<string, any>; onOpenQuoteModal: () => void }) {
-  const hubs = Array.isArray(content.network_hubs) ? content.network_hubs : [];
   const { language } = useLanguage();
+  const isKm = language === 'km';
+  const hubs = Array.isArray(content.network_hubs) && content.network_hubs.length > 0 ? content.network_hubs : HUBS;
+
   return (
     <section className="py-12">
       <div className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 space-y-8">
@@ -14,10 +16,10 @@ export function AboutHubs({ content, onOpenQuoteModal }: { content: Record<strin
           <div className="text-center space-y-3 max-w-2xl mx-auto">
             <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/20 border border-emerald-300 dark:border-emerald-400/40 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider shadow-sm">
               <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 animate-spin" />
-              <span>{content.net_badge}</span>
+              <span>{content.net_badge || (isKm ? 'បណ្តាញពាណិជ្ជកម្ម' : 'Global Trade Network')}</span>
             </span>
-            <h2 className="text-3xl sm:text-4xl font-display font-black text-slate-900 dark:text-white">{content.net_heading}</h2>
-            <p className="text-slate-600 dark:text-slate-300 text-sm">{content.net_sub}</p>
+            <h2 className="text-3xl sm:text-4xl font-display font-black text-slate-900 dark:text-white">{content.net_heading || (isKm ? 'មជ្ឈមណ្ឌលប្រភពដើម' : 'Origin Sourcing Hubs')}</h2>
+            <p className="text-slate-600 dark:text-slate-300 text-sm">{content.net_sub || (isKm ? 'ការផ្លាស់ប្តូរពាណិជ្ជកម្មដោយផ្ទាល់រវាងប្រទេស' : 'Direct trade corridors linking ASEAN and global manufacturing hubs.')}</p>
           </div>
         </ScrollReveal>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">

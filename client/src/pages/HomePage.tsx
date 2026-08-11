@@ -38,7 +38,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setActiveTab, onOpenQuoteMod
   return (
     <>
       <PageTransitionOverlay isLoading={isLoading} isTransitioning={isTransitioning} />
-      <div className={`space-y-20 pb-16 bg-slate-50 dark:bg-[#090D16] text-slate-900 dark:text-slate-100 transition-colors duration-300 bg-ambient-mesh stripe-mesh-glow ${
+      <div className={`space-y-10 sm:space-y-16 lg:space-y-24 pb-12 sm:pb-16 bg-slate-50 dark:bg-[#090D16] text-slate-900 dark:text-slate-100 transition-colors duration-300 bg-ambient-mesh stripe-mesh-glow ${
         isLoading ? 'opacity-0 scale-[0.99]' : 'opacity-100 scale-100 transition-all duration-700 ease-out'
       }`}>
         <HomeHero hero={hero} stats={heroStats} hubs={hubs} selectedOrigin={selectedOrigin} globeLabel={sections.hero_globe?.globe_label} globeAllLabel={sections.hero_globe?.globe_all_label} onSelectOrigin={setSelectedOrigin} onNavigate={setActiveTab} onQuote={onOpenQuoteModal} />

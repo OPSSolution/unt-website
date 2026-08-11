@@ -63,12 +63,14 @@ export function CoreValuesSection() {
 }
 
 export function AdvantagesSection({ content }: { content: Record<string, any> }) {
-  const advantages = Array.isArray(content.advantages) ? content.advantages : [];
   const { language } = useLanguage();
+  const isKm = language === 'km';
+  const advantages = Array.isArray(content.advantages) && content.advantages.length > 0 ? content.advantages : ADVANTAGES;
+
   return (
     <section className="py-12">
       <div className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
-        <SectionHeading badge={content.adv_badge ?? ''} title={content.adv_heading ?? ''} />
+        <SectionHeading badge={content.adv_badge || (isKm ? 'ចំណុចខ្លាំង' : 'Competitive Advantages')} title={content.adv_heading || (isKm ? 'ហេតុអ្វីជ្រើសរើស UNT' : 'Why Choose UNT')} />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
           {advantages.map((localized: any, index: number) => {
             const fallback = language === 'en' ? ADVANTAGES[index] : undefined;

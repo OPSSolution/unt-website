@@ -35,7 +35,7 @@ export const CodePenTitleReveal: React.FC<Props> = ({
     return () => observer.disconnect();
   }, []);
 
-  const words = text.split(' ');
+  const words = (text || '').split(' ');
 
   return (
     <Component
