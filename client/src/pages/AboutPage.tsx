@@ -4,7 +4,6 @@ import { AboutHubs } from './about/AboutHubs';
 import { AboutHero, AboutMission } from './about/AboutIntroSections';
 import { AboutTimeline } from './about/AboutTimeline';
 import { AdvantagesSection, CoreValuesSection } from './about/AboutValueSections';
-import { Interactive3DBg } from '../components/Interactive3DBg';
 import { useProducts } from '../hooks/useProducts';
 import type { Product } from '../types';
 
@@ -19,7 +18,6 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onOpenQuoteModal, onOpenPr
 
   return (
     <div className="relative isolate space-y-10 sm:space-y-12 pb-12 bg-slate-50 dark:bg-[#080B11] text-slate-900 dark:text-slate-100 transition-colors duration-300 min-h-screen overflow-hidden">
-      <Interactive3DBg variant="hex-grid" />
       <div className="absolute inset-0 -z-[1] bg-[linear-gradient(to_right,#0596690d_1px,transparent_1px),linear-gradient(to_bottom,#0596690d_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#10b98112_1px,transparent_1px),linear-gradient(to_bottom,#10b98112_1px,transparent_1px)] bg-[size:3rem_3rem] pointer-events-none" />
       <div className="absolute inset-0 -z-[1] pointer-events-none overflow-hidden">
         <div className="absolute top-[8%] -left-40 w-[620px] h-[620px] bg-emerald-500/10 dark:bg-emerald-500/20 blur-[150px] rounded-full animate-pulse" />
