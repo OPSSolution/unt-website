@@ -94,12 +94,21 @@ function mergeLocalizedSessions(english: unknown, khmer: unknown) {
 function mergeLocalizedList(english: unknown, khmer: unknown, sharedKeys: string[] = []) {
   if (!Array.isArray(english)) return Array.isArray(khmer) ? khmer : [];
   const translated = Array.isArray(khmer) ? khmer : [];
+  const translatedById = new Map(translated
+    .filter((item): item is Record<string, unknown> =>
+      !!item && typeof item === "object" && !Array.isArray(item) && item.id !== undefined)
+    .map((item) => [item.id, item]));
   return english.map((item, index) => {
     if (!item || typeof item !== "object" || Array.isArray(item)) return item;
     const base = item as Record<string, unknown>;
     const blank = blankLocalizedFields(base);
     sharedKeys.forEach((key) => { if (base[key] !== undefined) blank[key] = base[key]; });
-    const localizedItem = translated[index];
+    const positional = translated[index];
+    const localizedItem = translatedById.get(base.id) ?? (
+      positional && typeof positional === "object" && !Array.isArray(positional) && !("id" in positional)
+        ? positional
+        : undefined
+    );
     return localizedItem && typeof localizedItem === "object" && !Array.isArray(localizedItem)
       ? { ...blank, ...localizedItem, ...Object.fromEntries(sharedKeys.filter((key) => base[key] !== undefined).map((key) => [key, base[key]])) }
       : blank;

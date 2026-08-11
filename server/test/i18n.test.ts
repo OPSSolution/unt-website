@@ -90,6 +90,30 @@ test("upcoming training session structure is shared without leaking English into
   });
 });
 
+test("Khmer trade hubs stay matched to countries when translations are reordered", () => {
+  const localized = localizedSection({
+    en: {
+      hubs: [
+        { id: "korea", name: "South Korea", flagUrl: "/korea.svg", lat: 37.56, lon: 126.97 },
+        { id: "japan", name: "Japan", flagUrl: "/japan.svg", lat: 35.67, lon: 139.65 },
+      ],
+    },
+    km: {
+      hubs: [
+        { id: "japan", name: "Japan in Khmer" },
+        { id: "korea", name: "Korea in Khmer" },
+      ],
+    },
+  }, "km") as { hubs: Array<Record<string, unknown>> };
+
+  assert.equal(localized.hubs[0].id, "korea");
+  assert.equal(localized.hubs[0].name, "Korea in Khmer");
+  assert.equal(localized.hubs[0].flagUrl, "/korea.svg");
+  assert.equal(localized.hubs[1].id, "japan");
+  assert.equal(localized.hubs[1].name, "Japan in Khmer");
+  assert.equal(localized.hubs[1].flagUrl, "/japan.svg");
+});
+
 test("admin writes require an explicit content language", async () => {
   const app = express();
   app.put("/content", requireContentLanguage, (_req, res) => res.sendStatus(204));

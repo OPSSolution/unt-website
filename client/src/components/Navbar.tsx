@@ -96,10 +96,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <>
       <header className="sticky top-0 z-50 w-full pointer-events-none px-3 sm:px-6 pt-3 sm:pt-4">
-        <div className={`pointer-events-auto relative mx-auto max-w-[1700px] w-full nav-pill transition-all duration-300 ${isScrolled ? 'nav-pill-scrolled py-1.5' : 'py-2'
+        <div className={`pointer-events-auto relative mx-auto max-w-[1700px] w-full nav-pill py-2 transition-all duration-300 ${isScrolled ? 'nav-pill-scrolled' : ''
           } ${mobileMenuOpen ? 'rounded-[2rem]' : 'rounded-full'}`}>
           <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-emerald-400/50 to-transparent pointer-events-none rounded-full" />
-          <div className={`flex items-center justify-between gap-2 pl-3 sm:pl-4 pr-2 sm:pr-3 transition-all duration-300 ${isScrolled ? 'h-12 xl:h-14' : 'h-14 xl:h-16'}`}>
+          <div className="flex h-14 items-center justify-between gap-2 pl-3 pr-2 transition-all duration-300 sm:pl-4 sm:pr-3 xl:h-16">
             <button onClick={() => handleNavigate('home')} className="flex items-center space-x-2.5 text-left group focus:outline-none shrink-0" aria-label="Unique Noble Trading Co., Ltd. home">
               <div className="relative w-10 h-10 rounded-xl bg-white border border-emerald-200 shadow-sm p-1 group-hover:scale-105 transition-all duration-300 shrink-0">
                 <img src="/images/logos/image.png" alt="UNT Logo" className="w-full h-full object-contain" />
