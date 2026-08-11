@@ -11,6 +11,7 @@ function replaceLegacyCompanyName(value: unknown): unknown {
   if (typeof value === "string") {
     return value
       .replace(/Unique Noble Trading Co\., Ltd\.\s*\(UNT Company\)/gi, LEGAL_COMPANY_NAME)
+      .replace(/ក្រុមហ៊ុន\s*UNT/gi, LEGAL_COMPANY_NAME)
       .replace(/UNT Company/gi, LEGAL_COMPANY_NAME);
   }
   if (Array.isArray(value)) return value.map(replaceLegacyCompanyName);
