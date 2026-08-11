@@ -108,13 +108,13 @@ export function EditorShell({
             </div>
           )}
         </div>
-        <div className="flex w-full sm:w-auto items-center gap-1.5 rounded-2xl border bg-white p-1.5 shadow-sm dark:border-white/10 dark:bg-slate-900/80 shrink-0">
+        <div className="flex w-full sm:w-auto items-center gap-1.5 rounded-[20px] border border-slate-200 bg-white p-1.5 shadow-[0_2px_8px_rgba(15,23,42,0.08)] dark:border-white/10 dark:bg-slate-900/80 dark:shadow-none shrink-0">
           <button
             type="button"
             role="switch"
             aria-checked={autoSaveEnabled}
             onClick={() => setAutoSaveEnabled(!autoSaveEnabled)}
-            className="flex flex-1 sm:flex-none items-center justify-between sm:justify-start gap-2.5 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-white/5"
+            className="flex flex-1 sm:flex-none items-center justify-between sm:justify-start gap-2.5 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-white/5"
             title={autoSaveEnabled ? 'Changes save automatically after typing' : 'Changes save only when you click Save Changes'}
           >
             <span>Auto save</span>
@@ -127,14 +127,14 @@ export function EditorShell({
               <span className={`absolute left-0.5 top-0.5 h-7 w-7 rounded-full bg-white shadow-sm ring-1 ring-black/5 transition-transform duration-200 ease-out ${autoSaveEnabled ? 'translate-x-8' : 'translate-x-0'}`} />
             </span>
           </button>
-          <div className="h-7 w-px bg-slate-200 dark:bg-slate-700" />
+          <div className="mx-0.5 h-8 w-px bg-slate-200 dark:bg-slate-700" />
           <button
             onClick={saveNow}
             disabled={saving || manualSaving}
             className={`btn-shine flex items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all shrink-0 disabled:opacity-60 ${
               saved || manualSaved
                 ? 'bg-emerald-500 text-white'
-                : 'bg-slate-900 hover:bg-slate-800 text-white dark:bg-emerald-500 dark:hover:bg-emerald-400 dark:text-slate-950'
+                : 'bg-[#11182d] hover:bg-[#1b2540] text-white shadow-sm dark:bg-emerald-500 dark:hover:bg-emerald-400 dark:text-slate-950 dark:shadow-none'
             }`}
           >
             {saved || manualSaved ? <CheckCircle className="w-4 h-4" /> : <Save className="w-4 h-4" />}
