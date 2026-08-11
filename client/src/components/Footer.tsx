@@ -64,7 +64,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }
                 <img src="/images/logos/image.png" alt="UNT Logo" className="w-full h-full object-contain" />
               </div>
               <div>
-                <span className="font-display font-bold text-xl text-slate-900 dark:text-white block">{nb.company_name ?? 'Unique Noble Trading Co., Ltd.'}</span>
+                <span className="font-display font-bold text-xl text-slate-900 dark:text-white block">Unique Noble Trading Co., Ltd.</span>
                 <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">{nb.company_legal ?? 'Unique Noble Trading Co., Ltd.'}</span>
               </div>
             </div>
