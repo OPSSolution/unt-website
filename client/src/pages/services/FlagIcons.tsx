@@ -1,6 +1,21 @@
 import React from 'react';
 
 // Crisp SVG Country Flag Logo Components (cross-platform OS compatible)
+export const FlagCambodia: React.FC<{ className?: string }> = ({ className = 'w-6 h-6' }) => (
+  <svg viewBox="0 0 64 64" className={`${className} shrink-0 drop-shadow-md`} fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="32" cy="32" r="30" fill="#FFFFFF" stroke="#CBD5E1" strokeWidth="2" />
+    <mask id="kh-mask-v6">
+      <circle cx="32" cy="32" r="29" fill="#FFFFFF" />
+    </mask>
+    <g mask="url(#kh-mask-v6)">
+      <rect x="0" y="0" width="64" height="16" fill="#032EA6" />
+      <rect x="0" y="16" width="64" height="32" fill="#E00025" />
+      <rect x="0" y="48" width="64" height="16" fill="#032EA6" />
+      <path d="M22 38h20v-2h-3v-4h-2v-4h-2v4h-2v-6h-2v6h-2v-4h-2v4h-2v4h-3v2z" fill="#FFFFFF" />
+    </g>
+  </svg>
+);
+
 export const FlagJapan: React.FC<{ className?: string }> = ({ className = 'w-6 h-6' }) => (
   <svg viewBox="0 0 64 64" className={`${className} shrink-0 drop-shadow-md`} fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="32" cy="32" r="30" fill="#FFFFFF" stroke="#CBD5E1" strokeWidth="2" />

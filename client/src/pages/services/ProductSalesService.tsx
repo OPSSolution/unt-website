@@ -6,6 +6,8 @@ import {
 import { ScrollReveal } from '../../components/ScrollReveal';
 import { Card3D } from '../../components/Card3D';
 import { countryContentDefaults, countryDetails, productBenefits, productCategories } from './servicesData';
+import { useTradeHubs } from '../../hooks/useTradeHubs';
+import { COUNTRY_FLAGS, COUNTRY_FLAG_EMOJIS, countryFlagUrl } from '../products/data';
 
 interface ProductSalesServiceProps {
   onOpenQuoteModal: () => void;
@@ -13,15 +15,62 @@ interface ProductSalesServiceProps {
   content: Record<string, any>;
 }
 
+const KHMER_TO_ENGLISH_NAME: Record<string, string> = {
+  'កម្ពុជា': 'Cambodia',
+  'ថៃ': 'Thailand',
+  'វៀតណាម': 'Vietnam',
+  'ឡាវ': 'Laos',
+  'ម៉ាឡេស៊ី': 'Malaysia',
+  'ចិន': 'China',
+  'កូរ៉េខាងត្បូង': 'South Korea',
+  'ជប៉ុន': 'Japan',
+};
+
+function CountryFlagLogo({ country, className = 'w-6 h-6' }: { country: any; className?: string }) {
+  const tradeHubs = useTradeHubs();
+  const rawName = String(country?.name ?? '').trim();
+  const englishName = KHMER_TO_ENGLISH_NAME[rawName] || rawName;
+  const code = String(country?.code ?? '').toUpperCase();
+
+  const matchingHub = tradeHubs.find((h) =>
+    (h.id && h.id.toUpperCase() === code) ||
+    (h.name && h.name.toLowerCase() === englishName.toLowerCase()) ||
+    (h.id && h.id.toLowerCase() === englishName.toLowerCase())
+  );
+
+  const flagUrl = country?.flagUrl || matchingHub?.flagUrl || COUNTRY_FLAGS[englishName] || countryFlagUrl(rawName, code);
+  const flagEmoji = country?.flag || matchingHub?.flag || COUNTRY_FLAG_EMOJIS[englishName] || '🌐';
+
+  const staticEntry = Object.values(countryDetails).find((c) =>
+    c.code === code || c.name.toLowerCase() === englishName.toLowerCase()
+  );
+
+  if (flagUrl) {
+    return (
+      <img
+        src={flagUrl}
+        alt={rawName}
+        className={`${className} object-cover rounded-full shadow-xs border border-slate-200 dark:border-white/20 shrink-0`}
+        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+      />
+    );
+  }
+
+  if (staticEntry?.FlagComponent) {
+    const StaticFlag = staticEntry.FlagComponent;
+    return <StaticFlag className={className} />;
+  }
+
+  return <span className="text-xl leading-none shrink-0" aria-hidden="true">{flagEmoji}</span>;
+}
+
 export const ProductSalesService: React.FC<ProductSalesServiceProps> = ({ onOpenQuoteModal, delay = 0, content }) => {
-  const [selectedCountry, setSelectedCountry] = useState<string>('JP');
+  const [selectedCountry, setSelectedCountry] = useState<string>('KH');
 
   const countries = Array.isArray(content.origin_countries) && content.origin_countries.length ? content.origin_countries : countryContentDefaults;
   const categories = Array.isArray(content.product_categories) && content.product_categories.length ? content.product_categories : productCategories;
   const benefits = Array.isArray(content.product_benefits) && content.product_benefits.length ? content.product_benefits : productBenefits;
   const activeCountryInfo = countries.find((country: any) => country.code === selectedCountry) ?? countries[0] ?? countryContentDefaults[0];
-  const flagForCode = (code: string) => Object.values(countryDetails).find((country) => country.code === code)?.FlagComponent ?? countryDetails.Japan.FlagComponent;
-  const ActiveFlagIcon = flagForCode(activeCountryInfo.code);
 
   return (
     <section className="space-y-6">
@@ -61,12 +110,10 @@ export const ProductSalesService: React.FC<ProductSalesServiceProps> = ({ onOpen
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             {countries.map((country: any, idx: number) => {
-              const cName = country.name;
-              const FlagLogo = flagForCode(country.code);
-              const isSelected = selectedCountry === country.code;
+              const isSelected = selectedCountry === country.code || (idx === 0 && !countries.some((c: any) => c.code === selectedCountry));
               return (
                 <button
-                  key={cName}
+                  key={`${country.code}-${idx}`}
                   onClick={() => setSelectedCountry(country.code)}
                   style={{ animationDelay: `${idx * 50}ms` }}
                   className={`p-3 rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all duration-300 border animate-fade-in ${isSelected
@@ -74,11 +121,11 @@ export const ProductSalesService: React.FC<ProductSalesServiceProps> = ({ onOpen
                     : 'bg-white dark:bg-white/5 text-slate-800 dark:text-white border-slate-200 dark:border-white/10 hover:border-emerald-500 hover:shadow-md active:scale-95 shadow-sm'
                     }`}
                 >
-                  <div className="flex items-center gap-2.5">
-                    <FlagLogo className="w-6 h-6" />
-                    <span className="font-extrabold">{country.name}</span>
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <CountryFlagLogo country={country} />
+                    <span className="font-extrabold truncate">{country.name}</span>
                   </div>
-                  {isSelected && <Check className="w-4 h-4 shrink-0" />}
+                  {isSelected && <Check className="w-4 h-4 shrink-0 ml-1" />}
                 </button>
               );
             })}
@@ -97,13 +144,13 @@ export const ProductSalesService: React.FC<ProductSalesServiceProps> = ({ onOpen
             {/* Header Row */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 pb-5 border-b border-emerald-100 dark:border-emerald-500/15 relative z-10">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-white/10 border border-emerald-200 dark:border-emerald-400/30 flex items-center justify-center p-1.5 shadow-sm shrink-0">
-                  <ActiveFlagIcon className="w-8 h-8" />
+                <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-white/10 border border-emerald-200 dark:border-emerald-400/30 flex items-center justify-center p-1.5 shadow-sm shrink-0 overflow-hidden">
+                  <CountryFlagLogo country={activeCountryInfo} className="w-8 h-8" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-0.5">
                     <span className="text-[10px] font-black px-2 py-0.5 rounded bg-emerald-600 text-white dark:bg-emerald-500 dark:text-slate-950 uppercase tracking-widest">{activeCountryInfo.code}</span>
-                    <h3 className="text-xl sm:text-2xl font-display font-black text-slate-900 dark:text-white">{activeCountryInfo.name} Corridor</h3>
+                    <h3 className="text-xl sm:text-2xl font-display font-black text-slate-900 dark:text-white">{activeCountryInfo.name}</h3>
                   </div>
                   <p className="text-xs text-emerald-700 dark:text-emerald-400 font-semibold">{activeCountryInfo.niche}</p>
                 </div>
@@ -131,7 +178,7 @@ export const ProductSalesService: React.FC<ProductSalesServiceProps> = ({ onOpen
             {/* 3-Column Info */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10 text-xs sm:text-sm">
               <div className="p-4 rounded-xl bg-slate-50/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 space-y-2">
-                <span className="font-extrabold uppercase text-[10px] tracking-wider text-emerald-700 dark:text-emerald-400 block">{content.corridor_overview_label ?? 'Corridor Overview'}</span>
+                <span className="font-extrabold uppercase text-[10px] tracking-wider text-emerald-700 dark:text-emerald-400 block">{content.corridor_overview_label ?? 'Overview'}</span>
                 <p className="text-slate-600 dark:text-slate-300 leading-relaxed font-medium">{activeCountryInfo.desc}</p>
               </div>
 

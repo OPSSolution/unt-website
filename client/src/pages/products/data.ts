@@ -31,6 +31,17 @@ export const COUNTRY_FLAGS: Record<string, string> = {
   Malaysia: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Flag_of_Malaysia.svg/250px-Flag_of_Malaysia.svg.png',
 };
 
+const KHMER_COUNTRY_MAP: Record<string, string> = {
+  'កម្ពុជា': 'Cambodia',
+  'ថៃ': 'Thailand',
+  'វៀតណាម': 'Vietnam',
+  'ឡាវ': 'Laos',
+  'ម៉ាឡេស៊ី': 'Malaysia',
+  'ចិន': 'China',
+  'កូរ៉េខាងត្បូង': 'South Korea',
+  'ជប៉ុន': 'Japan',
+};
+
 const COUNTRY_CODE_NAMES: Record<string, string> = {
   KH: 'Cambodia', KHM: 'Cambodia',
   TH: 'Thailand', THA: 'Thailand',
@@ -43,7 +54,8 @@ const COUNTRY_CODE_NAMES: Record<string, string> = {
 };
 
 export function countryFlagUrl(origin: string, emoji: string): string | undefined {
-  if (COUNTRY_FLAGS[origin]) return COUNTRY_FLAGS[origin];
+  const normalizedOrigin = KHMER_COUNTRY_MAP[origin.trim()] || origin.trim();
+  if (COUNTRY_FLAGS[normalizedOrigin]) return COUNTRY_FLAGS[normalizedOrigin];
   const countryFromCode = COUNTRY_CODE_NAMES[emoji.trim().toUpperCase()];
   if (countryFromCode) return COUNTRY_FLAGS[countryFromCode];
   const englishOrigin = Object.keys(COUNTRY_FLAG_EMOJIS).find((country) => COUNTRY_FLAG_EMOJIS[country] === emoji);
