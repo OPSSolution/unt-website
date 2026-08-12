@@ -61,3 +61,34 @@ export async function uploadToImageKit(file: File, folder: string): Promise<Imag
 
   return { url: uploaded.url, fileId: uploaded.fileId, fileType: uploaded.fileType };
 }
+
+export async function removeBackgroundAndUpload(file: File): Promise<ImageKitUploadResult> {
+  if (!file.type.startsWith('image/')) throw new Error('Please choose an image file.');
+  if (file.size > 10 * 1024 * 1024) throw new Error('Background removal images must be 10 MB or smaller.');
+
+  const session = await supabase?.auth.getSession();
+  const token = session?.data.session?.access_token;
+  if (!token) throw new Error('Your admin session has expired. Please sign in again.');
+
+  const removeResponse = await fetch(`${API_BASE}/api/admin/media/remove-background`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': file.type || 'image/png',
+      'X-Content-Language': storedLanguage(),
+    },
+    body: file,
+  });
+  if (!removeResponse.ok) {
+    const error = await removeResponse.json().catch(() => ({ error: 'Background removal failed.' }));
+    throw new Error(error.error ?? 'Background removal failed.');
+  }
+
+  const transparentBlob = await removeResponse.blob();
+  const transparentFile = new File(
+    [transparentBlob],
+    `${file.name.replace(/\.[^.]+$/, '') || 'product'}-transparent.png`,
+    { type: 'image/png' },
+  );
+  return uploadToImageKit(transparentFile, 'products/transparent');
+}

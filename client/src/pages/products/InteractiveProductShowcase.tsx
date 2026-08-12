@@ -9,6 +9,10 @@ interface Props {
   onQuote: (productName: string) => void;
 }
 
+function transparentImage(product: Product) {
+  return product.showcaseImage?.trim();
+}
+
 export function InteractiveProductShowcase({ products, onOpenProduct }: Props) {
   const { language } = useLanguage();
   const isKm = language === 'km';
@@ -25,12 +29,13 @@ export function InteractiveProductShowcase({ products, onOpenProduct }: Props) {
   const [trail, setTrail] = useState<{x: number, y: number, id: number}[]>([]);
   const trailIdRef = useRef(0);
 
-  const featuredProducts = products.length > 0 ? products.slice(0, 6) : [];
+  const featuredProducts = products
+    .filter((product) => Boolean(transparentImage(product)))
+    .slice(0, 6);
   const total = featuredProducts.length;
 
   // ─── Auto-orbit rotation (pauses on hover or drag) ───
   useEffect(() => {
-    if (total === 0) return;
     let lastTime = performance.now();
     const animate = (time: number) => {
       const delta = time - lastTime;
@@ -118,8 +123,6 @@ export function InteractiveProductShowcase({ products, onOpenProduct }: Props) {
     }, 150);
     return () => clearInterval(interval);
   }, []);
-
-  if (total === 0) return null;
 
   // ─── Orbital position calculator ───
   const getOrbitalPosition = (index: number) => {
@@ -241,6 +244,8 @@ export function InteractiveProductShowcase({ products, onOpenProduct }: Props) {
               const pos = getOrbitalPosition(idx);
               const isActive = activeIdx === idx;
               const isFront = pos.normalizedZ > 0.7;
+              const productImage = transparentImage(product);
+              if (!productImage) return null;
 
               return (
                 <div
@@ -285,7 +290,7 @@ export function InteractiveProductShowcase({ products, onOpenProduct }: Props) {
 
                     {/* Product Image */}
                     <img
-                      src={product.image}
+                      src={productImage}
                       alt={product.name}
                       className={`w-full h-full object-contain relative z-10 transition-transform duration-500 mix-blend-multiply dark:mix-blend-normal drop-shadow-[0_8px_20px_rgba(0,0,0,0.15)] ${
                         isActive ? 'scale-110' : ''

@@ -14,6 +14,7 @@ export interface AdminProduct {
   moq: string;
   lead_time: string;
   image: string;
+  showcase_image?: string | null;
   description: string;
   oem_available: boolean;
   specifications: string[];
@@ -26,5 +27,6 @@ export type ProductDraft = Omit<AdminProduct, 'id'>;
 export const EMPTY_PRODUCT: ProductDraft = {
   name: '', category: 'Food & Beverage', origin: '', origin_flag: '',
   moq: '', lead_time: '', image: '', description: '', oem_available: false,
+  showcase_image: '',
   specifications: [], certifications: [], shelf_life: '',
 };

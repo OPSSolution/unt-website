@@ -6,6 +6,11 @@ const optionalNonEmptyString = z.preprocess(
   nonEmptyString.optional(),
 );
 
+const clearableOptionalString = z.preprocess(
+  (value) => value === "" ? null : value,
+  nonEmptyString.nullable().optional(),
+);
+
 export const productSchema = z.object({
   name: nonEmptyString,
   category: z.enum(["Food & Beverage", "Skincare & Beauty", "Personal Care", "Health Supplements", "Household Goods"]),
@@ -14,6 +19,7 @@ export const productSchema = z.object({
   moq: nonEmptyString,
   lead_time: nonEmptyString,
   image: nonEmptyString,
+  showcase_image: clearableOptionalString,
   description: nonEmptyString,
   oem_available: z.boolean(),
   specifications: z.array(nonEmptyString),
