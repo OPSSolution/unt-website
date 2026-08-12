@@ -1,12 +1,13 @@
 import {
   FileText, Globe, GraduationCap, Home, Info, Layout, LayoutDashboard,
-  LucideIcon, Newspaper, Package, Phone, Users, Wrench, Inbox,
+  LucideIcon, Newspaper, Package, Phone, Users, Wrench, Inbox, Settings,
 } from 'lucide-react';
 
 export type AdminPage =
   | 'dashboard' | 'homepage' | 'trade_hubs' | 'about' | 'services'
   | 'products' | 'products_page' | 'partners' | 'training'
-  | 'articles' | 'blog' | 'contact' | 'navbar_footer' | 'quotes';
+  | 'articles' | 'blog' | 'contact' | 'navbar_footer' | 'quotes'
+  | 'settings';
 
 export interface NavGroup {
   label: string;
@@ -36,4 +37,5 @@ export const NAV_GROUPS: NavGroup[] = [
     { id: 'quotes', label: 'Quote Requests', icon: Inbox },
   ] },
   { label: 'Global Branding', items: [{ id: 'navbar_footer', label: 'Navbar & Footer', icon: Layout }] },
+  { label: 'System', items: [{ id: 'settings', label: 'API Settings', icon: Settings }] },
 ];

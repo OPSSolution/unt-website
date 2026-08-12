@@ -16,6 +16,7 @@ import { TradeHubsEditor } from '../pages/TradeHubsEditor';
 import { ContactEditor } from '../pages/ContactEditor';
 import { NavbarFooterEditor } from '../pages/NavbarFooterEditor';
 import { QuotesManager } from '../pages/QuotesManager';
+import { ApiSettingsPage } from '../pages/ApiSettingsPage';
 import { Menu, Sun, Moon } from 'lucide-react';
 import { LanguageToggle, useLanguage } from '../../i18n/LanguageContext';
 
@@ -34,6 +35,7 @@ const PAGE_LABELS: Record<AdminPage, string> = {
   contact: 'Contact Page',
   navbar_footer: 'Navbar & Footer',
   quotes: 'Quote Requests',
+  settings: 'API Settings',
 };
 
 export function Layout() {
@@ -59,6 +61,7 @@ export function Layout() {
       case 'contact':       return <ContactEditor />;
       case 'navbar_footer': return <NavbarFooterEditor />;
       case 'quotes':        return <QuotesManager />;
+      case 'settings':      return <ApiSettingsPage />;
     }
   };
 

@@ -9,6 +9,7 @@ const envSchema = z.object({
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
   IMAGEKIT_PUBLIC_KEY: z.string().min(1).optional(),
   IMAGEKIT_PRIVATE_KEY: z.string().min(1).optional(),
+  REMOVE_BG_API_KEY: z.string().min(1).optional(),
   RESEND_API_KEY: z.string().min(1).optional(),
   QUOTE_EMAIL_TO: z.string().email().optional(),
   EMAIL_FROM: z.string().min(1).optional(),

@@ -7,7 +7,6 @@ import { requestLanguage } from "../../i18n.js";
 import { localizedUpdate } from "./localizedUpdate.js";
 const router = Router();
 router.post("/", validateBody(productSchema), async (req, res) => {
-  if (requestLanguage(req) === "km") return res.status(400).json({ error: "Create the English product first, then add Khmer." });
   const { data, error } = await supabase.from("products").insert(req.body).select().single();
   if (error) return res.status(400).json({ error: error.message });
   return res.status(201).json(data);

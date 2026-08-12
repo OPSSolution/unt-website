@@ -1,9 +1,10 @@
-import { useState } from 'react';
-import { Save, X, Package, Image as ImageIcon, ListChecks, Eye, Clock3, Boxes } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { Save, X, Package, Image as ImageIcon, ListChecks, Eye, Clock3, Boxes, Wand2, Loader, Copy } from 'lucide-react';
 import { ImageField } from '../../components/ImageField';
 import { Field } from '../../components/EditorShell';
 import { AdminProduct, PRODUCT_CATEGORIES, ProductDraft } from './types';
 import { COUNTRY_FLAG_EMOJIS, PRODUCT_ORIGINS } from '../../../pages/products/data';
+import { removeBackgroundAndUpload } from '../../imageKitUpload';
 
 interface ProductFormProps {
   initial: ProductDraft | AdminProduct;
@@ -21,6 +22,9 @@ const ArrayField = ({ label, value, onChange }: { label: string; value: string[]
 
 export function ProductForm({ initial, onSave, onCancel, saving }: ProductFormProps) {
   const [form, setForm] = useState<ProductDraft>(() => ({ ...initial }));
+  const [removingBackground, setRemovingBackground] = useState(false);
+  const [removeBackgroundError, setRemoveBackgroundError] = useState('');
+  const removeBackgroundInputRef = useRef<HTMLInputElement>(null);
   const set = <Key extends keyof ProductDraft>(key: Key, value: ProductDraft[Key]) =>
     setForm((current) => ({ ...current, [key]: value }));
   const selectClass = 'w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 transition-colors';
@@ -40,6 +44,19 @@ export function ProductForm({ initial, onSave, onCancel, saving }: ProductFormPr
       origin,
       origin_flag: COUNTRY_FLAG_EMOJIS[origin] ?? current.origin_flag,
     }));
+  };
+
+  const handleRemoveBackground = async (file: File) => {
+    setRemovingBackground(true);
+    setRemoveBackgroundError('');
+    try {
+      const uploaded = await removeBackgroundAndUpload(file);
+      set('showcase_image', uploaded.url);
+    } catch (error: unknown) {
+      setRemoveBackgroundError(error instanceof Error ? error.message : 'Background removal failed.');
+    } finally {
+      setRemovingBackground(false);
+    }
   };
 
   return (
@@ -85,6 +102,47 @@ export function ProductForm({ initial, onSave, onCancel, saving }: ProductFormPr
       <div className="space-y-4">
         {sectionTitle(<ImageIcon className="w-4 h-4" />, 'Media & technical details', 'Use a clean product image and list each item on a separate line.')}
         <ImageField label="Product Image" value={form.image} onChange={(value) => set('image', value)} />
+        <div className="space-y-3 rounded-2xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/70 dark:bg-emerald-950/20 p-4">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+            <div>
+              <div className="text-[11px] font-bold text-emerald-700 dark:text-emerald-300 uppercase tracking-widest">Transparent catalog image</div>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">This image is used in the wholesale product orbit after its background is removed.</p>
+            </div>
+            <div className="flex flex-wrap gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => set('showcase_image', form.image)}
+                disabled={!form.image}
+                className="inline-flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-emerald-200 dark:border-emerald-800 disabled:opacity-50 text-emerald-700 dark:text-emerald-300 text-xs font-bold transition-colors"
+              >
+                <Copy className="w-3.5 h-3.5" />
+                Use product image
+              </button>
+              <button
+                type="button"
+                onClick={() => removeBackgroundInputRef.current?.click()}
+                disabled={removingBackground}
+                className="inline-flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-bold transition-colors"
+              >
+                {removingBackground ? <Loader className="w-3.5 h-3.5 animate-spin" /> : <Wand2 className="w-3.5 h-3.5" />}
+                {removingBackground ? 'Removing...' : 'Remove background'}
+              </button>
+            </div>
+            <input
+              ref={removeBackgroundInputRef}
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              className="hidden"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (file) void handleRemoveBackground(file);
+                event.currentTarget.value = '';
+              }}
+            />
+          </div>
+          {removeBackgroundError && <p className="text-red-500 dark:text-red-400 text-xs">{removeBackgroundError}</p>}
+          <ImageField label="Background-removed image URL" value={form.showcase_image ?? ''} onChange={(value) => set('showcase_image', value || null)} folder="products/transparent" />
+        </div>
         <div className="grid grid-cols-1 gap-4">
           <ArrayField label="Specifications" value={form.specifications} onChange={(value) => set('specifications', value)} />
           <ArrayField label="Certifications" value={form.certifications} onChange={(value) => set('certifications', value)} />
@@ -95,7 +153,7 @@ export function ProductForm({ initial, onSave, onCancel, saving }: ProductFormPr
       {(form.name || form.image) && <div className="rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 p-4">
         <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 mb-3"><Eye className="w-4 h-4" />Live catalog preview</div>
         <div className="max-w-2xl grid grid-cols-[112px_1fr] gap-4 items-center">
-          <div className="w-28 h-28 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800">{form.image && <img src={form.image} alt="" className="w-full h-full object-cover" />}</div>
+          <div className="w-28 h-28 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800">{(form.showcase_image || form.image) && <img src={form.showcase_image || form.image} alt="" className="w-full h-full object-contain" />}</div>
           <div className="min-w-0"><span className="text-[10px] font-bold text-emerald-600 uppercase">{form.category}</span><h3 className="text-lg font-bold text-slate-900 dark:text-white line-clamp-2 mt-1">{form.name || 'Product name'}</h3><p className="text-xs text-slate-500 mt-1">{form.origin_flag} {form.origin || 'Origin country'}</p><div className="flex flex-wrap gap-3 mt-3 text-[11px] text-slate-600 dark:text-slate-300"><span className="flex items-center gap-1"><Boxes className="w-3.5 h-3.5 text-emerald-500" />MOQ {form.moq || '—'}</span><span className="flex items-center gap-1"><Clock3 className="w-3.5 h-3.5 text-emerald-500" />{form.lead_time || 'Lead time'}</span>{form.certifications.length > 0 && <span className="flex items-center gap-1"><ListChecks className="w-3.5 h-3.5 text-emerald-500" />{form.certifications.length} certifications</span>}</div></div>
         </div>
       </div>}

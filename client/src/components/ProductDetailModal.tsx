@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { X, CheckCircle2, ShieldCheck, PackageCheck, Send } from 'lucide-react';
+import React from 'react';
+import { X, CheckCircle2, ShieldCheck, PackageCheck, Send, ExternalLink } from 'lucide-react';
 import { Product } from '../types';
 import { countryFlagUrl } from '../pages/products/data';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface ProductDetailModalProps {
   product: Product | null;
@@ -14,7 +15,8 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   onClose,
   onOpenQuoteWithProduct,
 }) => {
-  const [sampleRequested, setSampleRequested] = useState(false);
+  const { language } = useLanguage();
+  const isKm = language === 'km';
 
   if (!product) return null;
   const flagUrl = countryFlagUrl(product.origin, product.originFlag);
@@ -119,19 +121,15 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 
           {/* Action CTAs */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
-            {sampleRequested ? (
-              <div className="w-full sm:w-auto p-3 bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 rounded-xl text-emerald-800 dark:text-emerald-300 text-xs font-semibold flex items-center space-x-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                <span>Sample kit request dispatched to trade desk!</span>
-              </div>
-            ) : (
-              <button
-                onClick={() => setSampleRequested(true)}
-                className="w-full sm:w-auto px-5 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold border border-slate-300 dark:border-slate-700 transition-colors"
-              >
-                Request Product Sample Kit
-              </button>
-            )}
+            <a
+              href="https://ballangkmall.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto px-5 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-slate-800 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-xs font-bold border border-slate-300 dark:border-slate-700 hover:border-emerald-500/40 transition-all flex items-center justify-center space-x-2 group shadow-sm"
+            >
+              <span>{isKm ? 'ទិញឥឡូវនេះ (Ballang KMall)' : 'Shop Now (Ballang KMall)'}</span>
+              <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-500 transition-colors shrink-0" />
+            </a>
 
             <button
               onClick={() => {

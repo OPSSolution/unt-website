@@ -113,4 +113,12 @@ export const api = {
     request(`/api/admin/quotes/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }, token),
   deleteQuote: (id: string, token: string) =>
     request(`/api/admin/quotes/${id}`, { method: 'DELETE' }, token),
+
+  // Settings
+  getRemoveBackgroundSettings: (token: string) =>
+    request<{ configured: boolean; source: 'admin' | 'env' | null; updated_at: string | null }>('/api/admin/settings/remove-background', {}, token),
+  updateRemoveBackgroundSettings: (apiKey: string, token: string) =>
+    request<{ configured: boolean; source: 'admin'; updated_at: string }>('/api/admin/settings/remove-background', { method: 'PUT', body: JSON.stringify({ apiKey }) }, token),
+  clearRemoveBackgroundSettings: (token: string) =>
+    request<{ configured: boolean; source: 'env' | null; updated_at: null }>('/api/admin/settings/remove-background', { method: 'DELETE' }, token),
 };

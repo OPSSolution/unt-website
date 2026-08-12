@@ -177,8 +177,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <button
                       key={link.id}
                       onClick={() => handleNavigate(link.id)}
-                      className={`relative px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 flex items-center gap-1.5 group select-none ${isActive
-                        ? 'text-white bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 shadow-md shadow-emerald-600/30 scale-[1.02] border border-emerald-500/50'
+                      className={`relative px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 flex items-center gap-1.5 group select-none border border-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/70 ${isActive
+                        ? 'text-white bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 shadow-md shadow-emerald-600/30 scale-[1.02]'
                         : 'text-slate-800 dark:text-slate-100 bg-transparent hover:bg-slate-200/80 dark:hover:bg-slate-800/80 hover:text-emerald-700 dark:hover:text-emerald-300'
                         }`}
                     >

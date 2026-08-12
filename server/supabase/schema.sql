@@ -13,6 +13,7 @@ create table if not exists products (
   moq text not null,
   lead_time text not null,
   image text not null,
+  showcase_image text,
   description text not null,
   oem_available boolean default false,
   specifications text[] default '{}',
@@ -100,6 +101,15 @@ create policy "public read articles" on articles for select using (true);
 create policy "public read partners" on partners for select using (true);
 create policy "public read hero_content" on hero_content for select using (true);
 create policy "public read hero_stats" on hero_stats for select using (true);
+
+-- ADMIN SETTINGS
+create table if not exists admin_settings (
+  key text primary key,
+  value text not null,
+  updated_at timestamptz default now()
+);
+
+alter table admin_settings enable row level security;
 
 -- Service role has full access (used by the server with SUPABASE_SERVICE_ROLE_KEY)
 -- No additional policy needed — service role bypasses RLS by default.
@@ -237,6 +247,7 @@ on conflict do nothing;
 -- Bilingual content. English remains in the existing columns for backwards
 -- compatibility; Khmer values are stored in translations->'km'.
 alter table products add column if not exists translations jsonb not null default '{}'::jsonb;
+alter table products add column if not exists showcase_image text;
 alter table articles add column if not exists translations jsonb not null default '{}'::jsonb;
 alter table partners add column if not exists translations jsonb not null default '{}'::jsonb;
 alter table hero_content add column if not exists translations jsonb not null default '{}'::jsonb;

@@ -9,6 +9,7 @@ export interface Product {
   moq: string;
   leadTime: string;
   image: string;
+  showcaseImage?: string;
   description: string;
   oemAvailable: boolean;
   specifications: string[];
