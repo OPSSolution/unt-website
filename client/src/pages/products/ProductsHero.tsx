@@ -11,7 +11,7 @@ interface Props {
 
 export function ProductsHero({ badge, headline, subheadline }: Props) {
   return (
-    <section className="relative z-10 pt-14 pb-4 sm:pt-16 sm:pb-6 lg:pt-20 lg:pb-6 bg-transparent border-b-0 text-slate-900 dark:text-slate-100 transition-colors duration-300 overflow-hidden">
+    <section className="relative z-10 pt-10 pb-2 sm:pt-16 sm:pb-6 lg:pt-20 lg:pb-6 bg-transparent border-b-0 text-slate-900 dark:text-slate-100 transition-colors duration-300 overflow-hidden">
       
       {/* 3D Hex-Grid Canvas Background */}
 
@@ -24,18 +24,18 @@ export function ProductsHero({ badge, headline, subheadline }: Props) {
       </div>
 
       <ScrollReveal animation="up">
-        <div className="relative z-10 max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 text-center space-y-5">
+        <div className="relative z-10 max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 text-center space-y-3 sm:space-y-5">
           
           <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-400/40 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm font-bold shadow-sm backdrop-blur-md animate-gentle-float">
             <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400 animate-spin" />
             <span>{badge ?? 'Verified B2B Wholesale & OEM Products'}</span>
           </div>
 
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-black tracking-tight text-slate-900 dark:text-white leading-[1.1] max-w-5xl mx-auto">
+          <h1 className="text-3xl sm:text-6xl lg:text-7xl font-display font-black tracking-tight text-slate-900 dark:text-white leading-[1.1] max-w-5xl mx-auto">
             <ScrollTextReveal text={headline ?? 'Verified Global Wholesale Catalog'} mode="codepen-title" />
           </h1>
 
-          <p className="text-slate-600 dark:text-slate-300 text-base sm:text-xl max-w-3xl mx-auto leading-relaxed font-normal">
+          <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-xl max-w-3xl mx-auto leading-relaxed font-normal">
             {subheadline ?? 'Direct-from-factory imported goods pre-audited for Cambodian Ministry compliance, Khmer labeling standards, and volume trade distribution.'}
           </p>
 

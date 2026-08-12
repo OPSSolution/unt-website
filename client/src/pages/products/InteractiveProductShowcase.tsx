@@ -17,6 +17,7 @@ export function InteractiveProductShowcase({ products, onOpenProduct }: Props) {
   const { language } = useLanguage();
   const isKm = language === 'km';
   const containerRef = useRef<HTMLDivElement>(null);
+  const [stageWidth, setStageWidth] = useState(0);
   const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 });
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
   const [rotation, setRotation] = useState(0);
@@ -31,6 +32,16 @@ export function InteractiveProductShowcase({ products, onOpenProduct }: Props) {
     .filter((product) => Boolean(transparentImage(product)))
     .slice(0, 6);
   const total = featuredProducts.length;
+  const isCompact = stageWidth > 0 && stageWidth < 640;
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const observer = new ResizeObserver(([entry]) => {
+      setStageWidth(entry.contentRect.width);
+    });
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   // ─── Auto-orbit rotation (pauses on hover or drag) ───
   useEffect(() => {
@@ -111,8 +122,10 @@ export function InteractiveProductShowcase({ products, onOpenProduct }: Props) {
   // ─── Orbital position calculator ───
   const getOrbitalPosition = (index: number) => {
     const angle = (rotation + (index * 360) / total) * (Math.PI / 180);
-    const radiusX = 420;
-    const radiusY = 100;
+    const radiusX = isCompact
+      ? Math.min(170, Math.max(128, stageWidth * 0.4))
+      : Math.min(420, Math.max(180, stageWidth * 0.34));
+    const radiusY = isCompact ? 42 : 100;
     const x = Math.sin(angle) * radiusX;
     const z = Math.cos(angle) * radiusY;
     const normalizedZ = (z + radiusY) / (radiusY * 2);
@@ -137,7 +150,7 @@ export function InteractiveProductShowcase({ products, onOpenProduct }: Props) {
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        className="relative bg-transparent py-12 sm:py-16 lg:py-20 overflow-hidden"
+        className="relative bg-transparent py-6 sm:py-16 lg:py-20 overflow-hidden"
       >
         {/* ─── Mouse-following gradient glow ─── */}
         <div
@@ -169,7 +182,7 @@ export function InteractiveProductShowcase({ products, onOpenProduct }: Props) {
           ))}
         </div>
 
-        <div className="relative z-10 max-w-[1300px] w-full mx-auto px-6 sm:px-8 lg:px-12 space-y-6">
+        <div className="relative z-10 max-w-[1300px] w-full mx-auto px-4 sm:px-8 lg:px-12 space-y-4 sm:space-y-6">
 
           {/* ─── Drag instruction hint ─── */}
           <div className="text-center">
@@ -188,12 +201,12 @@ export function InteractiveProductShowcase({ products, onOpenProduct }: Props) {
 
           {/* ─── 3D Orbital Ring Stage ─── */}
           <div
-            className="relative h-[420px] sm:h-[500px] lg:h-[560px] flex items-center justify-center"
+            className="relative h-[350px] min-[390px]:h-[380px] sm:h-[500px] lg:h-[560px] flex items-center justify-center"
             style={{ perspective: '1200px' }}
           >
             {/* Orbital Ground Ring */}
             <div
-              className="absolute w-[840px] h-[220px] rounded-[100%] border border-emerald-500/10 dark:border-emerald-500/15 pointer-events-none"
+              className="absolute w-[min(840px,86vw)] h-[110px] sm:h-[220px] rounded-[100%] border border-emerald-500/10 dark:border-emerald-500/15 pointer-events-none"
               style={{
                 transform: `rotateX(68deg) translateZ(-25px)`,
                 boxShadow: '0 0 80px rgba(16,185,129,0.06), inset 0 0 80px rgba(16,185,129,0.03)',
@@ -202,7 +215,7 @@ export function InteractiveProductShowcase({ products, onOpenProduct }: Props) {
 
             {/* Inner Orbital Ring */}
             <div
-              className="absolute w-[600px] h-[160px] rounded-[100%] border border-emerald-500/5 dark:border-emerald-500/8 pointer-events-none"
+              className="absolute w-[min(600px,68vw)] h-[82px] sm:h-[160px] rounded-[100%] border border-emerald-500/5 dark:border-emerald-500/8 pointer-events-none"
               style={{
                 transform: `rotateX(68deg) translateZ(-15px)`,
               }}
@@ -239,7 +252,7 @@ export function InteractiveProductShowcase({ products, onOpenProduct }: Props) {
 
                   {/* 3D Tilt Card */}
                   <div
-                    className="relative w-48 sm:w-56 lg:w-64 h-48 sm:h-56 lg:h-64 flex flex-col items-center justify-center overflow-visible transition-all duration-300"
+                    className="relative w-[clamp(5.25rem,27vw,16rem)] h-[clamp(5.25rem,27vw,16rem)] sm:w-56 sm:h-56 lg:w-64 lg:h-64 flex flex-col items-center justify-center overflow-visible transition-all duration-300"
                     style={{
                       transform: isActive
                         ? `perspective(600px) rotateX(${cardTilt.x}deg) rotateY(${cardTilt.y}deg)`
@@ -275,13 +288,13 @@ export function InteractiveProductShowcase({ products, onOpenProduct }: Props) {
                   </div>
 
                   {/* Product Label (Shows on Hover) */}
-                  <div className={`mt-3 text-center transition-all duration-300 max-w-[220px] ${
+                  <div className={`mt-1.5 sm:mt-3 text-center transition-all duration-300 w-[min(48vw,150px)] sm:w-auto sm:max-w-[220px] ${
                     isActive ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-3 scale-95'
                   }`}>
-                    <p className="text-slate-900 dark:text-white font-bold text-sm truncate">
+                    <p className="text-slate-900 dark:text-white font-bold text-[10px] sm:text-sm leading-tight line-clamp-1">
                       {product.name}
                     </p>
-                    <p className="text-emerald-600 dark:text-emerald-400/80 text-xs mt-0.5">
+                    <p className="text-emerald-600 dark:text-emerald-400/80 text-[9px] sm:text-xs leading-tight mt-0.5 line-clamp-2">
                       {product.origin} • MOQ: {product.moq}
                     </p>
                   </div>
@@ -291,12 +304,12 @@ export function InteractiveProductShowcase({ products, onOpenProduct }: Props) {
           </div>
 
           {/* ─── Center CTA Button ─── */}
-          <div className="flex justify-center pt-2">
+          <div className="flex justify-center pt-0 sm:pt-2">
             <a
               href="https://ballangkmall.com/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-400 text-white text-sm font-bold shadow-xl shadow-emerald-600/30 hover:shadow-emerald-500/40 hover:scale-105 active:scale-95 transition-all whitespace-nowrap group relative overflow-hidden"
+              className="inline-flex max-w-[calc(100vw-2rem)] items-center justify-center gap-2 px-5 sm:px-8 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-400 text-white text-xs sm:text-sm font-bold shadow-xl shadow-emerald-600/30 hover:shadow-emerald-500/40 hover:scale-105 active:scale-95 transition-all whitespace-normal text-center group relative overflow-hidden"
             >
               {/* Shimmer Sweep */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
