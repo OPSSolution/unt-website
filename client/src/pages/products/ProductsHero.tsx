@@ -11,7 +11,7 @@ interface Props {
 
 export function ProductsHero({ badge, headline, subheadline }: Props) {
   return (
-    <section className="relative z-10 py-20 lg:py-24 bg-transparent border-b border-emerald-500/10 text-slate-900 dark:text-slate-100 transition-colors duration-300 overflow-hidden">
+    <section className="relative z-10 pt-14 pb-4 sm:pt-16 sm:pb-6 lg:pt-20 lg:pb-6 bg-transparent border-b-0 text-slate-900 dark:text-slate-100 transition-colors duration-300 overflow-hidden">
       
       {/* 3D Hex-Grid Canvas Background */}
 

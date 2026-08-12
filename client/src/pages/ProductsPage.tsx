@@ -5,6 +5,7 @@ import { useProducts } from '../hooks/useProducts';
 import { CatalogFilters } from './products/CatalogFilters';
 import { ProductGrid } from './products/ProductGrid';
 import { ProductsHero } from './products/ProductsHero';
+import { InteractiveProductShowcase } from './products/InteractiveProductShowcase';
 import { PageAnimatedBackground } from '../components/PageAnimatedBackground';
 import { countryNameFromFlag } from './products/data';
 
@@ -54,12 +55,19 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ onOpenProductModal, 
   };
 
   return (
-    <div className="relative isolate space-y-12 pb-16 animate-fade-in bg-slate-50 dark:bg-[#080B11] text-slate-900 dark:text-slate-100 transition-colors duration-300 overflow-hidden min-h-screen">
+    <div className="relative isolate space-y-6 sm:space-y-8 pb-16 animate-fade-in bg-slate-50 dark:bg-[#080B11] text-slate-900 dark:text-slate-100 transition-colors duration-300 overflow-hidden min-h-screen">
       
       {/* 3D Hex-Grid Canvas Background for Wholesale Products Catalog */}
       <PageAnimatedBackground />
 
       <ProductsHero badge={content.badge} headline={content.headline} subheadline={content.subheadline} />
+
+      {/* 3D Live Interactive Product Showcase (Nike Pinterest E-Commerce Concept) */}
+      <InteractiveProductShowcase
+        products={products}
+        onOpenProduct={onOpenProductModal}
+        onQuote={onOpenQuoteWithProduct}
+      />
 
       <section className="relative z-10 max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 space-y-6">
         <CatalogFilters
