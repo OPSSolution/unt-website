@@ -18,7 +18,7 @@ export const productSchema = z.object({
   origin_flag: nonEmptyString,
   moq: nonEmptyString,
   lead_time: nonEmptyString,
-  image: nonEmptyString,
+  image: z.string().trim(),
   showcase_image: clearableOptionalString,
   description: nonEmptyString,
   oem_available: z.boolean(),
