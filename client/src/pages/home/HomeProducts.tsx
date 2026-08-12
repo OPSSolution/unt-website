@@ -84,9 +84,87 @@ export function HomeProducts({ hubs, products, content, onSelectOrigin, onNaviga
           </button>
         ))}
       </div>
-      <div key={`banner-${animationKey}`} className="flex items-center gap-3 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-emerald-900/90 to-slate-900/90 border border-emerald-500/30 text-white">{activeHub ? <img src={activeHub.flagUrl} alt={`${activeHub.name} flag`} className="w-7 h-5 sm:w-8 sm:h-6 object-cover rounded shrink-0" /> : <Globe className="w-7 h-7 sm:w-8 sm:h-8 text-emerald-400 shrink-0" />}<div><span className="text-emerald-400 font-bold text-[11px] sm:text-xs">{allOrigins ? 'ALL ORIGINS — ASEAN Network' : `${activeHub?.name ?? 'Global'} ➜ Phnom Penh, Cambodia`}</span><div className="text-xs sm:text-sm font-semibold">{allOrigins ? 'Full multi-origin product catalog' : `Featured: ${activeHub?.categories ?? 'All Categories'}`}</div></div></div>
       {visibleProducts.length > 0 ? (
-        <div key={`cards-${animationKey}`} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">{visibleProducts.map((product) => { const flagUrl = countryFlagUrl(product.origin, product.originFlag); return <Card3D key={product.id} intensity={12} onClick={() => onOpenProduct(product)}><article className="group cursor-pointer rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-md h-full"><div className="relative aspect-video bg-white dark:bg-slate-800"><img src={product.image} alt={product.name} className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform" /><div className="absolute top-3 left-3 px-2.5 py-1 bg-white/95 dark:bg-slate-900/95 text-xs font-bold rounded-lg flex items-center gap-1.5">{flagUrl ? <img src={flagUrl} alt={`${product.origin} flag`} className="w-5 h-3.5 object-cover rounded-sm" onError={(event) => { event.currentTarget.style.display = 'none'; }} /> : <span>{product.originFlag}</span>}<span>{product.origin}</span></div></div><div className="p-5 sm:p-6 space-y-2.5 sm:space-y-3 text-left"><div className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase">{product.category}</div><h3 className="text-base sm:text-lg font-display font-bold text-slate-900 dark:text-white leading-snug">{product.name}</h3><p className="text-slate-600 dark:text-slate-300 text-xs line-clamp-2">{product.description}</p><div className="pt-2 flex justify-between text-xs border-t border-slate-100 dark:border-slate-800"><span>MOQ: <b>{product.moq}</b></span><span>{product.leadTime}</span></div></div></article></Card3D>; })}</div>
+        <div key={`cards-${animationKey}`} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {visibleProducts.map((product) => {
+            const flagUrl = countryFlagUrl(product.origin, product.originFlag);
+            return (
+              <Card3D key={product.id} intensity={10} onClick={() => onOpenProduct(product)}>
+                <article className="group cursor-pointer rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 overflow-hidden shadow-sm hover:shadow-xl hover:border-emerald-400 dark:hover:border-emerald-500/50 transition-all duration-300 flex flex-col justify-between h-full text-left">
+                  <div>
+                    {/* Image Container with full-bleed image display */}
+                    <div className="relative aspect-[4/3] overflow-hidden bg-slate-100 dark:bg-slate-950 block border-b border-slate-100 dark:border-slate-800/80">
+                      {/* Subtle Gradient Scrim */}
+                      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/40 via-transparent to-slate-900/10 dark:from-slate-950/60 dark:to-slate-950/40 pointer-events-none z-10" />
+
+                      {/* Crisp Full-Body Edge-to-Edge Product Image */}
+                      <img 
+                        src={product.image} 
+                        alt={product.name} 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" 
+                      />
+
+                      {/* Origin Flag Badge */}
+                      {product.originFlag && (
+                        <div className="absolute top-3 left-3 px-2 py-1 bg-white/95 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200/90 dark:border-slate-700/80 rounded-xl shadow-sm flex items-center gap-1.5 text-xs font-bold text-slate-800 dark:text-white z-20" title={product.origin}>
+                          {flagUrl ? (
+                            <img src={flagUrl} alt={product.origin} className="w-4.5 h-3.5 object-cover rounded-sm" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                          ) : (
+                            <span>{product.originFlag}</span>
+                          )}
+                          <span className="text-[10px] uppercase tracking-wider text-slate-700 dark:text-slate-200">{product.origin}</span>
+                        </div>
+                      )}
+
+                      {/* OEM Status Badge */}
+                      <div className={`absolute top-3 right-3 px-2.5 py-1 rounded-full text-[10px] font-bold backdrop-blur-md border shadow-sm flex items-center gap-1.5 z-20 ${
+                        product.oemAvailable 
+                          ? 'bg-emerald-50/95 dark:bg-emerald-950/90 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-500/40' 
+                          : 'bg-white/95 dark:bg-slate-900/90 text-cyan-700 dark:text-cyan-300 border-slate-200 dark:border-cyan-500/40'
+                      }`}>
+                        <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${product.oemAvailable ? 'bg-emerald-500' : 'bg-cyan-500'}`} />
+                        <span>{product.oemAvailable ? 'OEM Ready' : 'Stock Active'}</span>
+                      </div>
+                    </div>
+
+                    {/* Content Details */}
+                    <div className="p-5 space-y-3">
+                      <span className="inline-block text-[10px] font-extrabold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-md border border-emerald-200/50 dark:border-emerald-800/50">
+                        {product.category}
+                      </span>
+                      <h3 className="text-base font-display font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 line-clamp-2 min-h-[2.75rem] leading-snug transition-colors">
+                        {product.name}
+                      </h3>
+                      <p className="text-slate-600 dark:text-slate-300 text-xs line-clamp-2 min-h-[2.25rem] leading-relaxed">
+                        {product.description}
+                      </p>
+
+                      {/* Specs Mini Grid */}
+                      <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 grid grid-cols-2 gap-2 text-xs">
+                        <div className="bg-slate-50 dark:bg-slate-800/50 p-2 rounded-xl border border-slate-100 dark:border-slate-800/80 min-w-0">
+                          <span className="block text-[9px] uppercase tracking-wider font-semibold text-slate-400 dark:text-slate-500 truncate">
+                            Minimum Order
+                          </span>
+                          <strong className="text-slate-900 dark:text-white font-bold text-[11px] truncate block" title={product.moq}>
+                            {product.moq}
+                          </strong>
+                        </div>
+                        <div className="bg-slate-50 dark:bg-slate-800/50 p-2 rounded-xl border border-slate-100 dark:border-slate-800/80 min-w-0 text-right">
+                          <span className="block text-[9px] uppercase tracking-wider font-semibold text-slate-400 dark:text-slate-500 truncate">
+                            Lead Time
+                          </span>
+                          <strong className="text-slate-900 dark:text-white font-bold text-[11px] truncate block" title={product.leadTime}>
+                            {product.leadTime}
+                          </strong>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              </Card3D>
+            );
+          })}
+        </div>
       ) : (
         <div key={`empty-${animationKey}`} className="rounded-3xl border border-dashed border-slate-300 bg-white/60 px-6 py-12 text-center dark:border-slate-700 dark:bg-slate-900/50">
           <p className="text-sm font-bold text-slate-700 dark:text-slate-200">No products are currently listed for {activeHub?.name ?? 'this origin'}.</p>
