@@ -26,8 +26,6 @@ export function InteractiveProductShowcase({ products, onOpenProduct }: Props) {
   const rotationStartRef = useRef(0);
   const animFrameRef = useRef<number>(0);
   const [cardTilt, setCardTilt] = useState<{x: number, y: number}>({x: 0, y: 0});
-  const [trail, setTrail] = useState<{x: number, y: number, id: number}[]>([]);
-  const trailIdRef = useRef(0);
 
   const featuredProducts = products
     .filter((product) => Boolean(transparentImage(product)))
@@ -49,7 +47,7 @@ export function InteractiveProductShowcase({ products, onOpenProduct }: Props) {
     return () => cancelAnimationFrame(animFrameRef.current);
   }, [isHovering, isDragging, total]);
 
-  // ─── Mouse parallax tracking + cursor trail ───
+  // ─── Mouse parallax tracking ───
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
@@ -62,13 +60,6 @@ export function InteractiveProductShowcase({ products, onOpenProduct }: Props) {
       const dragDelta = e.clientX - dragStartRef.current;
       setRotation(rotationStartRef.current + dragDelta * 0.5);
     }
-
-    // Cursor trail particles
-    trailIdRef.current += 1;
-    setTrail(prev => [
-      ...prev.slice(-8),
-      { x: e.clientX - rect.left, y: e.clientY - rect.top, id: trailIdRef.current }
-    ]);
   }, [isDragging]);
 
   // ─── Drag handlers ───
@@ -116,13 +107,6 @@ export function InteractiveProductShowcase({ products, onOpenProduct }: Props) {
     setCardTilt({ x: 0, y: 0 });
   }, []);
 
-  // Clean up old trail particles
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTrail(prev => prev.slice(-6));
-    }, 150);
-    return () => clearInterval(interval);
-  }, []);
 
   // ─── Orbital position calculator ───
   const getOrbitalPosition = (index: number) => {
@@ -166,21 +150,6 @@ export function InteractiveProductShowcase({ products, onOpenProduct }: Props) {
           }}
         />
 
-        {/* ─── Cursor Trail Particles ─── */}
-        {trail.map((p, i) => (
-          <div
-            key={p.id}
-            className="absolute w-2 h-2 rounded-full bg-emerald-400/40 pointer-events-none"
-            style={{
-              left: p.x,
-              top: p.y,
-              transform: 'translate(-50%, -50%)',
-              opacity: (i + 1) / trail.length * 0.6,
-              transition: 'opacity 0.3s, transform 0.3s',
-              filter: 'blur(1px)',
-            }}
-          />
-        ))}
 
         {/* ─── Floating ambient particles ─── */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">

@@ -31,10 +31,10 @@ export function MobileNav({ activeTab, darkMode, ctaLabel, setDarkMode, onNaviga
             <button
               key={link.id}
               onClick={() => onNavigate(link.id)}
-              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-full text-sm font-bold transition-all duration-200 ${
+              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-full text-sm font-bold transition-all duration-200 border border-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/70 ${
                 isActive
-                  ? 'text-white bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 shadow-md shadow-emerald-600/30 border border-emerald-500/50'
-                  : 'text-slate-800 dark:text-slate-100 bg-slate-100/90 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700/90 border border-slate-200/80 dark:border-slate-700/80 shadow-sm'
+                  ? 'text-white bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 shadow-md shadow-emerald-600/30'
+                  : 'text-slate-800 dark:text-slate-100 bg-slate-100/90 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700/90 shadow-sm'
               }`}
             >
               <span>{isKm ? link.labelKhmer ?? link.label : link.label}</span>

@@ -127,7 +127,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               rel="noopener noreferrer"
               className="w-full sm:w-auto px-5 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-slate-800 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-xs font-bold border border-slate-300 dark:border-slate-700 hover:border-emerald-500/40 transition-all flex items-center justify-center space-x-2 group shadow-sm"
             >
-              <span>{isKm ? 'ទិញកញ្ចប់គំរូទំនិញ (Ballang KMall)' : 'Buy Sample Kit (Ballang KMall)'}</span>
+              <span>{isKm ? 'ទិញឥឡូវនេះ (Ballang KMall)' : 'Shop Now (Ballang KMall)'}</span>
               <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-500 transition-colors shrink-0" />
             </a>
 
