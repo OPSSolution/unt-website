@@ -1,9 +1,11 @@
-import { useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Save, X, Package, Image as ImageIcon, ListChecks, Eye, Clock3, Boxes, Wand2, Loader, Copy } from 'lucide-react';
 import { ImageField } from '../../components/ImageField';
 import { Field } from '../../components/EditorShell';
 import { AdminProduct, PRODUCT_CATEGORIES, ProductDraft } from './types';
-import { COUNTRY_FLAG_EMOJIS, PRODUCT_ORIGINS } from '../../../pages/products/data';
+import { COUNTRY_FLAG_EMOJIS } from '../../../pages/products/data';
+import { TRADE_HUBS, type TradeHub } from '../../../components/ThreeBackground';
+import { api } from '../../api';
 import { removeBackgroundAndUpload } from '../../imageKitUpload';
 
 interface ProductFormProps {
@@ -24,7 +26,48 @@ export function ProductForm({ initial, onSave, onCancel, saving }: ProductFormPr
   const [form, setForm] = useState<ProductDraft>(() => ({ ...initial }));
   const [removingBackground, setRemovingBackground] = useState(false);
   const [removeBackgroundError, setRemoveBackgroundError] = useState('');
+  const [tradeHubs, setTradeHubs] = useState<TradeHub[]>(TRADE_HUBS);
+  const [loadingHubs, setLoadingHubs] = useState(false);
   const removeBackgroundInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setLoadingHubs(true);
+    api.getHomepageSection('trade_hubs', 'en')
+      .then((res) => {
+        const fetched = res?.data?.hubs ?? res?.hubs;
+        if (Array.isArray(fetched) && fetched.length > 0) {
+          setTradeHubs(fetched);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoadingHubs(false));
+  }, []);
+
+  const countryList = useMemo(() => {
+    const list: Array<{ name: string; flag: string }> = [];
+    const names = new Set<string>();
+
+    tradeHubs.forEach((hub) => {
+      const name = hub.name?.trim();
+      if (name && !names.has(name)) {
+        names.add(name);
+        list.push({
+          name,
+          flag: hub.flag?.trim() || COUNTRY_FLAG_EMOJIS[name] || '🌐',
+        });
+      }
+    });
+
+    if (form.origin && !names.has(form.origin)) {
+      list.push({
+        name: form.origin,
+        flag: form.origin_flag || COUNTRY_FLAG_EMOJIS[form.origin] || '🌐',
+      });
+    }
+
+    return list;
+  }, [tradeHubs, form.origin, form.origin_flag]);
+
   const set = <Key extends keyof ProductDraft>(key: Key, value: ProductDraft[Key]) =>
     setForm((current) => ({ ...current, [key]: value }));
   const selectClass = 'w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 transition-colors';
@@ -34,15 +77,13 @@ export function ProductForm({ initial, onSave, onCancel, saving }: ProductFormPr
       <div><h3 className="font-bold text-slate-900 dark:text-white text-sm">{title}</h3><p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{description}</p></div>
     </div>
   );
-  const originOptions = form.origin && !PRODUCT_ORIGINS.includes(form.origin)
-    ? [...PRODUCT_ORIGINS.filter((origin) => origin !== 'All'), form.origin]
-    : PRODUCT_ORIGINS.filter((origin) => origin !== 'All');
 
-  const updateOrigin = (origin: string) => {
+  const updateOrigin = (selectedName: string) => {
+    const target = countryList.find((c) => c.name === selectedName);
     setForm((current) => ({
       ...current,
-      origin,
-      origin_flag: COUNTRY_FLAG_EMOJIS[origin] ?? current.origin_flag,
+      origin: selectedName,
+      origin_flag: target?.flag || COUNTRY_FLAG_EMOJIS[selectedName] || current.origin_flag,
     }));
   };
 
@@ -80,14 +121,17 @@ export function ProductForm({ initial, onSave, onCancel, saving }: ProductFormPr
           </select>
         </div>
         <div className="space-y-1.5">
-          <label htmlFor="product-origin" className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Origin Country</label>
+          <label htmlFor="product-origin" className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center justify-between">
+            <span>Origin Country</span>
+            {loadingHubs && <span className="text-[10px] text-emerald-500 font-normal">Loading 3D hubs...</span>}
+          </label>
           <select id="product-origin" value={form.origin} onChange={(event) => updateOrigin(event.target.value)} className={selectClass} required>
-            <option value="" disabled>Select a country</option>
-            {originOptions.map((origin) => (
-              <option key={origin} value={origin}>{COUNTRY_FLAG_EMOJIS[origin] ?? form.origin_flag} {origin}</option>
+            <option value="" disabled>Select a country from World 3D Hubs</option>
+            {countryList.map((country) => (
+              <option key={country.name} value={country.name}>{country.flag} {country.name}</option>
             ))}
           </select>
-          <p className="text-[11px] text-slate-400 dark:text-slate-500">The country flag is added automatically.</p>
+          <p className="text-[11px] text-slate-400 dark:text-slate-500">Countries are synced with World 3D Trade Hubs. The flag emoji is updated automatically.</p>
         </div>
         <Field label="MOQ" value={form.moq} onChange={(value) => set('moq', value)} />
         <Field label="Lead Time" value={form.lead_time} onChange={(value) => set('lead_time', value)} />

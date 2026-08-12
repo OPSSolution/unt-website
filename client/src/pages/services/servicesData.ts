@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlagJapan, FlagKorea, FlagMalaysia, FlagVietnam, FlagLaos, FlagChina } from './FlagIcons';
+import { FlagCambodia, FlagJapan, FlagKorea, FlagMalaysia, FlagVietnam, FlagLaos, FlagChina } from './FlagIcons';
 
 export interface CountryData {
   name: string;
@@ -14,6 +14,17 @@ export interface CountryData {
 }
 
 export const countryDetails: Record<string, CountryData> = {
+  'Cambodia': {
+    name: 'Cambodia',
+    code: 'KH',
+    FlagComponent: FlagCambodia,
+    niche: 'Local Distribution, GI Produce & Regional Logistics Hub',
+    seaTransit: '1 – 2 Days',
+    airTransit: 'Same Day / Express',
+    standards: ['GDCE Compliant', 'MOC Certified', 'Ministry of Health Approved'],
+    topProducts: ['Kampot Pepper & Organic Produce', 'Local Agricultural FMCG Goods', 'Wholesale Local Stock'],
+    desc: 'Phnom Penh central warehousing and door-to-door distribution network serving all 25 Cambodian provinces.'
+  },
   'Japan': {
     name: 'Japan',
     code: 'JP',

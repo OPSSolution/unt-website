@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Plus, Trash2 } from 'lucide-react';
 import { api } from '../api';
 import { useAdminAuth } from '../hooks/useAdminAuth';
 import { useAutoSave } from '../hooks/useAutoSave';
@@ -22,7 +23,7 @@ const DEFAULTS = {
   product_cta: 'Browse Live Wholesale Stock',
   origin_selector_label: 'Select Origin Country',
   source_from_label: 'Source from',
-  corridor_overview_label: 'Corridor Overview',
+  corridor_overview_label: 'Overview',
   compliance_standards_label: 'Compliance Standards',
   top_products_label: 'Top Sourced Products',
   stock_categories_label: 'Product Categories Available in Stock',
@@ -83,9 +84,82 @@ const DEFAULTS = {
 };
 const EMPTY_TRANSLATIONS = Object.fromEntries(Object.entries(DEFAULTS).map(([key, value]) => [key, Array.isArray(value) ? [] : '']));
 
+const KHMER_COUNTRY_DEFAULTS: Record<string, any> = {
+  KH: {
+    name: 'កម្ពុជា',
+    niche: 'ការចែកចាយក្នុងស្រុក ផលិតផលសម្គាល់ភូមិសាស្ត្រ និងមជ្ឈមណ្ឌលភស្តុភារតំបន់',
+    seaTransit: '១ – ២ ថ្ងៃ',
+    airTransit: 'ក្នុងថ្ងៃ / បន្ទាន់',
+    standards: ['អនុលោមតាម GDCE', 'វិញ្ញាបនបត្រពាណិជ្ជកម្ម', 'ទទួលស្គាល់ដោយក្រសួងសុខាភិបាល'],
+    topProducts: ['ម្រេចកំពត និងផលិតផលកសិកម្ម', 'ទំនិញប្រើប្រាស់ក្នុងស្រុក', 'ស្តុកដុំក្នុងស្រុក'],
+    desc: 'បណ្តាញឃ្លាំងកណ្តាល និងការដឹកជញ្ជូនដល់ទីតាំងផ្ទាល់នៅភ្នំពេញ និងគ្រប់ ២៥ រាជធានី-ខេត្ត។'
+  },
+  JP: {
+    name: 'ជប៉ុន',
+    niche: 'ការថែរក្សាស្បែកលំដាប់ខ្ពស់ កូឡាជែន និងភេសជ្ជៈមុខងារ',
+    seaTransit: '១២ – ១៤ ថ្ងៃ',
+    airTransit: '៣ – ៥ ថ្ងៃ',
+    standards: ['អនុម័តដោយ PMDA', 'ISO 22000', 'ទទួលស្គាល់ដោយ GMP'],
+    topProducts: ['សេរ៉ូមកូឡាជែនពន្យារភាពចាស់', 'ម្សៅតែបៃតង និងតែមុខងារ', 'អាហារបំប៉ន Placenta និង NMN'],
+    desc: 'ភាពជាដៃគូរោងចក្រផ្ទាល់នៅតូក្យូ អូសាកា និងហ្វូគូអូកា។ ការផលិតរបស់ជប៉ុនធានានូវភាពបរិសុទ្ធនៃរូបមន្ត និងការត្រួតពិនិត្យគុណភាពយ៉ាងម៉ឹងម៉ាត់។'
+  },
+  KR: {
+    name: 'កូរ៉េខាងត្បូង',
+    niche: 'K-Beauty ថែរក្សាស្បែក និងផលិតផលសុខភាពទាន់សម័យ',
+    seaTransit: '១០ – ១២ ថ្ងៃ',
+    airTransit: '២ – ៤ ថ្ងៃ',
+    standards: ['ស្តង់ដារ MFDS (KFDA)', 'CGMP', 'ISO 22716'],
+    topProducts: ['សេរ៉ូមផ្តល់សំណើម Cica', 'ឡេការពារកម្តៅថ្ងៃ Glass-Skin SPF50+', 'យិនស៊ិនក្រហមចាញ់'],
+    desc: 'ក្រុមការងារលទ្ធកម្មផ្ទាល់នៅសេអ៊ូល និងអ៊ីនឈុន។ ទទួលបានរូបមន្ត K-Beauty ទាន់សម័យ និងរោងចក្រ OEM/ODM។'
+  },
+  VN: {
+    name: 'វៀតណាម',
+    niche: 'កសិផលពិសេស កាហ្វេ គ្រឿងទេស និងការវេចខ្ចប់',
+    seaTransit: '៣ – ៥ ថ្ងៃ',
+    airTransit: '១ – ២ ថ្ងៃ',
+    standards: ['វិញ្ញាបនបត្រ VFA', 'ISO 9001', 'ស្តង់ដារ VietGAP'],
+    topProducts: ['គ្រាប់កាហ្វេ Robusta គុណភាពខ្ពស់', 'ស្វាយកែវរំអៀត និងផ្លែឈើក្រៀម', 'ប្រអប់វេចខ្ចប់បរិស្ថាន'],
+    desc: 'ការដឹកជញ្ជូនតាមផ្លូវគោកឆ្លងដែន និងផ្លូវសមុទ្រលឿនបំផុត។ តម្លៃសមរម្យសម្រាប់ទំនិញកសិកម្ម និងអាហារវេចខ្ចប់។'
+  },
+  LA: {
+    name: 'ឡាវ',
+    niche: 'ផលិតផលកសិកម្មសរីរាង្គ តែ រ៉ែ និងសិប្បកម្ម',
+    seaTransit: '២ – ៤ ថ្ងៃ (ផ្លូវដែក និងរថយន្ត)',
+    airTransit: '១ – ២ ថ្ងៃ',
+    standards: ['អនុម័តដោយ Lao FDA', 'ISO 9001', 'អនុលោមភាពពាណិជ្ជកម្មអាស៊ាន'],
+    topProducts: ['គ្រាប់កាហ្វេភ្នំពិសេស', 'តែសរីរាង្គ និងគ្រឿងទេស', 'សូត្រ និងសម្លៀកបំពាក់បៃតង'],
+    desc: 'ច្រកពាណិជ្ជកម្មផ្លូវគោកផ្ទាល់តាមវៀងច័ន្ទ។ ការតភ្ជាប់ភស្តុភារឆ្លងដែនលឿនរហ័សរវាងកម្ពុជា និងឡាវ។'
+  },
+  CN: {
+    name: 'ចិន',
+    niche: 'ការវេចខ្ចប់គ្រឿងសម្ភារៈសម្រស់ OEM អេឡិចត្រូនិក និងទំនិញដុំ',
+    seaTransit: '៧ – ១០ ថ្ងៃ',
+    airTransit: '២ – ៤ ថ្ងៃ',
+    standards: ['ចុះបញ្ជី NMPA', 'ISO 13485', 'ស្តង់ដារ CE & CCC'],
+    topProducts: ['ដបគ្រឿងសម្អិត Airless', 'ឧបករណ៍ពន្លឺបំប៉នស្បែក LED', 'ប្រអប់រឹងបោះពុម្ពតាមតម្រូវការ'],
+    desc: 'ការសវនកម្មរោងចក្រផ្ទាល់នៅក្វាងទុង ចឺជាំង និងជាំងស៊ូ។ ប្រភពចម្បងសម្រាប់ការផលិតពុម្ពវេចខ្ចប់ OEM និងទំនិញដុំ។'
+  },
+  MY: {
+    name: 'ម៉ាឡេស៊ី',
+    niche: 'អាហារ ព្រេង និងផលិតផលអនាម័យផ្ទាល់ខ្លួន standard Halal',
+    seaTransit: '៧ – ៩ ថ្ងៃ',
+    airTransit: '២ – ៣ ថ្ងៃ',
+    standards: ['JAKIM Halal', 'MPOB Certified', 'HACCP & GMP'],
+    topProducts: ['កាហ្វេស 3-in-1', 'ប្រេងដូងបរិភោគ', 'សាប៊ូកក់សក់ និងសាប៊ូតួខ្លួនសរីរាង្គ'],
+    desc: 'ការតភ្ជាប់ភស្តុភាររវាងកំពង់ផែ Klang និងព្រះសីហនុ។ ប្រភពផលិតផលប្រើប្រាស់ និងគ្រឿងសម្អិត Halal។'
+  }
+};
+
 const KHMER_STRUCTURE_DEFAULTS = {
   origin_countries: countryContentDefaults.map((country) => ({
-    code: country.code, name: '', niche: '', seaTransit: '', airTransit: '', standards: [], topProducts: [], desc: '',
+    code: country.code,
+    name: KHMER_COUNTRY_DEFAULTS[country.code]?.name || country.name,
+    niche: KHMER_COUNTRY_DEFAULTS[country.code]?.niche || country.niche,
+    seaTransit: KHMER_COUNTRY_DEFAULTS[country.code]?.seaTransit || country.seaTransit,
+    airTransit: KHMER_COUNTRY_DEFAULTS[country.code]?.airTransit || country.airTransit,
+    standards: KHMER_COUNTRY_DEFAULTS[country.code]?.standards || country.standards,
+    topProducts: KHMER_COUNTRY_DEFAULTS[country.code]?.topProducts || country.topProducts,
+    desc: KHMER_COUNTRY_DEFAULTS[country.code]?.desc || country.desc,
   })),
   product_categories: productCategories.map(() => ({ title: '', count: '' })),
   product_benefits: productBenefits.map(() => ({ title: '', desc: '' })),
@@ -150,6 +224,48 @@ export function ServicesEditor() {
     origin_countries: (Array.isArray(current.origin_countries) ? current.origin_countries : []).map((country: any, index: number) =>
       index === selectedCountryIndex ? { ...country, [key]: value } : country),
   }));
+
+  const addCountry = () => {
+    setData((current: any) => {
+      const list = Array.isArray(current.origin_countries) ? current.origin_countries : [];
+      const isKm = language === 'km';
+      const newCountry = isKm ? {
+        code: 'KH',
+        name: 'កម្ពុជា',
+        niche: 'ការចែកចាយក្នុងស្រុក ផលិតផលសម្គាល់ភូមិសាស្ត្រ និងមជ្ឈមណ្ឌលភស្តុភារតំបន់',
+        seaTransit: '១ – ២ ថ្ងៃ',
+        airTransit: 'ក្នុងថ្ងៃ / បន្ទាន់',
+        desc: 'បណ្តាញឃ្លាំងកណ្តាល និងការដឹកជញ្ជូនដល់ទីតាំងផ្ទាល់នៅភ្នំពេញ និងគ្រប់ ២៥ រាជធានី-ខេត្ត។',
+        standards: ['អនុលោមតាម GDCE', 'វិញ្ញាបនបត្រពាណិជ្ជកម្ម', 'ទទួលស្គាល់ដោយក្រសួងសុខាភិបាល'],
+        topProducts: ['ម្រេចកំពត និងផលិតផលកសិកម្ម', 'ទំនិញប្រើប្រាស់ក្នុងស្រុក', 'ស្តុកដុំក្នុងស្រុក'],
+      } : {
+        code: 'KH',
+        name: 'Cambodia',
+        niche: 'Local Distribution, GI Produce & Regional Logistics Hub',
+        seaTransit: '1 – 2 Days',
+        airTransit: 'Same Day / Express',
+        desc: 'Phnom Penh central warehousing and door-to-door distribution network serving all 25 Cambodian provinces.',
+        standards: ['GDCE Compliant', 'MOC Certified', 'Ministry of Health Approved'],
+        topProducts: ['Kampot Pepper & Organic Produce', 'Local Agricultural FMCG Goods', 'Wholesale Local Stock'],
+      };
+      const updated = [...list, newCountry];
+      setSelectedCountryIndex(updated.length - 1);
+      return { ...current, origin_countries: updated };
+    });
+  };
+
+  const removeCountry = (indexToRemove: number) => {
+    setData((current: any) => {
+      const list = Array.isArray(current.origin_countries) ? current.origin_countries : [];
+      if (list.length <= 1) {
+        alert('At least one country corridor must remain.');
+        return current;
+      }
+      const updated = list.filter((_: any, idx: number) => idx !== indexToRemove);
+      setSelectedCountryIndex((prev) => Math.max(0, Math.min(prev, updated.length - 1)));
+      return { ...current, origin_countries: updated };
+    });
+  };
   const updateCategory = (index: number, key: 'title' | 'count', value: string) => setData((current: any) => ({
     ...current,
     product_categories: (Array.isArray(current.product_categories) ? current.product_categories : []).map((category: any, itemIndex: number) =>
@@ -235,24 +351,78 @@ export function ServicesEditor() {
           </div></Card>
 
           <Card><div className="space-y-5">
-            <SectionDivider label="Country Corridors" />
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-3">
+              <SectionDivider label="Country Corridors" />
+              <button
+                type="button"
+                onClick={addCountry}
+                className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors shadow-sm shrink-0"
+              >
+                <Plus className="w-4 h-4" />
+                Add Country Corridor
+              </button>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
               {(Array.isArray(data.origin_countries) ? data.origin_countries : []).map((country: any, index: number) => (
-                <button key={`${country.code}-${index}`} type="button" onClick={() => setSelectedCountryIndex(index)} className={`px-4 py-2 rounded-xl text-xs font-bold border ${selectedCountryIndex === index ? 'bg-emerald-600 border-emerald-600 text-white' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'}`}>{country.name || country.code || `Country ${index + 1}`}</button>
+                <div key={`${country.code}-${index}`} className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedCountryIndex(index)}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all ${selectedCountryIndex === index ? 'bg-emerald-600 border-emerald-600 text-white shadow-sm scale-105' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
+                  >
+                    {country.name || country.code || `Country ${index + 1}`}
+                  </button>
+                  {data.origin_countries.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (confirm(`Delete corridor for "${country.name || country.code}"?`)) {
+                          removeCountry(index);
+                        }
+                      }}
+                      title={`Delete ${country.name || country.code}`}
+                      className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
               ))}
             </div>
             {(() => {
-              const country = (Array.isArray(data.origin_countries) ? data.origin_countries : [])[selectedCountryIndex];
+              const countryList = Array.isArray(data.origin_countries) ? data.origin_countries : [];
+              const country = countryList[selectedCountryIndex];
               if (!country) return <p className="text-sm text-slate-500">No country content is available for this language.</p>;
-              return <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Field label="Country Name" value={country.name ?? ''} onChange={(v) => updateCountry('name', v)} />
-                <Field label="Country Code" value={country.code ?? ''} onChange={(v) => updateCountry('code', v.toUpperCase())} />
-                <div className="md:col-span-2"><Field label="Specialty / Niche" value={country.niche ?? ''} onChange={(v) => updateCountry('niche', v)} /></div>
-                <Field label="Sea / Land Transit" value={country.seaTransit ?? ''} onChange={(v) => updateCountry('seaTransit', v)} />
-                <Field label="Air Transit" value={country.airTransit ?? ''} onChange={(v) => updateCountry('airTransit', v)} />
-                <div className="md:col-span-2"><Field label="Corridor Description" value={country.desc ?? ''} onChange={(v) => updateCountry('desc', v)} multiline rows={4} /></div>
-                <Field label="Compliance Standards (one per line)" value={(country.standards ?? []).join('\n')} onChange={(v) => updateCountry('standards', v.split('\n').map((item) => item.trim()).filter(Boolean))} multiline rows={5} />
-                <Field label="Top Sourced Products (one per line)" value={(country.topProducts ?? []).join('\n')} onChange={(v) => updateCountry('topProducts', v.split('\n').map((item) => item.trim()).filter(Boolean))} multiline rows={5} />
+              return <div className="space-y-4 pt-2">
+                <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                  <span className="text-xs font-bold text-slate-700 dark:text-slate-200">
+                    Editing Corridor: <strong className="text-emerald-600 dark:text-emerald-400">{country.name || country.code}</strong>
+                  </span>
+                  {countryList.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (confirm(`Delete corridor for "${country.name || country.code}"?`)) {
+                          removeCountry(selectedCountryIndex);
+                        }
+                      }}
+                      className="inline-flex items-center gap-1.5 text-xs text-red-500 hover:text-red-600 font-bold px-3 py-1.5 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/40 border border-red-200 dark:border-red-900/40 transition-colors shrink-0"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      Delete Corridor
+                    </button>
+                  )}
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Field label="Country Name" value={country.name ?? ''} onChange={(v) => updateCountry('name', v)} />
+                  <Field label="Country Code" value={country.code ?? ''} onChange={(v) => updateCountry('code', v.toUpperCase())} />
+                  <div className="md:col-span-2"><Field label="Specialty / Niche" value={country.niche ?? ''} onChange={(v) => updateCountry('niche', v)} /></div>
+                  <Field label="Sea / Land Transit" value={country.seaTransit ?? ''} onChange={(v) => updateCountry('seaTransit', v)} />
+                  <Field label="Air Transit" value={country.airTransit ?? ''} onChange={(v) => updateCountry('airTransit', v)} />
+                  <div className="md:col-span-2"><Field label="Corridor Description" value={country.desc ?? ''} onChange={(v) => updateCountry('desc', v)} multiline rows={4} /></div>
+                  <Field label="Compliance Standards (one per line)" value={(country.standards ?? []).join('\n')} onChange={(v) => updateCountry('standards', v.split('\n').map((item) => item.trim()).filter(Boolean))} multiline rows={5} />
+                  <Field label="Top Sourced Products (one per line)" value={(country.topProducts ?? []).join('\n')} onChange={(v) => updateCountry('topProducts', v.split('\n').map((item) => item.trim()).filter(Boolean))} multiline rows={5} />
+                </div>
               </div>;
             })()}
           </div></Card>

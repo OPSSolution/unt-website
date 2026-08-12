@@ -52,11 +52,12 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
         <div className="p-6 overflow-y-auto space-y-6 flex-1 text-slate-800 dark:text-slate-100 text-left">
           {/* Main Visual & Overview */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-            <div className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 aspect-video md:aspect-square">
+            <div className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-950 aspect-square group shadow-inner">
+              <div className="absolute inset-0 bg-gradient-to-b from-slate-900/30 via-transparent to-slate-900/10 dark:from-slate-950/50 dark:to-slate-950/40 pointer-events-none z-10" />
               <img
                 src={product.image}
                 alt={product.name}
-                className="w-full h-full object-contain p-4 bg-white dark:bg-slate-800"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               {product.oemAvailable && (
                 <div className="absolute top-3 left-3 px-3 py-1 bg-emerald-600 text-white font-bold text-xs rounded-full shadow-md flex items-center space-x-1">
