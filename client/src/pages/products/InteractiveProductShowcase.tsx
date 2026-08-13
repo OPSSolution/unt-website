@@ -194,7 +194,7 @@ export function InteractiveProductShowcase({ products, onOpenProduct }: Props) {
               <Sparkles className="w-3.5 h-3.5" />
               {isDragging
                 ? (isKm ? '⟵ អូសដើម្បីបង្វិល ⟶' : '⟵ DRAGGING ⟶')
-                : (isKm ? '☝️ អូស ឬដាក់កណ្ដុរលើផលិតផល' : '☝️ DRAG TO SPIN • HOVER TO EXPLORE')
+                : (isKm ? 'អូស ឬដាក់កណ្ដុរលើផលិតផល' : 'DRAG TO SPIN • HOVER TO EXPLORE')
               }
             </span>
           </div>
