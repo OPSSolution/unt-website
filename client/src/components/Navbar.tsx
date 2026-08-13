@@ -150,17 +150,17 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* ─── 2. Logo & Brand Tagline ─── */}
             <button
               onClick={() => handleNavigate('home')}
-              className="flex min-w-0 items-center space-x-1.5 sm:space-x-2 text-left group focus:outline-none shrink-0 max-w-[130px] sm:max-w-[230px] xl:max-w-[250px] 2xl:max-w-[260px]"
+              className="flex min-w-0 items-center space-x-2.5 sm:space-x-3 text-left group focus:outline-none shrink-0 max-w-[170px] sm:max-w-[280px] xl:max-w-[320px] 2xl:max-w-[340px]"
               aria-label="Unique Noble Trading Home"
             >
-              <div className="relative w-8 h-8 sm:w-9 sm:h-9 xl:w-10 xl:h-10 rounded-xl bg-white border border-emerald-200/80 shadow-sm p-1 group-hover:scale-105 transition-all duration-300 shrink-0">
+              <div className="relative w-11 h-11 sm:w-[52px] sm:h-[52px] xl:w-14 xl:h-14 rounded-2xl bg-white border border-emerald-200/80 shadow-sm p-1 group-hover:scale-105 transition-all duration-300 shrink-0">
                 <img src="/images/logos/image.png" alt="UNT Logo" className="w-full h-full object-contain" />
               </div>
               <div className="hidden sm:block min-w-0 flex-1">
-                <div className="font-display font-black text-xs tracking-tight text-slate-900 dark:text-white leading-tight truncate">
+                <div className="font-display font-black text-[13px] sm:text-sm xl:text-[15px] tracking-tight text-slate-900 dark:text-white leading-tight truncate">
                   {companyName}
                 </div>
-                <div className="text-xs text-emerald-600 dark:text-emerald-400 font-bold mt-0.5 leading-tight truncate">
+                <div className="text-xs sm:text-[13px] text-emerald-600 dark:text-emerald-400 font-bold mt-0.5 leading-tight truncate">
                   {companyTagline}
                 </div>
               </div>
