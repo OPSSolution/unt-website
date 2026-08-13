@@ -1,4 +1,5 @@
 import { Router } from "express";
+import express from "express";
 import { requireAdmin } from "../../middleware/auth.js";
 import { auditAdminMutation } from "../../middleware/logger.js";
 import productsRouter from "./products.js";
@@ -13,7 +14,15 @@ import { protectLanguageIntegrity, requireContentLanguage } from "../../i18n.js"
 
 const router = Router();
 // Anything mounted below this guard is admin-only by construction.
-router.use(requireAdmin, requireContentLanguage, protectLanguageIntegrity, auditAdminMutation);
+const isBinaryUpload = (req: express.Request) => {
+  const ct = req.headers["content-type"] ?? "";
+  return ct.startsWith("image/") || ct.startsWith("video/") || ct.startsWith("application/octet-stream");
+};
+
+router.use(requireAdmin);
+router.use((req, res, next) => isBinaryUpload(req) ? next() : requireContentLanguage(req, res, next));
+router.use((req, res, next) => isBinaryUpload(req) ? next() : protectLanguageIntegrity(req, res, next));
+router.use(auditAdminMutation);
 router.use("/products", productsRouter);
 router.use("/articles", articlesRouter);
 router.use("/partners", partnersRouter);

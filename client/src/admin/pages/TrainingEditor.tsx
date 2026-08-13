@@ -31,12 +31,42 @@ export function TrainingEditor() {
   const [scheduleSaveMessage, setScheduleSaveMessage] = useState('');
   const [scheduleSaveError, setScheduleSaveError] = useState('');
 
+  const saveTrainingPage = async (
+    latestData: any,
+    options: { syncActivities?: boolean; verifyActivities?: ActivityItem[] } = {},
+  ) => {
+    if (!token) throw new Error('Your admin session is unavailable. Please sign in again.');
+    await api.updateHomepageSection('training_page', latestData, token, language);
+
+    if (options.syncActivities && Array.isArray(latestData.activities)) {
+      const otherLang = language === 'en' ? 'km' : 'en';
+      const otherResult = await api.getHomepageSection('training_page', otherLang);
+      const otherActivities = restoreClientActivities(otherResult.data?.activities);
+      const syncedOtherActivities = buildOtherLangActivities(latestData.activities, otherActivities);
+      const otherData = { ...(otherResult.data ?? {}), activities: syncedOtherActivities };
+      await api.updateHomepageSection('training_page', otherData, token, otherLang);
+    }
+
+    if (options.verifyActivities) {
+      const verified = await api.getHomepageSection('training_page', language);
+      const verifiedActivities = restoreClientActivities(verified.data?.activities);
+      const savedById = new Map(verifiedActivities.map((activity) => [activity.id, activity]));
+      const missing = options.verifyActivities.find((activity) => {
+        const savedActivity = savedById.get(activity.id);
+        return !savedActivity || savedActivity.mediaUrl !== activity.mediaUrl;
+      });
+      if (missing) {
+        throw new Error(`Activity "${missing.title || missing.id}" was not confirmed by Supabase.`);
+      }
+      setData((current: any) => ({ ...current, activities: verifiedActivities }));
+    }
+  };
+
   const { saving, saved, error, dirty, autoSaving, autoSaved, autoSaveError } = useAutoSave(
     `training_page-${language}`,
     data,
     async (latestData) => {
-      if (!token) throw new Error('Your admin session is unavailable. Please sign in again.');
-      await api.updateHomepageSection('training_page', latestData, token, language);
+      await saveTrainingPage(latestData, { syncActivities: true });
     },
     1200,
     !loading && loadedLanguage === language,
@@ -70,8 +100,7 @@ export function TrainingEditor() {
   const set = (key: string) => (v: string) => setData((d: any) => ({ ...d, [key]: v }));
 
   const handleSave = async () => {
-    if (!token) return;
-    await api.updateHomepageSection('training_page', data, token, language);
+    await saveTrainingPage(data, { syncActivities: true });
   };
 
   const persistSessions = async (upcoming_sessions: UpcomingSession[]) => {
@@ -112,26 +141,7 @@ export function TrainingEditor() {
     }
 
     try {
-      await api.updateHomepageSection('training_page', nextData, token, language);
-
-      const otherLang = language === 'en' ? 'km' : 'en';
-      const otherResult = await api.getHomepageSection('training_page', otherLang);
-      const otherActivities = restoreClientActivities(otherResult.data?.activities);
-      const syncedOtherActivities = buildOtherLangActivities(activities, otherActivities);
-      const otherData = { ...(otherResult.data ?? {}), activities: syncedOtherActivities };
-      await api.updateHomepageSection('training_page', otherData, token, otherLang);
-
-      const verified = await api.getHomepageSection('training_page', language);
-      const verifiedActivities = restoreClientActivities(verified.data?.activities);
-      const savedById = new Map(verifiedActivities.map((activity) => [activity.id, activity]));
-      const missing = activities.find((activity) => {
-        const saved = savedById.get(activity.id);
-        return !saved || saved.mediaUrl !== activity.mediaUrl;
-      });
-      if (missing) {
-        throw new Error(`Activity "${missing.title}" was not confirmed by Supabase.`);
-      }
-      setData((current: any) => ({ ...current, activities: verifiedActivities }));
+      await saveTrainingPage(nextData, { syncActivities: true, verifyActivities: activities });
       setGallerySaveMessage('Gallery activity saved and verified in Supabase. Media URL confirmed from ImageKit.');
     } catch (saveError) {
       setGallerySaveError(saveError instanceof Error ? saveError.message : 'Failed to save gallery activity.');

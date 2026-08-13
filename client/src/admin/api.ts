@@ -121,4 +121,18 @@ export const api = {
     request<{ configured: boolean; source: 'admin'; updated_at: string }>('/api/admin/settings/remove-background', { method: 'PUT', body: JSON.stringify({ apiKey }) }, token),
   clearRemoveBackgroundSettings: (token: string) =>
     request<{ configured: boolean; source: 'env' | null; updated_at: null }>('/api/admin/settings/remove-background', { method: 'DELETE' }, token),
+
+  getImageKitSettings: (token: string) =>
+    request<{ configured: boolean; source: 'admin' | 'env' | null; updated_at: string | null }>('/api/admin/settings/imagekit', {}, token),
+  updateImageKitSettings: (publicKey: string, privateKey: string, token: string) =>
+    request<{ configured: boolean; source: 'admin'; updated_at: string }>('/api/admin/settings/imagekit', { method: 'PUT', body: JSON.stringify({ publicKey, privateKey }) }, token),
+  clearImageKitSettings: (token: string) =>
+    request<{ configured: boolean; source: 'env' | null; updated_at: null }>('/api/admin/settings/imagekit', { method: 'DELETE' }, token),
+
+  getCloudinarySettings: (token: string) =>
+    request<{ configured: boolean; source: 'admin' | 'env' | null; updated_at: string | null }>('/api/admin/settings/cloudinary', {}, token),
+  updateCloudinarySettings: (cloudName: string, apiKey: string, apiSecret: string, token: string) =>
+    request<{ configured: boolean; source: 'admin'; updated_at: string }>('/api/admin/settings/cloudinary', { method: 'PUT', body: JSON.stringify({ cloudName, apiKey, apiSecret }) }, token),
+  clearCloudinarySettings: (token: string) =>
+    request<{ configured: boolean; source: 'env' | null; updated_at: null }>('/api/admin/settings/cloudinary', { method: 'DELETE' }, token),
 };

@@ -1,6 +1,10 @@
 import React, { useId, useRef, useState } from 'react';
 import { Upload, X, Loader } from 'lucide-react';
-import { uploadToImageKit } from '../imageKitUpload';
+import { uploadToImageKit, uploadToCloudinary } from '../imageKitUpload';
+import { api } from '../api';
+import { useAdminAuth } from '../hooks/useAdminAuth';
+
+type Provider = 'imagekit' | 'cloudinary';
 
 interface Props {
   label: string;
@@ -15,14 +19,26 @@ interface Props {
 export function ImageField({ label, value, onChange, accept = 'image/*', folder = 'images', previewType = 'image' }: Props) {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
+  const [provider, setProvider] = useState<Provider>('imagekit');
+  const [ikConfigured, setIkConfigured] = useState<boolean | null>(null);
+  const [cdConfigured, setCdConfigured] = useState<boolean | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const fieldId = useId();
+  const { token } = useAdminAuth();
+
+  React.useEffect(() => {
+    if (!token) return;
+    api.getImageKitSettings(token).then((s) => setIkConfigured(s.configured)).catch(() => setIkConfigured(false));
+    api.getCloudinarySettings(token).then((s) => setCdConfigured(s.configured)).catch(() => setCdConfigured(false));
+  }, [token]);
 
   const handleFile = async (file: File) => {
     setUploading(true);
     setUploadError('');
     try {
-      const uploaded = await uploadToImageKit(file, folder);
+      const uploaded = provider === 'cloudinary'
+        ? await uploadToCloudinary(file, folder)
+        : await uploadToImageKit(file, folder);
       onChange(uploaded.url);
     } catch (error: unknown) {
       setUploadError(error instanceof Error ? error.message : 'Upload failed');
@@ -33,7 +49,34 @@ export function ImageField({ label, value, onChange, accept = 'image/*', folder 
 
   return (
     <div className="space-y-1.5">
-      <label htmlFor={fieldId} className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{label}</label>
+      <div className="flex items-center justify-between">
+        <label htmlFor={fieldId} className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{label}</label>
+        <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 rounded-lg p-0.5">
+          <button
+            type="button"
+            onClick={() => setProvider('imagekit')}
+            className={`text-[10px] font-bold px-2 py-0.5 rounded-md transition-colors ${
+              provider === 'imagekit'
+                ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 shadow-sm'
+                : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
+            }`}
+          >
+            ImageKit{ikConfigured === false && ' ⚠'}
+          </button>
+          <button
+            type="button"
+            onClick={() => setProvider('cloudinary')}
+            className={`text-[10px] font-bold px-2 py-0.5 rounded-md transition-colors ${
+              provider === 'cloudinary'
+                ? 'bg-white dark:bg-slate-700 text-purple-700 dark:text-purple-300 shadow-sm'
+                : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
+            }`}
+          >
+            Cloudinary{cdConfigured === false && ' ⚠'}
+          </button>
+
+        </div>
+      </div>
 
       <div className="flex gap-2">
         <input
@@ -51,7 +94,7 @@ export function ImageField({ label, value, onChange, accept = 'image/*', folder 
           className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 disabled:opacity-50 text-slate-700 dark:text-white text-xs font-medium transition-colors shrink-0"
         >
           {uploading ? <Loader className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
-          <span>{uploading ? 'Uploading...' : 'Upload'}</span>
+          <span>{uploading ? 'Uploading...' : `Upload`}</span>
         </button>
         <input
           ref={inputRef}

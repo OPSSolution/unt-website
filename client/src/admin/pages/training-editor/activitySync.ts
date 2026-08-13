@@ -13,7 +13,8 @@ export const ACTIVITY_TEXT_FIELDS: (keyof ActivityItem)[] = [
 
 /**
  * Validate and normalise a raw saved activities array from Supabase.
- * Items missing id / title / mediaUrl are dropped.
+ * Items missing id / mediaUrl are dropped. Title may be blank because each
+ * language has its own text fields, and untranslated placeholders are valid.
  */
 export function restoreClientActivities(saved: unknown): ActivityItem[] {
   const EMPTY: ActivityItem = {
@@ -28,7 +29,7 @@ export function restoreClientActivities(saved: unknown): ActivityItem[] {
     const id = typeof a.id === 'string' ? a.id.trim() : '';
     const title = typeof a.title === 'string' ? a.title.trim() : '';
     const mediaUrl = typeof a.mediaUrl === 'string' ? a.mediaUrl.trim() : '';
-    if (!id || !title || !mediaUrl) return [];
+    if (!id || !mediaUrl) return [];
     return [{
       ...EMPTY, ...a, id, title, mediaUrl,
       galleryImages: Array.isArray(a.galleryImages)
@@ -42,8 +43,9 @@ export function restoreClientActivities(saved: unknown): ActivityItem[] {
 /**
  * Build the merged activity list to display in the admin.
  * - Union of all IDs from both sides (added in either language → appears in both).
- * - Structural fields come from primary (current language).
- * - Text fields come from primary; fall back to secondary when primary is empty.
+ * - Structural fields come from whichever language already has the record.
+ * - Text fields come only from primary (current language), so untranslated
+ *   Khmer/English fields remain blank instead of leaking from the other side.
  */
 export function mergeActivitiesForDisplay(
   primary: ActivityItem[],
@@ -58,18 +60,13 @@ export function mergeActivitiesForDisplay(
   return allIds.map((id) => {
     const p = primaryById.get(id);
     const s = secondaryById.get(id);
-    if (p && !s) return p;
-    if (!p && s) return s;
-    const merged: ActivityItem = { ...p! };
+    if (p) return p;
+    const placeholder: ActivityItem = { ...s! };
     for (const field of ACTIVITY_TEXT_FIELDS) {
-      const pVal = p![field];
-      const sVal = s![field];
-      const pEmpty = pVal === undefined || pVal === null ||
-        (typeof pVal === 'string' && !pVal.trim()) ||
-        (Array.isArray(pVal) && pVal.length === 0);
-      if (pEmpty && sVal !== undefined) (merged as any)[field] = sVal;
+      const value = placeholder[field];
+      (placeholder as any)[field] = Array.isArray(value) ? [] : '';
     }
-    return merged;
+    return placeholder;
   });
 }
 
@@ -77,7 +74,7 @@ export function mergeActivitiesForDisplay(
  * Build the activity list to write for the OTHER language:
  * - Keep other lang's existing text intact.
  * - Sync structural fields from the current lang's new list.
- * - Add new activities (copied whole as placeholder); deletions reflected by exclusion.
+ * - Add new activities with blank text placeholders; deletions reflected by exclusion.
  */
 export function buildOtherLangActivities(
   newActivities: ActivityItem[],
@@ -86,7 +83,14 @@ export function buildOtherLangActivities(
   const otherById = new Map(otherActivities.map((a) => [a.id, a]));
   return newActivities.map((newActivity) => {
     const other = otherById.get(newActivity.id);
-    if (!other) return { ...newActivity };
+    if (!other) {
+      const placeholder: ActivityItem = { ...newActivity };
+      for (const field of ACTIVITY_TEXT_FIELDS) {
+        const value = placeholder[field];
+        (placeholder as any)[field] = Array.isArray(value) ? [] : '';
+      }
+      return placeholder;
+    }
     const synced: ActivityItem = { ...other };
     for (const field of ACTIVITY_STRUCTURAL_FIELDS) {
       const val = newActivity[field];

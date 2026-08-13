@@ -6,6 +6,7 @@ export type Translations = Record<string, Record<string, unknown>>;
 
 const SHARED_FIELD = /(^id$|_id$|^origin$|image|avatar|url|flag|created_at|updated_at|sort_order|featured|available)/i;
 const LEGAL_COMPANY_NAME = "Unique Noble Trading Co., Ltd.";
+const ACTIVITY_SHARED_FIELDS = ["id", "category", "type", "mediaUrl", "thumbnailUrl", "videoUrl", "galleryImages"] as const;
 
 function replaceLegacyCompanyName(value: unknown): unknown {
   if (typeof value === "string") {
@@ -36,8 +37,8 @@ function blankLocalizedFields(value: Record<string, unknown>) {
 
 function mergeSharedActivities(english: unknown, khmer: unknown) {
   if (!Array.isArray(english)) return Array.isArray(khmer) ? khmer : [];
-  if (!Array.isArray(khmer) || khmer.length === 0) return english;
-  const localizedItems = khmer.filter((item): item is Record<string, unknown> =>
+  const khmerItems = Array.isArray(khmer) ? khmer : [];
+  const localizedItems = khmerItems.filter((item): item is Record<string, unknown> =>
     !!item && typeof item === "object" && !Array.isArray(item));
   const khmerById = new Map(localizedItems.map((item) => [item.id, item]));
   const englishIds = new Set(english
@@ -46,19 +47,23 @@ function mergeSharedActivities(english: unknown, khmer: unknown) {
   const merged = english.map((item, index) => {
     if (!item || typeof item !== "object" || Array.isArray(item)) return item;
     const base = item as Record<string, unknown>;
-    const positional = khmer[index];
+    const blank = blankLocalizedFields(base);
+    for (const key of ACTIVITY_SHARED_FIELDS) {
+      if (base[key] !== undefined) blank[key] = base[key];
+    }
+    const positional = khmerItems[index];
     const translated = khmerById.get(base.id) ?? (
       positional && typeof positional === "object" && !Array.isArray(positional) && !("id" in positional)
         ? positional
         : undefined
     );
-    if (!translated || typeof translated !== "object" || Array.isArray(translated)) return base;
+    if (!translated || typeof translated !== "object" || Array.isArray(translated)) return blank;
 
-    const merged = { ...base, ...translated };
+    const merged = { ...blank, ...translated };
     // Activity media and behavior are shared between languages. Older Khmer
     // records can contain blank copies of these fields; allowing those copies
     // to win makes thumbnails/videos disappear when the language changes.
-    for (const key of ["id", "category", "type", "mediaUrl", "thumbnailUrl", "videoUrl", "galleryImages"] as const) {
+    for (const key of ACTIVITY_SHARED_FIELDS) {
       if (base[key] !== undefined) merged[key] = base[key];
     }
     return merged;

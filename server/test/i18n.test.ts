@@ -38,10 +38,13 @@ test("legacy company names in saved homepage content use the legal company name"
   });
 });
 
-test("training activity media remains available when Khmer text is empty", () => {
-  const activity = { id: "activity-1", title: "Workshop", mediaUrl: "https://example.com/photo.jpg" };
+test("training activity media remains available while untranslated Khmer text stays blank", () => {
+  const activity = { id: "activity-1", title: "Workshop", description: "English copy", mediaUrl: "https://example.com/photo.jpg" };
   const data = { en: { heading: "Training", activities: [activity] }, km: { heading: "", activities: [] } };
-  assert.deepEqual(localizedSection(data, "km"), { heading: "", activities: [activity] });
+  assert.deepEqual(localizedSection(data, "km"), {
+    heading: "",
+    activities: [{ id: "activity-1", title: "", description: "", mediaUrl: "https://example.com/photo.jpg" }],
+  });
 });
 
 test("blank Khmer activity media cannot hide shared images and videos", () => {
@@ -78,7 +81,7 @@ test("new Khmer training activities survive localization and refresh", () => {
     km: { activities: [khmerActivity] },
   };
   assert.deepEqual(localizedSection(data, "km"), {
-    activities: [englishActivity, khmerActivity],
+    activities: [{ id: "activity-1", title: "", mediaUrl: "https://example.com/one.jpg" }, khmerActivity],
   });
 });
 

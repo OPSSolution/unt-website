@@ -23,7 +23,13 @@ export function createApp() {
   app.disable("x-powered-by");
   app.use(helmet({ contentSecurityPolicy: false }));
   app.use(cors({ origin: env.CORS_ORIGIN === "*" ? true : env.CORS_ORIGIN }));
-  app.use(express.json({ limit: "1mb" }));
+  app.use(express.json({
+    limit: "1mb",
+    type: (req) => {
+      const ct = req.headers["content-type"] ?? "";
+      return ct.startsWith("application/json");
+    },
+  }));
   app.use(requestLogger);
   const publicApiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,

@@ -62,6 +62,31 @@ export async function uploadToImageKit(file: File, folder: string): Promise<Imag
   return { url: uploaded.url, fileId: uploaded.fileId, fileType: uploaded.fileType };
 }
 
+export async function uploadToCloudinary(file: File, folder: string): Promise<ImageKitUploadResult> {
+  const limit = file.type.startsWith('video/') ? 100 : 25;
+  if (file.size > limit * 1024 * 1024) {
+    throw new Error(`${file.type.startsWith('video/') ? 'Videos' : 'Images'} must be ${limit} MB or smaller.`);
+  }
+
+  const session = await supabase?.auth.getSession();
+  const token = session?.data.session?.access_token;
+  if (!token) throw new Error('Your admin session has expired. Please sign in again.');
+
+  const res = await fetch(`${API_BASE}/api/admin/media/cloudinary-upload?folder=${encodeURIComponent(folder)}`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/octet-stream',
+      'X-File-Type': file.type || 'image/jpeg',
+      'X-Content-Language': storedLanguage(),
+    },
+    body: file,
+  });
+  const data = await res.json().catch(() => ({})) as { url?: string; fileId?: string; error?: string };
+  if (!res.ok || !data.url) throw new Error(data.error ?? 'Cloudinary upload failed.');
+  return { url: data.url, fileId: data.fileId ?? '' };
+}
+
 export async function removeBackgroundAndUpload(file: File): Promise<ImageKitUploadResult> {
   if (!file.type.startsWith('image/')) throw new Error('Please choose an image file.');
   if (file.size > 10 * 1024 * 1024) throw new Error('Background removal images must be 10 MB or smaller.');
@@ -74,7 +99,8 @@ export async function removeBackgroundAndUpload(file: File): Promise<ImageKitUpl
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': file.type || 'image/png',
+      'Content-Type': 'application/octet-stream',
+      'X-File-Type': file.type || 'image/png',
       'X-Content-Language': storedLanguage(),
     },
     body: file,

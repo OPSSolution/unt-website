@@ -9,21 +9,15 @@ const envSchema = z.object({
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
   IMAGEKIT_PUBLIC_KEY: z.string().min(1).optional(),
   IMAGEKIT_PRIVATE_KEY: z.string().min(1).optional(),
+  CLOUDINARY_CLOUD_NAME: z.string().min(1).optional(),
+  CLOUDINARY_API_KEY: z.string().min(1).optional(),
+  CLOUDINARY_API_SECRET: z.string().min(1).optional(),
   REMOVE_BG_API_KEY: z.string().min(1).optional(),
   RESEND_API_KEY: z.string().min(1).optional(),
   QUOTE_EMAIL_TO: z.string().email().optional(),
   EMAIL_FROM: z.string().min(1).optional(),
   PUBLIC_SITE_URL: z.string().url().default("https://unt-website.onrender.com"),
   CORS_ORIGIN: z.string().min(1).default("*"),
-}).superRefine((value, context) => {
-  const configured = [value.IMAGEKIT_PUBLIC_KEY, value.IMAGEKIT_PRIVATE_KEY].filter(Boolean).length;
-  if (configured !== 0 && configured !== 2) {
-    context.addIssue({
-      code: "custom",
-      path: ["IMAGEKIT_PUBLIC_KEY"],
-      message: "IMAGEKIT_PUBLIC_KEY and IMAGEKIT_PRIVATE_KEY must be configured together",
-    });
-  }
 });
 
 const result = envSchema.safeParse(process.env);

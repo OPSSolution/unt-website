@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { nonEmptyString } from "./common.js";
+import { nonEmptyString, mediaUrlSchema } from "./common.js";
 
 const optionalNonEmptyString = z.preprocess(
   (value) => value === "" ? undefined : value,
@@ -18,8 +18,11 @@ export const productSchema = z.object({
   origin_flag: nonEmptyString,
   moq: nonEmptyString,
   lead_time: nonEmptyString,
-  image: z.string().trim(),
-  showcase_image: clearableOptionalString,
+  image: mediaUrlSchema,
+  showcase_image: z.preprocess(
+    (value) => value === "" ? null : value,
+    mediaUrlSchema.nullable().optional(),
+  ),
   description: nonEmptyString,
   oem_available: z.boolean(),
   specifications: z.array(nonEmptyString),
@@ -34,10 +37,8 @@ export const articleSchema = z.object({
   read_time: nonEmptyString,
   author_name: nonEmptyString,
   author_role: nonEmptyString,
-  // Images can be cleared from the article editor. The database columns remain
-  // non-null, so an empty string represents an intentionally removed image.
-  author_avatar: z.string().trim(),
-  image: z.string().trim(),
+  author_avatar: mediaUrlSchema,
+  image: mediaUrlSchema,
   excerpt: nonEmptyString,
   content: z.array(nonEmptyString).min(1),
   tags: z.array(nonEmptyString),
@@ -49,7 +50,7 @@ export const partnerSchema = z.object({
   category: nonEmptyString,
   country: nonEmptyString,
   logo_text: nonEmptyString,
-  image: optionalNonEmptyString,
+  image: mediaUrlSchema.optional(),
   description: optionalNonEmptyString,
 });
 
@@ -60,7 +61,10 @@ export const heroContentSchema = z.object({
   subtitle: nonEmptyString,
   cta_primary: nonEmptyString,
   cta_secondary: nonEmptyString,
-  feature_image: optionalNonEmptyString,
+  feature_image: z.preprocess(
+    (value) => value === "" ? undefined : value,
+    mediaUrlSchema.optional(),
+  ),
 });
 
 export const heroStatSchema = z.object({
