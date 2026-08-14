@@ -1,14 +1,16 @@
 import { CheckCircle2, Globe } from 'lucide-react';
-import { ORIGINS, ORIGINS_KM, VOLUMES, VOLUMES_KM, type QuoteFormContent } from './quoteModalData';
+import { VOLUMES, VOLUMES_KM, type QuoteFormContent } from './quoteModalData';
 import { stepAnimation, type QuoteStepProps } from './types';
 import type { ContentLanguage } from '../../i18n/LanguageContext';
+import type { TradeHub } from '../ThreeBackground';
 
 interface Props extends QuoteStepProps {
   language: ContentLanguage;
   content: QuoteFormContent;
+  origins: TradeHub[];
 }
 
-export function QuoteDetailsStep({ formData, setFormData, direction, language, content }: Props) {
+export function QuoteDetailsStep({ formData, setFormData, direction, language, content, origins }: Props) {
   const isKm = language === 'km';
   const volumes = content.volume_options?.length ? content.volume_options : (isKm ? VOLUMES_KM : VOLUMES);
 
@@ -19,14 +21,15 @@ export function QuoteDetailsStep({ formData, setFormData, direction, language, c
           {content.origin_label || (isKm ? 'ប្រទេសដើមដែលពេញចិត្ត' : 'Preferred Origin Country')}
         </label>
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-3">
-          {ORIGINS.map((origin) => {
-            const isActive = formData.originPreference === origin.value;
-            const displayName = content.origin_options?.[ORIGINS.indexOf(origin)] || (isKm ? (ORIGINS_KM[origin.value] ?? origin.value) : origin.value.split(' / ')[0]);
+          {origins.map((origin, index) => {
+            const originName = origin.name.trim();
+            const isActive = formData.originPreference === originName;
+            const displayName = content.origin_options?.[index] || originName;
             return (
               <button
                 type="button"
-                key={origin.value}
-                onClick={() => setFormData((current) => ({ ...current, originPreference: origin.value }))}
+                key={origin.id || originName}
+                onClick={() => setFormData((current) => ({ ...current, originPreference: originName }))}
                 className={`group relative flex flex-col items-center justify-center gap-2.5 px-3 py-4 rounded-2xl border-2 transition-all duration-300 text-xs font-bold overflow-hidden ${
                   isActive
                     ? 'bg-emerald-50 dark:bg-emerald-950/50 border-emerald-500 dark:border-emerald-400 text-emerald-700 dark:text-emerald-300 shadow-lg shadow-emerald-500/15 scale-[1.03]'
@@ -40,7 +43,7 @@ export function QuoteDetailsStep({ formData, setFormData, direction, language, c
                   {origin.flagUrl ? (
                     <img
                       src={origin.flagUrl}
-                      alt={origin.value}
+                      alt={originName}
                       className="w-full h-full object-cover rounded-xl border border-slate-200/80 dark:border-slate-700/80"
                     />
                   ) : (

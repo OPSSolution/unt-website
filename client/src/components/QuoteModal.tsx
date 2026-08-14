@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import type { QuoteRequestState } from '../types';
 import { QuoteContactStep } from './quote-modal/QuoteContactStep';
 import { QuoteDetailsStep } from './quote-modal/QuoteDetailsStep';
@@ -11,6 +11,8 @@ import { useLanguage } from '../i18n/LanguageContext';
 import { API_BASE } from '../lib/apiBase';
 import { api } from '../admin/api';
 import type { QuoteFormContent } from './quote-modal/quoteModalData';
+import { useTradeHubs } from '../hooks/useTradeHubs';
+import type { TradeHub } from './ThreeBackground';
 
 interface QuoteModalProps {
   isOpen: boolean;
@@ -18,11 +20,11 @@ interface QuoteModalProps {
   preselectedProduct?: string;
 }
 
-const initialFormData = (preselectedProduct?: string): QuoteRequestState => ({
+const initialFormData = (preselectedProduct?: string, originPreference = 'Vietnam'): QuoteRequestState => ({
   serviceType: preselectedProduct ? 'Wholesale Purchase' : 'Product Sourcing',
   productName: preselectedProduct || undefined,
   productCategory: 'Food & Beverage',
-  originPreference: 'Vietnam',
+  originPreference,
   estimatedVolume: '1,000 - 5,000 units',
   companyName: '',
   contactName: '',
@@ -33,9 +35,17 @@ const initialFormData = (preselectedProduct?: string): QuoteRequestState => ({
 
 export const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose, preselectedProduct }) => {
   const { language, setLanguage } = useLanguage();
+  const tradeHubs = useTradeHubs();
+  const originHubs = useMemo(
+    () => tradeHubs.filter((hub): hub is TradeHub => {
+      return Boolean(hub.name?.trim());
+    }),
+    [tradeHubs],
+  );
+  const defaultOriginPreference = originHubs[0]?.name.trim() || 'Vietnam';
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState<StepDirection>('forward');
-  const [formData, setFormData] = useState<QuoteRequestState>(() => initialFormData(preselectedProduct));
+  const [formData, setFormData] = useState<QuoteRequestState>(() => initialFormData(preselectedProduct, defaultOriginPreference));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState('');
@@ -44,12 +54,20 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose, presele
 
   useEffect(() => {
     if (isOpen) {
-      setFormData(initialFormData(preselectedProduct));
+      setFormData(initialFormData(preselectedProduct, defaultOriginPreference));
       requestAnimationFrame(() => setAnimateIn(true));
     } else {
       setAnimateIn(false);
     }
-  }, [isOpen, preselectedProduct]);
+  }, [defaultOriginPreference, isOpen, preselectedProduct]);
+
+  useEffect(() => {
+    if (!isOpen || originHubs.length === 0) return;
+    const validOrigins = new Set(originHubs.map((hub) => hub.name.trim()));
+    setFormData((current) => validOrigins.has(current.originPreference)
+      ? current
+      : { ...current, originPreference: defaultOriginPreference });
+  }, [defaultOriginPreference, isOpen, originHubs]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -147,7 +165,7 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose, presele
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5 text-left">
               {step === 1 && <QuoteServiceStep {...stepProps} language={language} content={content} />}
-              {step === 2 && <QuoteDetailsStep {...stepProps} language={language} content={content} />}
+              {step === 2 && <QuoteDetailsStep {...stepProps} language={language} content={content} origins={originHubs} />}
               {step === 3 && <QuoteContactStep {...stepProps} language={language} content={content} />}
               {submitError && <div role="alert" className="rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300">{submitError}</div>}
               <QuoteNavigation
