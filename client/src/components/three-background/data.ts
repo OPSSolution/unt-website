@@ -20,9 +20,3 @@ export const TRADE_HUBS: TradeHub[] = [
   { id: 'laos', name: 'Laos', flag: '🇱🇦', flagUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Flag_of_Laos.svg/250px-Flag_of_Laos.svg.png', lat: 17.97, lon: 102.63, leadTime: '2-4 Days', categories: 'Agricultural & Organic Goods', moq: '500 Units', type: 'warehouse' },
   { id: 'malaysia', name: 'Malaysia', flag: '🇲🇾', flagUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Flag_of_Malaysia.svg/250px-Flag_of_Malaysia.svg.png', lat: 3.13, lon: 101.68, leadTime: '3-5 Days', categories: 'Halal Certified F&B & Cosmetics', moq: '600 Units', type: 'factory' },
 ];
-
-export const CAMBODIA_HUB = {
-  id: 'cambodia', name: 'Cambodia', flag: '🇰🇭',
-  flagUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Flag_of_Cambodia.svg/250px-Flag_of_Cambodia.svg.png',
-  lat: 11.55, lon: 104.91,
-};

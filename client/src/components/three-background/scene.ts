@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import type { AirplaneAnimation, RouteAnimation, SequentialFlag, ShipAnimation } from './animation';
-import { CAMBODIA_HUB, type TradeHub } from './data';
+import type { TradeHub } from './data';
 import { createAirplaneMesh, createContainerMesh, createFlagSprite, createShipMesh, getFlagMaterials, latLonToVector3 } from './visuals';
 
 export const GLOBE_RADIUS = 7.5;
@@ -19,6 +19,9 @@ export interface GlobeSceneObjects {
 export function buildGlobeScene(hubs: TradeHub[]): GlobeSceneObjects {
   const globeGroup = new THREE.Group();
   const radius = GLOBE_RADIUS;
+  const routeAnchor = hubs.find((hub) => hub.id === 'cambodia')
+    ?? hubs.find((hub) => hub.name.toLowerCase() === 'cambodia')
+    ?? { lat: 11.55, lon: 104.91 };
 
   globeGroup.add(new THREE.Mesh(
     new THREE.SphereGeometry(radius * 0.98, 48, 48),
@@ -70,7 +73,7 @@ export function buildGlobeScene(hubs: TradeHub[]): GlobeSceneObjects {
     new THREE.PointsMaterial({ color: 0x38bdf8, size: 0.18, transparent: true, opacity: 0.8 }),
   ));
 
-  const cambodiaPosition = latLonToVector3(CAMBODIA_HUB.lat, CAMBODIA_HUB.lon, radius);
+  const cambodiaPosition = latLonToVector3(routeAnchor.lat, routeAnchor.lon, radius);
   const khRing = new THREE.Mesh(
     new THREE.RingGeometry(0.3, 0.48, 32),
     new THREE.MeshBasicMaterial({ color: 0x10b981, side: THREE.DoubleSide, transparent: true, opacity: 0.95 }),
@@ -79,24 +82,23 @@ export function buildGlobeScene(hubs: TradeHub[]): GlobeSceneObjects {
   khRing.lookAt(cambodiaPosition.clone().multiplyScalar(2));
   globeGroup.add(khRing);
 
-  const headquartersFlag = createFlagSprite(CAMBODIA_HUB.flagUrl, 'UNT HQ', true);
-  headquartersFlag.position.copy(latLonToVector3(CAMBODIA_HUB.lat, CAMBODIA_HUB.lon, radius * 1.15));
-  globeGroup.add(headquartersFlag);
-
   const sequentialFlags: SequentialFlag[] = [];
   const routes: RouteAnimation[] = [];
   hubs.forEach((hub) => {
+    const isRouteAnchor = hub.id === 'cambodia' || hub.name.toLowerCase() === 'cambodia';
     const position = latLonToVector3(hub.lat, hub.lon, radius);
-    const ring = new THREE.Mesh(
-      new THREE.RingGeometry(0.18, 0.3, 24),
-      new THREE.MeshBasicMaterial({
-        color: hub.type === 'factory' ? 0x34d399 : hub.type === 'warehouse' ? 0x38bdf8 : 0x6ee7b7,
-        side: THREE.DoubleSide, transparent: true, opacity: 0.85,
-      }),
-    );
-    ring.position.copy(position);
-    ring.lookAt(position.clone().multiplyScalar(2));
-    globeGroup.add(ring);
+    if (!isRouteAnchor) {
+      const ring = new THREE.Mesh(
+        new THREE.RingGeometry(0.18, 0.3, 24),
+        new THREE.MeshBasicMaterial({
+          color: hub.type === 'factory' ? 0x34d399 : hub.type === 'warehouse' ? 0x38bdf8 : 0x6ee7b7,
+          side: THREE.DoubleSide, transparent: true, opacity: 0.85,
+        }),
+      );
+      ring.position.copy(position);
+      ring.lookAt(position.clone().multiplyScalar(2));
+      globeGroup.add(ring);
+    }
 
     const flag = createFlagSprite(hub.flagUrl, hub.name);
     flag.position.copy(latLonToVector3(hub.lat, hub.lon, radius * 1.15));
@@ -107,6 +109,8 @@ export function buildGlobeScene(hubs: TradeHub[]): GlobeSceneObjects {
     });
     globeGroup.add(flag);
     sequentialFlags.push({ hubId: hub.id, group: flag, mats: materials });
+
+    if (isRouteAnchor) return;
 
     const midpoint = position.clone().add(cambodiaPosition).multiplyScalar(0.5);
     midpoint.normalize().multiplyScalar(radius + position.distanceTo(cambodiaPosition) * 0.38);

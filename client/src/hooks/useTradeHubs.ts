@@ -32,17 +32,27 @@ function normalizeHub(hub: TradeHub, language: 'en' | 'km'): TradeHub {
   };
 }
 
+function uniqueHubs(hubs: TradeHub[]) {
+  const seen = new Set<string>();
+  return hubs.filter((hub) => {
+    const key = hub.id || hub.name.trim().toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 export function useTradeHubs(): TradeHub[] {
   const tradeHubsSection = useHomepageSections().trade_hubs;
   const { language } = useLanguage();
   return useMemo(() => {
     const hubs = tradeHubsSection?.hubs;
     if (!Array.isArray(hubs) || hubs.length === 0) {
-      return TRADE_HUBS.map((hub) => normalizeHub(
+      return uniqueHubs(TRADE_HUBS.map((hub) => normalizeHub(
         language === 'km' ? { ...hub, name: '' } : hub,
         language,
-      ));
+      )));
     }
-    return hubs.map((hub: TradeHub) => normalizeHub(hub, language));
+    return uniqueHubs(hubs.map((hub: TradeHub) => normalizeHub(hub, language)));
   }, [language, tradeHubsSection]);
 }
