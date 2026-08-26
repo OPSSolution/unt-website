@@ -20,7 +20,7 @@ export function HomeHero({ hero, hubs, selectedOrigin, globeLabel, globeAllLabel
   const selectedHub = hubs.find((hub) => hub.id === selectedOrigin);
   return (
     <section className="relative py-10 sm:py-16 lg:py-28 flex items-center justify-center overflow-hidden bg-white/80 dark:bg-[#0B0F17]/90 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-300">
-      <div className="absolute inset-y-0 right-0 w-full lg:w-1/2 pointer-events-none">
+      <div className="absolute right-0 top-0 w-full h-[clamp(300px,55vw,520px)] sm:h-[clamp(360px,52vw,560px)] lg:inset-y-0 lg:w-1/2 lg:h-auto pointer-events-none opacity-60 lg:opacity-100">
         <ThreeBackground activeOrigin={selectedOrigin} hubs={hubs} />
       </div>
       <div className="absolute inset-0 z-0 opacity-50 dark:opacity-30 pointer-events-none"><div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-400/20 via-cyan-500/10 to-transparent" /></div>
