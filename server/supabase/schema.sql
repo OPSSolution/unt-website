@@ -240,8 +240,7 @@ on conflict (section_key) do nothing;
 insert into hero_stats (label, value, sort_order) values
   ('Annual Trade Volume', '$50M+', 1),
   ('Audited Factories', '500+', 2),
-  ('Global Trade Origins', '15+', 3),
-  ('On-Time Customs Clearance', '99.4%', 4)
+  ('Global Trade Origins', '15+', 3)
 on conflict do nothing;
 
 -- Bilingual content. English remains in the existing columns for backwards
