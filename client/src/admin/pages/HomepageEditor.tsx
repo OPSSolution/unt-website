@@ -5,7 +5,7 @@ import { useAutoSave } from '../hooks/useAutoSave';
 import { EditorShell, Field, Card, SectionDivider } from '../components/EditorShell';
 import { ImageField } from '../components/ImageField';
 import { HeroTab } from './homepage-editor/HeroTab';
-import { HOMEPAGE_TABS, HomepageSection, HomepageTab, HeroStat } from './homepage-editor/types';
+import { HOMEPAGE_TABS, HomepageSection, HomepageTab } from './homepage-editor/types';
 
 // ── Tabs mirror the 7 sections in HomePage.tsx ──────────────────────────────
 export function HomepageEditor() {
@@ -14,7 +14,6 @@ export function HomepageEditor() {
 
   // Section data states
   const [hero, setHero] = useState<HomepageSection | null>(null);
-  const [stats, setStats] = useState<HeroStat[]>([]);
   const [pillars, setPillars] = useState<any>(null);
   const [heritage, setHeritage] = useState<any>(null);
   const [products, setProducts] = useState<any>(null);
@@ -29,12 +28,11 @@ export function HomepageEditor() {
 
   const { saving, saved, error, dirty, autoSaving, autoSaved, autoSaveError } = useAutoSave(
     'homepage',
-    { hero, stats, pillars, heritage, products, oem, partners, insights, heroGlobe },
+    { hero, pillars, heritage, products, oem, partners, insights, heroGlobe },
     async (d) => {
       if (!token) return;
       const saves: Promise<any>[] = [];
       if (d.hero) saves.push(api.updateHeroContent(d.hero, token));
-      if (d.stats?.length) saves.push(...d.stats.map((stat) => api.updateHeroStat(stat.id, stat, token)));
       if (d.pillars) saves.push(api.updateHomepageSection('pillars', d.pillars, token));
       if (d.heritage) saves.push(api.updateHomepageSection('heritage', d.heritage, token));
       if (d.products) saves.push(api.updateHomepageSection('products_section', d.products, token));
@@ -51,7 +49,6 @@ export function HomepageEditor() {
   useEffect(() => {
     Promise.all([
       api.getHeroContent(),
-      api.getHeroStats(),
       api.getHomepageSection('pillars'),
       api.getHomepageSection('heritage'),
       api.getHomepageSection('products_section'),
@@ -59,9 +56,8 @@ export function HomepageEditor() {
       api.getHomepageSection('partners_section'),
       api.getHomepageSection('insights_section'),
       api.getHomepageSection('hero_globe'),
-    ]).then(([h, s, p, he, pr, o, pa, ins, hg]) => {
+    ]).then(([h, p, he, pr, o, pa, ins, hg]) => {
       setHero(h);
-      setStats(s);
       setPillars(p.data);
       setHeritage(he.data);
       setProducts(pr.data ?? {
@@ -90,7 +86,6 @@ export function HomepageEditor() {
     try {
       await Promise.all([
         api.updateHeroContent(hero, token),
-        ...stats.map((s) => api.updateHeroStat(s.id, s, token)),
         api.updateHomepageSection('pillars', pillars, token),
         api.updateHomepageSection('heritage', heritage, token),
         api.updateHomepageSection('products_section', products, token),
@@ -104,8 +99,6 @@ export function HomepageEditor() {
 
   const sh = (key: string) => (value: string) => setHero((current) => ({ ...current, [key]: value }));
   const shg = (key: string) => (value: string) => setHeroGlobe((current) => ({ ...current, [key]: value }));
-  const updateStat = (index: number, changes: Partial<HeroStat>) => setStats((current) =>
-    current.map((stat, itemIndex) => itemIndex === index ? { ...stat, ...changes } : stat));
   const sp = (key: string) => (v: string) => setPillars((c: any) => ({ ...c, [key]: v }));
   const she = (key: string) => (v: string) => setHeritage((c: any) => ({ ...c, [key]: v }));
   const spr = (key: string) => (v: string) => setProducts((c: any) => ({ ...c, [key]: v }));
@@ -131,10 +124,8 @@ export function HomepageEditor() {
             <HeroTab
               hero={hero}
               heroGlobe={heroGlobe}
-              stats={stats}
               setHeroField={sh}
               setGlobeField={shg}
-              updateStat={updateStat}
             />
           )}
 
