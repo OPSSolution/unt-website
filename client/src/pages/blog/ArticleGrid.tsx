@@ -1,4 +1,4 @@
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Eye } from 'lucide-react';
 import { Card3D } from '../../components/Card3D';
 import type { Article } from '../../types';
 
@@ -50,14 +50,21 @@ export function ArticleGrid({ articles, onOpen, content }: Props) {
                   {article.excerpt}
                 </p>
 
-                <div className="grid grid-cols-2 gap-2 border-t border-slate-100 pt-3 text-xs dark:border-slate-800/80">
+                <div className="grid grid-cols-3 gap-2 border-t border-slate-100 pt-3 text-xs dark:border-slate-800/80">
                   <div className="min-w-0 rounded-xl border border-slate-100 bg-slate-50 p-2 dark:border-slate-800/80 dark:bg-slate-800/50">
                     <span className="block truncate text-[9px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Published</span>
                     <strong className="block truncate text-[11px] font-bold text-slate-900 dark:text-white" title={article.date}>{article.date}</strong>
                   </div>
-                  <div className="min-w-0 rounded-xl border border-slate-100 bg-slate-50 p-2 text-right dark:border-slate-800/80 dark:bg-slate-800/50">
+                  <div className="min-w-0 rounded-xl border border-slate-100 bg-slate-50 p-2 dark:border-slate-800/80 dark:bg-slate-800/50">
                     <span className="block truncate text-[9px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Read Time</span>
                     <strong className="block truncate text-[11px] font-bold text-slate-900 dark:text-white" title={article.readTime}>{article.readTime}</strong>
+                  </div>
+                  <div className="min-w-0 rounded-xl border border-slate-100 bg-slate-50 p-2 text-right dark:border-slate-800/80 dark:bg-slate-800/50">
+                    <span className="block truncate text-[9px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Views</span>
+                    <strong className="flex items-center justify-end gap-1 truncate text-[11px] font-bold text-slate-900 dark:text-white" title={`${article.views ?? 0} views`}>
+                      <Eye className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                      {(article.views ?? 0).toLocaleString()}
+                    </strong>
                   </div>
                 </div>
               </div>

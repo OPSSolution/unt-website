@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
-import { X, Calendar, Tag, Share2, Check, ArrowRight, Clock3, BookOpen, ShieldCheck } from 'lucide-react';
+import { X, Calendar, Tag, Share2, Check, ArrowRight, Clock3, BookOpen, ShieldCheck, Eye } from 'lucide-react';
 import { Article } from '../types';
+import { registerArticleView } from '../hooks/useArticles';
 
 interface ArticleReaderModalProps {
   article: Article | null;
@@ -14,6 +15,7 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
   onOpenQuoteModal,
 }) => {
   const [copied, setCopied] = React.useState(false);
+  const [views, setViews] = React.useState<number>(article?.views ?? 0);
 
   useEffect(() => {
     if (!article) return;
@@ -23,6 +25,12 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
     window.addEventListener('keydown', onKeyDown);
     return () => { document.body.style.overflow = previousOverflow; window.removeEventListener('keydown', onKeyDown); };
   }, [article, onClose]);
+
+  useEffect(() => {
+    if (!article) return;
+    setViews(article.views ?? 0);
+    registerArticleView(article.id).then((updated) => { if (updated !== null) setViews(updated); });
+  }, [article]);
 
   if (!article) return null;
 
@@ -138,9 +146,15 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
                 </div>
               </div>
 
-              <div className="flex items-center space-x-1 lg:ml-0 xl:ml-auto rounded-full bg-slate-50 px-3 py-1.5 border border-slate-100 dark:bg-slate-900 dark:border-slate-800">
-                <Calendar className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                <span>{article.date}</span>
+              <div className="flex items-center gap-2 lg:ml-0 xl:ml-auto">
+                <div className="flex items-center space-x-1 rounded-full bg-slate-50 px-3 py-1.5 border border-slate-100 dark:bg-slate-900 dark:border-slate-800">
+                  <Calendar className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span>{article.date}</span>
+                </div>
+                <div className="flex items-center space-x-1 rounded-full bg-slate-50 px-3 py-1.5 border border-slate-100 dark:bg-slate-900 dark:border-slate-800">
+                  <Eye className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span>{views.toLocaleString()} views</span>
+                </div>
               </div>
             </div>
           </div>
