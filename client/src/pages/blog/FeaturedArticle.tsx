@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Sparkles, BookOpen, Clock, ShieldCheck, Download } from 'lucide-react';
+import { ArrowRight, Sparkles, BookOpen, Clock, ShieldCheck, Download, Eye } from 'lucide-react';
 import { Card3D } from '../../components/Card3D';
 import type { Article } from '../../types';
 
@@ -55,6 +55,11 @@ export function FeaturedArticle({ article, onOpen, content }: Props) {
                 <span className="flex items-center gap-1">
                   <Clock className="w-3.5 h-3.5" />
                   <span>{article.readTime}</span>
+                </span>
+                <span>•</span>
+                <span className="flex items-center gap-1">
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>{(article.views ?? 0).toLocaleString()} views</span>
                 </span>
               </div>
 

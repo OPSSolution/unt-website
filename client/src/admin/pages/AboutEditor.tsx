@@ -4,8 +4,9 @@ import { useAdminAuth } from '../hooks/useAdminAuth';
 import { useAutoSave } from '../hooks/useAutoSave';
 import { EditorShell, Field, Card, SectionDivider } from '../components/EditorShell';
 import { Plus, Trash2 } from 'lucide-react';
-import { AboutPageData, Advantage, NetworkHub, normalizeAboutData } from './about-editor/data';
+import { AboutPageData, Advantage, NetworkHub, OwnerProfile, normalizeAboutData } from './about-editor/data';
 import { HeaderTab } from './about-editor/HeaderTab';
+import { ImageField } from '../components/ImageField';
 
 const DEFAULTS = {
   badge: 'About Unique Noble Trading Co., Ltd.',
@@ -34,7 +35,7 @@ const DEFAULTS = {
   cta: 'Partner with Unique Noble Trading Co., Ltd.',
 };
 
-const TABS = ['Header', 'Mission', 'Advantages', 'Network'] as const;
+const TABS = ['Header', 'Mission', 'Advantages', 'Network', 'Owners'] as const;
 type Tab = typeof TABS[number];
 
 export function AboutEditor() {
@@ -90,6 +91,10 @@ export function AboutEditor() {
   const updateHub = (index: number, changes: Partial<NetworkHub>) => setData((current) => ({
     ...current,
     network_hubs: current.network_hubs.map((hub, itemIndex) => itemIndex === index ? { ...hub, ...changes } : hub),
+  }));
+  const updateOwner = (index: number, changes: Partial<OwnerProfile>) => setData((current) => ({
+    ...current,
+    owner_profiles: current.owner_profiles.map((owner, itemIndex) => itemIndex === index ? { ...owner, ...changes } : owner),
   }));
 
   const handleSave = async () => {
@@ -264,6 +269,52 @@ export function AboutEditor() {
                 </Card>
               ))}
             </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'Owners' && (
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+          <div className="xl:col-span-4">
+            <Card>
+              <div className="space-y-4">
+                <SectionDivider label="Owner Profiles" />
+                <p className="text-xs leading-relaxed text-slate-500 dark:text-slate-400">Manage the people shown below the Global Network & Operations Hubs section.</p>
+                <button
+                  onClick={() => setData((current) => ({ ...current, owner_profiles: [...current.owner_profiles, { name: 'New Owner', designation: 'Director', quote: 'Add an introduction for this owner.', src: '' }] }))}
+                  className="mt-4 flex items-center justify-center gap-2 w-full px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold text-sm transition-colors"
+                >
+                  <Plus className="w-4 h-4" /> Add Owner
+                </button>
+              </div>
+            </Card>
+          </div>
+          <div className="xl:col-span-8 space-y-4">
+            {data.owner_profiles.map((owner, i) => (
+              <Card key={i}>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <SectionDivider label={`Owner ${i + 1}`} />
+                    <button
+                      onClick={() => setData((current) => ({ ...current, owner_profiles: current.owner_profiles.filter((_, index) => index !== i) }))}
+                      className="p-1 text-red-400 transition-colors hover:text-red-500"
+                      title="Remove Owner"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <Field label="Name" value={owner.name} onChange={(value) => updateOwner(i, { name: value })} />
+                  <Field label="Role / Designation" value={owner.designation} onChange={(value) => updateOwner(i, { designation: value })} />
+                  <Field label="Introduction" value={owner.quote} onChange={(value) => updateOwner(i, { quote: value })} multiline rows={4} />
+                  <ImageField
+                    label="Owner Profile Image"
+                    value={owner.src}
+                    onChange={(value) => updateOwner(i, { src: value })}
+                    folder="about/owners"
+                  />
+                </div>
+              </Card>
+            ))}
           </div>
         </div>
       )}

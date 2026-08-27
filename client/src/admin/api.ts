@@ -135,4 +135,13 @@ export const api = {
     request<{ configured: boolean; source: 'admin'; updated_at: string }>('/api/admin/settings/cloudinary', { method: 'PUT', body: JSON.stringify({ cloudName, apiKey, apiSecret }) }, token),
   clearCloudinarySettings: (token: string) =>
     request<{ configured: boolean; source: 'env' | null; updated_at: null }>('/api/admin/settings/cloudinary', { method: 'DELETE' }, token),
+
+  // Site traffic
+  getSiteStatsBreakdown: (token: string) =>
+    request<{
+      daily: { date: string; visits: number }[];
+      countries: { country: string; visits: number }[];
+      newVisitors: number;
+      returningVisitors: number;
+    }>('/api/admin/site-stats/breakdown', {}, token),
 };

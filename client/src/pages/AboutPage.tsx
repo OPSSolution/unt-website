@@ -4,6 +4,7 @@ import { AboutHubs } from './about/AboutHubs';
 import { AboutHero, AboutMission } from './about/AboutIntroSections';
 import { AboutTimeline } from './about/AboutTimeline';
 import { AdvantagesSection, CoreValuesSection } from './about/AboutValueSections';
+import { AboutTestimonials } from './about/AboutTestimonials';
 import { useProducts } from '../hooks/useProducts';
 import type { Product } from '../types';
 
@@ -31,6 +32,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onOpenQuoteModal, onOpenPr
         <AdvantagesSection content={content} />
         <AboutTimeline />
         <AboutHubs content={content} onOpenQuoteModal={onOpenQuoteModal} />
+        <AboutTestimonials content={content} />
       </div>
     </div>
   );

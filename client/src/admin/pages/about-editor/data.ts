@@ -10,9 +10,17 @@ export interface NetworkHub {
   desc: string;
 }
 
+export interface OwnerProfile {
+  name: string;
+  designation: string;
+  quote: string;
+  src: string;
+}
+
 export type AboutPageData = Record<string, any> & {
   advantages: Advantage[];
   network_hubs: NetworkHub[];
+  owner_profiles: OwnerProfile[];
 };
 
 const advantageIcons = ['ShieldCheck', 'Building2', 'Truck', 'Users'] as const;
@@ -36,10 +44,19 @@ export const DEFAULTS = {
   hub2_flags: '🇰🇷 🇯🇵', hub2_title: 'Seoul & Tokyo OEM Laboratories', hub2_desc: 'Access to audited GMP cosmetics laboratories and health supplement formulators for premium skincare lines.',
   hub3_flags: '🇨🇳 🇰🇭', hub3_title: 'Guangzhou & Phnom Penh Central', hub3_desc: 'Bulk manufacturing, custom eco packaging, and central distribution warehouse in Phnom Penh.',
   cta: 'Partner with Unique Noble Trading Co., Ltd.',
+  owner_profiles: [
+    { name: 'UNT Founder', designation: 'Founder & Managing Director', quote: 'I founded UNT to make international sourcing more accessible for Cambodian businesses.', src: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1000&auto=format&fit=crop' },
+    { name: 'UNT Co-Founder', designation: 'Co-Founder & Operations Lead', quote: 'Our goal is to turn reliable global connections into lasting local opportunities.', src: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1000&auto=format&fit=crop' },
+    { name: 'UNT Director', designation: 'Commercial Director', quote: 'UNT combines international standards with a deep understanding of the Cambodian market.', src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1000&auto=format&fit=crop' },
+  ],
 };
 
 const text = (source: Record<string, unknown>, key: string) =>
-  typeof source[key] === 'string' ? source[key] as string : DEFAULTS[key as keyof typeof DEFAULTS] ?? '';
+  typeof source[key] === 'string'
+    ? source[key] as string
+    : typeof DEFAULTS[key as keyof typeof DEFAULTS] === 'string'
+      ? DEFAULTS[key as keyof typeof DEFAULTS] as string
+      : '';
 
 export const normalizeAboutData = (source: Record<string, unknown>): AboutPageData => ({
   ...DEFAULTS,
@@ -54,6 +71,9 @@ export const normalizeAboutData = (source: Record<string, unknown>): AboutPageDa
     : [1, 2, 3].map((number) => ({
         flags: text(source, `hub${number}_flags`), title: text(source, `hub${number}_title`), desc: text(source, `hub${number}_desc`),
       })),
+  owner_profiles: Array.isArray(source.owner_profiles) && source.owner_profiles.length > 0
+    ? source.owner_profiles as OwnerProfile[]
+    : DEFAULTS.owner_profiles,
 });
 
 export const ABOUT_TABS = ['Header', 'Mission', 'Advantages', 'Network'] as const;

@@ -7,6 +7,7 @@ import { Footer } from './components/Footer';
 import { QuoteModal } from './components/QuoteModal';
 import { ProductDetailModal } from './components/ProductDetailModal';
 import { ArticleReaderModal } from './components/ArticleReaderModal';
+import { registerSiteVisit } from './hooks/useSiteStats';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<PageTab>('home');
@@ -17,6 +18,8 @@ export default function App() {
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
 
   const { darkMode, setDarkMode } = useTheme();
+
+  useEffect(() => { registerSiteVisit(); }, []);
 
   // Reset immediately when the rendered page changes. Smooth scrolling here
   // briefly exposes the new page at the previous page's scroll position.

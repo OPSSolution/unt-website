@@ -33,6 +33,7 @@ export interface Article {
   content: string[];
   tags: string[];
   featured?: boolean;
+  views?: number;
 }
 
 export interface TrainingTrack {

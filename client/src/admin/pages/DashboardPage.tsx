@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Package, FileText, Users, Sparkles, ArrowRight, Inbox } from 'lucide-react';
+import { Package, FileText, Users, Sparkles, ArrowRight, Inbox, Eye } from 'lucide-react';
 import { api } from '../api';
 import { useAdminAuth } from '../hooks/useAdminAuth';
+import { useTotalVisits } from '../../hooks/useSiteStats';
+import { TrafficPanel } from '../components/TrafficPanel';
 import type { AdminPage } from '../components/Sidebar';
 
 interface Props {
@@ -10,6 +12,7 @@ interface Props {
 
 export function DashboardPage({ onNavigate }: Props) {
   const { token } = useAdminAuth();
+  const totalVisits = useTotalVisits();
   const [counts, setCounts] = useState({ products: 0, articles: 0, partners: 0, quotes: 0 });
 
   useEffect(() => {
@@ -50,6 +53,18 @@ export function DashboardPage({ onNavigate }: Props) {
         <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Dashboard</h1>
         <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Manage all website content sections from here.</p>
       </div>
+
+      <div className="flex items-center gap-4 p-6 rounded-2xl stripe-glass-card">
+        <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-500/15 border border-emerald-200 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+          <Eye className="w-6 h-6" />
+        </div>
+        <div>
+          <div className="text-2xl font-bold text-slate-900 dark:text-white">{totalVisits === null ? '—' : totalVisits.toLocaleString()}</div>
+          <div className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">Total website visitors</div>
+        </div>
+      </div>
+
+      <TrafficPanel />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {cards.map((card) => (

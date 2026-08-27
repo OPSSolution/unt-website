@@ -1,8 +1,9 @@
 import React from 'react';
 import { PageTab } from '../types';
-import { Mail, Phone, MapPin, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Mail, Phone, MapPin, ShieldCheck, ArrowRight, Eye } from 'lucide-react';
 import { useHomepageSections } from '../hooks/useHomepageSections';
 import { useLanguage } from '../i18n/LanguageContext';
+import { useTotalVisits } from '../hooks/useSiteStats';
 import { footerNavigation, legalLinks, tradingSolutions } from './footer/data';
 import { NewsletterSignup } from './footer/NewsletterSignup';
 
@@ -16,6 +17,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }
   const nb = sections.navbar_footer ?? {};
   const { language } = useLanguage();
   const isKm = language === 'km';
+  const totalVisits = useTotalVisits();
 
   const navigateTo = (tab: PageTab) => {
     setActiveTab(tab);
@@ -129,8 +131,14 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenQuoteModal }
 
         {/* Bottom Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
-          <div>
-            © {new Date().getFullYear()} {nb.footer_copyright ?? 'Unique Noble Trading Co., Ltd. All rights reserved.'}
+          <div className="flex items-center gap-4">
+            <span>© {new Date().getFullYear()} {nb.footer_copyright ?? 'Unique Noble Trading Co., Ltd. All rights reserved.'}</span>
+            {totalVisits !== null && (
+              <span className="hidden sm:flex items-center gap-1.5 text-slate-400 dark:text-slate-600">
+                <Eye className="w-3.5 h-3.5" />
+                {totalVisits.toLocaleString()} visitors
+              </span>
+            )}
           </div>
           <div className="flex items-center space-x-6">
             {legalLinks.map((label) => (

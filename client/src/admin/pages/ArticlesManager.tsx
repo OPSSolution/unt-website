@@ -180,6 +180,9 @@ export function ArticlesManager() {
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-slate-900 dark:text-white font-semibold text-sm truncate">{a.title}</span>
                       {a.featured && <span className="px-2 py-0.5 bg-emerald-600/20 text-emerald-400 text-[10px] font-bold rounded-full shrink-0">Featured</span>}
+                      <span className="flex items-center gap-1 px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-bold rounded-full shrink-0">
+                        <Eye className="w-3 h-3" />{(a.views ?? 0).toLocaleString()}
+                      </span>
                     </div>
                     <div className="text-slate-500 dark:text-slate-500 text-xs mt-0.5">{a.category} · {a.date} · {a.read_time}</div>
                     <div className="text-slate-400 dark:text-slate-600 text-xs mt-0.5">By {a.author_name}</div>
