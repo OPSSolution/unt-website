@@ -43,7 +43,12 @@ export function TrafficPanel() {
 
   useEffect(() => {
     if (!token) return;
-    api.getSiteStatsBreakdown(token).then(setData).catch(() => {});
+    const load = () => { api.getSiteStatsBreakdown(token).then(setData).catch(() => {}); };
+    load();
+    const intervalId = window.setInterval(() => {
+      if (document.visibilityState === 'visible') load();
+    }, 45_000);
+    return () => window.clearInterval(intervalId);
   }, [token]);
 
   if (!data) return null;
