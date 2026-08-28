@@ -8,6 +8,7 @@ import { QuoteModal } from './components/QuoteModal';
 import { ProductDetailModal } from './components/ProductDetailModal';
 import { ArticleReaderModal } from './components/ArticleReaderModal';
 import { registerSiteVisit } from './hooks/useSiteStats';
+import { ViewCounterWidget } from './components/ViewCounterWidget';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<PageTab>('home');
@@ -84,6 +85,8 @@ export default function App() {
         onClose={() => setSelectedArticle(null)}
         onOpenQuoteModal={() => handleOpenQuoteModal()}
       />
+
+      <ViewCounterWidget />
     </div>
   );
 }
