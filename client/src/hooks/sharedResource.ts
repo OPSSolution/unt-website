@@ -45,7 +45,7 @@ function getResource<T>(key: string, load: () => Promise<T | null>, initialValue
   return resource;
 }
 
-export function useSharedResource<T>(key: string, load: () => Promise<T | null>, initialValue: T): T {
+export function useSharedResource<T>(key: string, load: () => Promise<T | null>, initialValue: T, pollMs?: number): T {
   const resource = getResource(key, load, initialValue);
   const subscribe = useCallback((notify: () => void) => {
       const isFirstSubscriber = resource.subscribers.size === 0;
@@ -66,14 +66,20 @@ export function useSharedResource<T>(key: string, load: () => Promise<T | null>,
       window.addEventListener('storage', refreshAfterAdminUpdate);
       window.addEventListener('unt-content-updated', refreshInCurrentTab);
       document.addEventListener('visibilitychange', refreshWhenVisible);
+      // Opt-in polling for values that change outside this browser (e.g. a
+      // visitor counter incremented by other visitors' sessions).
+      const pollId = pollMs ? window.setInterval(() => {
+        if (document.visibilityState === 'visible') void refresh(resource);
+      }, pollMs) : undefined;
       return () => {
         resource.subscribers.delete(notify);
         window.removeEventListener('focus', refreshWhenVisible);
         window.removeEventListener('storage', refreshAfterAdminUpdate);
         window.removeEventListener('unt-content-updated', refreshInCurrentTab);
         document.removeEventListener('visibilitychange', refreshWhenVisible);
+        if (pollId) window.clearInterval(pollId);
       };
-    }, [resource]);
+    }, [resource, pollMs]);
   return useSyncExternalStore(
     subscribe,
     () => resource.value,

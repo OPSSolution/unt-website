@@ -30,7 +30,9 @@ begin
   insert into site_visits (visitor_id, country, is_new)
   values (p_visitor_id, p_country, v_is_new);
 
-  update site_stats set total_visits = total_visits + 1 where id = 1
+  -- "total_visits" is ambiguous here: it names both the site_stats column and
+  -- the OUT parameter from RETURNS TABLE, so both sides must be table-qualified.
+  update site_stats set total_visits = site_stats.total_visits + 1 where id = 1
   returning site_stats.total_visits into v_total;
 
   return query select v_total, v_is_new;

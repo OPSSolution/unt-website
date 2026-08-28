@@ -32,5 +32,5 @@ async function loadTotalVisits(): Promise<number | null> {
 }
 
 export function useTotalVisits(): number | null {
-  return useSharedResource('site-stats-total-visits', loadTotalVisits, null);
+  return useSharedResource('site-stats-total-visits', loadTotalVisits, null, 15_000);
 }
